@@ -6,3 +6,4 @@
 *.swp
 .DS_Store
 .git
+test/debug.charly
