@@ -23,7 +23,7 @@ class Stack
   end
 
   def dump_values
-    collection = [] of Tuple(Int64, HashKey, BaseType)
+    collection = [] of Tuple(Int64, HashKey, StackEntry)
 
     # Add all parent values first
     parent = @parent
@@ -33,7 +33,7 @@ class Stack
 
     # Add the values of this stack
     @values.each do |key, value|
-      collection << {depth, key, value.value}
+      collection << {depth, key, value}
     end
 
     return collection
@@ -52,7 +52,7 @@ class Stack
     dump_values.each do |(depth, key, value)|
       depth = "#{depth}"[0..30]
       key = "#{key}"[0..30]
-      value = "#{value}"[0..30]
+      value = "#{value.value} #{value.locked ? "locked" : ""}"[0..30]
       type = "#{value.class}"[0..30]
 
       max_depth = depth.size if depth.size > max_depth
@@ -66,9 +66,9 @@ class Stack
       io << " "
       io << "#{key}".ljust(max_id, ' ')
       io << " : "
-      io << "#{value}".ljust(max_val, ' ')
+      io << "#{value.value} #{value.locked ? "locked" : ""}".ljust(max_val, ' ')
       io << " : "
-      io << "#{value.class}".ljust(max_type, ' ')
+      io << "#{value.value.class}".ljust(max_type, ' ')
       io << "\n"
     end
   end
@@ -101,7 +101,7 @@ class Stack
     @locked = false
   end
 
-  def write(key, value : BaseType, declaration = false, check_parent = true)
+  def write(key, value : BaseType, declaration = false, check_parent = true, constant = false)
 
     # Check if this is a declaration
     if declaration
@@ -110,7 +110,9 @@ class Stack
       if @locked
         raise "Could not write to variable '#{key}', stack is locked!"
       else
-        @values[key] = StackEntry.new(value)
+        value = StackEntry.new(value)
+        value.locked = constant
+        @values[key] = value
         return value
       end
     end
@@ -118,7 +120,11 @@ class Stack
     # Check if the current stack contains the key
     parent = @parent
     if contains key
-      @values[key] = StackEntry.new(value)
+      if (entry = @values[key]).locked
+        raise "Could not write to variable '#{key}', variable is a constant!"
+      else
+        @values[key] = StackEntry.new(value)
+      end
       return value
     elsif check_parent && parent.is_a?(Stack)
       return parent.write(key, value, false, true)

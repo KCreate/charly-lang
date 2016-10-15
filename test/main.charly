@@ -79,6 +79,16 @@ let testResult = UnitTest("Charly").begin(func(describe) {
       assert(b, 5)
     })
 
+    it("creates constants", func(assert) {
+      const name = "leonard"
+      const age = 16
+      const weather = "sunny"
+
+      assert(name, "leonard")
+      assert(age, 16)
+      assert(weather, "sunny")
+    })
+
   })
 
   describe("Arithmetic operations", func(it) {

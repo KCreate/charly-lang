@@ -50,7 +50,11 @@ class Interpreter
     end
 
     if node.is_a? VariableInitialisation
-      return exec_variable_initialisation(node, stack)
+      return exec_variable_initialisation(node, stack, constant: false)
+    end
+
+    if node.is_a? ConstantInitialisation
+      return exec_variable_initialisation(node, stack, constant: true)
     end
 
     if node.is_a? VariableAssignment
@@ -143,7 +147,7 @@ class Interpreter
   end
 
   # Saves value to a given variable in the current stack
-  def exec_variable_initialisation(node, stack)
+  def exec_variable_initialisation(node, stack, constant = false)
 
     # Resolve the value
     value = exec_expression(node.expression, stack)
@@ -155,7 +159,7 @@ class Interpreter
       if identifier_value.is_a? String
 
         if value.is_a? BaseType
-          stack.write(identifier_value, value, true)
+          stack.write(identifier_value, value, declaration: true, constant: constant)
         end
       end
     end
