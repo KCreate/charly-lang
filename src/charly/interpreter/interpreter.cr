@@ -186,12 +186,12 @@ class Interpreter
 
       # Only TObjects are allowed
       unless identifier.is_a?(TObject)
-        raise "Can't write to non-object #{identifier}"
+        raise "#{identifier} is not an object"
       end
 
       # Typecheck the member
       unless member.is_a?(IdentifierLiteral)
-        raise "Member node is not an identifier. That's a bug"
+        raise "Member node is not an identifier. You've found a bug in the interpeter."
       end
 
       identifier.stack.write(member.value.as(String), value, true, false)
@@ -700,7 +700,7 @@ class Interpreter
         target = redirect_property(me_identifier, me_member.value.as(String), stack)
         context = me_identifier
       else
-        raise "Invalid type for member in member expression. That's a bug in the parser."
+        raise "Member node is not an identifier. You've found a bug in the interpeter."
       end
     else
       target = exec_expression(identifier, stack)
@@ -715,7 +715,8 @@ class Interpreter
       context = target.parent_stack.get("self") unless context
       return exec_function(target, arguments, context)
     else
-      raise "#{identifier} is not a function! #{stack}"
+      puts stack
+      raise "#{identifier} is not a function!"
     end
   end
 
@@ -737,7 +738,7 @@ class Interpreter
 
     # Sanity check
     unless member.is_a? ASTNode
-      raise "Index expression without member found. That's a bug in the parser."
+      raise "Member node is not an identifier. You've found a bug in the interpeter."
     end
 
     # Check if there is at least 1 item in the index expression
@@ -847,7 +848,7 @@ class Interpreter
     if (parent_stack = function.parent_stack).is_a? Stack
       function_stack = Stack.new(parent_stack)
     else
-      raise "Could not find a valid stack for the function to run in"
+      raise "Could not find a valid stack for the function to run in. You've found a bug in the interpreter."
     end
 
     # Get the identities of the arguments that are required
@@ -1088,7 +1089,6 @@ class Interpreter
       end
     end
     filepath = File.expand_path(filepath) # Make it an absolute path
-    filepath = File.real_path(filepath) # Resolve symlinks
 
     return filepath
   end

@@ -108,8 +108,14 @@ class Stack
 
       # Check if the stack is locked
       if @locked
-        raise "Could not write to variable '#{key}', stack is locked!"
+        raise "Can't mutate '#{key}', stack is locked!"
       else
+
+        # Check if the value already exists
+        if contains(key) && (entry = @values[key]).locked
+          raise "Can't reinitialize constant '#{key}'"
+        end
+
         value = StackEntry.new(value)
         value.locked = constant
         @values[key] = value
@@ -121,7 +127,7 @@ class Stack
     parent = @parent
     if contains key
       if (entry = @values[key]).locked
-        raise "Could not write to variable '#{key}', variable is a constant!"
+        raise "Can't change '#{key}', variable is a constant"
       else
         @values[key] = StackEntry.new(value)
       end
@@ -129,7 +135,7 @@ class Stack
     elsif check_parent && parent.is_a?(Stack)
       return parent.write(key, value, false, true)
     else
-      raise "Could not write to variable '#{key}', variable wasn't declared!"
+      raise "'#{key}' is not declared"
     end
   end
 
@@ -146,7 +152,7 @@ class Stack
     elsif check_parent && parent.is_a? Stack
       return parent.delete(key, check_parent)
     else
-      raise "Could not delete variable '#{key}', not found!"
+      raise "Could not delete '#{key}', not found!"
     end
   end
 
@@ -160,7 +166,7 @@ class Stack
     elsif check_parent && parent.is_a? Stack
       return parent.get(key)
     else
-      raise "Variable '#{key}' is not defined!"
+      raise "'#{key}' is not defined"
     end
   end
 
