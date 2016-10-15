@@ -1,5 +1,5 @@
 require "../../helper.cr"
-require "../../interpreter/stack.cr"
+require "../../interpreter/stack/stack.cr"
 require "../../file.cr"
 
 abstract class ASTNode

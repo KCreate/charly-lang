@@ -1,5 +1,5 @@
 require "../syntax/ast/ast.cr"
-require "./stack.cr"
+require "./stack/stack.cr"
 require "./types.cr"
 require "./internal-functions.cr"
 

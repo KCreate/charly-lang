@@ -1,5 +1,5 @@
 # Interpreter
-require "./stack.cr"
+require "./stack/stack.cr"
 require "./interpreter.cr"
 require "./session.cr"
 

@@ -1,19 +1,20 @@
-require "./types.cr"
-require "../file.cr"
-require "./session.cr"
+require "../types.cr"
+require "../../file.cr"
+require "../session.cr"
+require "./entry.cr"
 
 # A single stack containing variables
 class Stack
   include CharlyTypes
   property parent : Stack?
   property file : VirtualFile?
-  property values : Hash(HashKey, BaseType)
+  property values : Hash(HashKey, StackEntry)
   property locked : Bool
   property session : Session?
 
   def initialize(parent)
     @parent = parent
-    @values = {} of HashKey => BaseType
+    @values = {} of HashKey => StackEntry
     @locked = false
   end
 
@@ -32,7 +33,7 @@ class Stack
 
     # Add the values of this stack
     @values.each do |key, value|
-      collection << {depth, key, value}
+      collection << {depth, key, value.value}
     end
 
     return collection
@@ -92,20 +93,6 @@ class Stack
     return self
   end
 
-  # Returns the stack at a given depth
-  def stack_at_depth(d)
-    if depth == d
-      return self
-    end
-
-    parent = @parent
-    if parent.is_a? Stack
-      return parent.stack_at_depth(d)
-    end
-
-    raise "Could not find stack at depth #{d}"
-  end
-
   def lock
     @locked = true
   end
@@ -114,7 +101,7 @@ class Stack
     @locked = false
   end
 
-  def write(key, value, declaration = false, check_parent = true)
+  def write(key, value : BaseType, declaration = false, check_parent = true)
 
     # Check if this is a declaration
     if declaration
@@ -123,7 +110,7 @@ class Stack
       if @locked
         raise "Could not write to variable '#{key}', stack is locked!"
       else
-        @values[key] = value
+        @values[key] = StackEntry.new(value)
         return value
       end
     end
@@ -131,7 +118,7 @@ class Stack
     # Check if the current stack contains the key
     parent = @parent
     if contains key
-      @values[key] = value
+      @values[key] = StackEntry.new(value)
       return value
     elsif check_parent && parent.is_a?(Stack)
       return parent.write(key, value, false, true)
@@ -147,7 +134,7 @@ class Stack
     # Check if the current stack contains the key
     parent = @parent
     if contains key
-      old_value = @values[key]
+      old_value = @values[key].value
       @values.delete key
       return old_value
     elsif check_parent && parent.is_a? Stack
@@ -160,10 +147,10 @@ class Stack
   # Get a key from the stack
   # If the key doesn't exist, check the parent stack
   # unless *check_parent* is passed
-  def get(key, check_parent = true)
+  def get(key, check_parent = true) : BaseType
     parent = @parent
     if contains key
-      return @values[key]
+      return @values[key].value
     elsif check_parent && parent.is_a? Stack
       return parent.get(key)
     else

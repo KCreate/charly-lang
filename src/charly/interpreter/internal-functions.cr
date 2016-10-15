@@ -1,4 +1,4 @@
-require "./stack.cr"
+require "./stack/stack.cr"
 require "./types.cr"
 
 # Defines all methods that are implemented in the interpreter directly
@@ -211,8 +211,11 @@ module InternalFunctions
       #
       # This means we have to go up two stacks in order to
       # be able to write to the correct one
+      #
+      # the value variable we got from values is an entry in the stack
+      # we need to unpack the value from the value
       object.stack.not_nil!.values.each do |key, value|
-        stack.parent.not_nil!.write(key, value, true)
+        stack.parent.not_nil!.write(key, value.value, true)
       end
     end
     return TNull.new
