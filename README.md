@@ -3,8 +3,9 @@
 <img align="right" alt="Charly" width="150" src="docs/images/charly.png" />
 
 # The Charly programming language
+## v0.0.1
 
-This is my try at writing an interpreter of a dynamic language from scratch with my bare hands. It is implemented in [Crystal](https://crystal-lang.org/) at has no dependencies.
+This is my try at writing an interpreter of a dynamic language from scratch with my bare hands. It is implemented in [Crystal](https://crystal-lang.org/).
 
 # Syntax
 
