@@ -22,9 +22,9 @@ class Progress {
   }
 }
 
-let progressView = Progress(30)
+const progressView = Progress(30)
 
-let messages = [
+const messages = [
   "Starting up hacking software",
   "Warming up hacking nodes",
   "Connecting to CIA server",

@@ -1,6 +1,6 @@
 export = {
-  let Array = require("./array.charly")
-  let Object = require("./object.charly")
-  let String = require("./string.charly")
-  let Numeric = require("./numeric.charly")
+  const Array = require("./array.charly")
+  const Object = require("./object.charly")
+  const String = require("./string.charly")
+  const Numeric = require("./numeric.charly")
 }

@@ -1,2 +1,2 @@
-let char = "enter char: ".promptc()
+const char = "enter char: ".promptc()
 write(char.ord())

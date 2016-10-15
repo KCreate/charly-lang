@@ -26,7 +26,7 @@ unpack(require("./primitives/include.charly"))
 
 # Default print and write functions
 unpack(require("io"))
-let print = stdout.print
-let write = stdout.write
-let gets = stdin.gets
-let getc = stdin.getc
+const print = stdout.print
+const write = stdout.write
+const gets = stdin.gets
+const getc = stdin.getc

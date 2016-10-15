@@ -1,4 +1,4 @@
-let stdout = {
+const stdout = {
   func print() {
     call_internal("stdout_print", __arguments.all_to_s())
   }
@@ -8,7 +8,7 @@ let stdout = {
   }
 }
 
-let stderr = {
+const stderr = {
   func print() {
     call_internal("stderr_print", __arguments.all_to_s())
   }
@@ -18,7 +18,7 @@ let stderr = {
   }
 }
 
-let stdin = {
+const stdin = {
   func gets() {
     call_internal("stdin_gets")
   }
@@ -29,9 +29,9 @@ let stdin = {
 }
 
 export = {
-  let stdout = stdout
-  let stderr = stderr
-  let stdin = stdin
+  const stdout = stdout
+  const stderr = stderr
+  const stdin = stdin
 
   # Sleep for *amount*
   # In miliseconds

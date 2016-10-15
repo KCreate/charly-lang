@@ -1,4 +1,4 @@
-let width = "How wide should the pyramid be?: ".prompt().to_n() + 1
+const width = "How wide should the pyramid be?: ".prompt().to_n() + 1
 
 width.times(func(i) {
 

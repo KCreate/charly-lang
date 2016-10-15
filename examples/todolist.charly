@@ -15,8 +15,7 @@ class TodoList {
   let todos = []
 
   func add(title) {
-    let todo = Todo(title)
-    todos.push(todo)
+    todos.push(Todo(title))
   }
 
   func remove(id) {
@@ -24,14 +23,14 @@ class TodoList {
   }
 
   func toggle(id) {
-    let todo = todos[id]
+    const todo = todos[id]
     if (todo) {
       todo.toggle()
     }
   }
 }
 
-let myList = TodoList()
+const myList = TodoList()
 
 # input loop
 

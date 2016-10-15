@@ -24,6 +24,14 @@ let object = {
 }
 ```
 
+__Declaring constants__
+```charly
+const PI = 3.14159265358979323846
+const E = 2.7182818284590451
+
+PI = 4 # Cannot redeclare constant PI
+```
+
 __Declaring a function__
 ```charly
 func callback(value, callback) {
