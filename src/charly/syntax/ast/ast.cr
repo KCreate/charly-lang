@@ -123,6 +123,11 @@ class VariableInitialisation < ASTNode
   property expression : ASTNode?
 end
 
+class ConstantInitialisation < ASTNode
+  property identifier : ASTNode?
+  property expression : ASTNode?
+end
+
 # A variable assignment
 class VariableAssignment < ASTNode
   property identifier : ASTNode?

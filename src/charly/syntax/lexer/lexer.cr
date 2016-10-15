@@ -159,6 +159,23 @@ class Lexer
         else
           consume_ident(start)
         end
+      when 'o'
+        case next_char
+        when 'n'
+          case next_char
+          when 's'
+            case next_char
+            when 't'
+              check_ident_or_keyword(TokenType::Keyword, start)
+            else
+              consume_ident(start)
+            end
+          else
+            consume_ident(start)
+          end
+        else
+          consume_ident(start)
+        end
       else
         consume_ident(start)
       end

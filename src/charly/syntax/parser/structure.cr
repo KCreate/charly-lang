@@ -105,6 +105,17 @@ class Structure
           return new_node
         end
       end
+
+      # Check for the const keyword and the assignment operator
+      if node.children[0].is_a? KeywordLiteral && node.children[0].value == "const"
+        if node.children[2].is_a? AssignmentOperator
+          @finished = false
+          new_node = ConstantInitialisation.new(node)
+          new_node << node.children[1]
+          new_node << node.children[3]
+          return new_node
+        end
+      end
     end
 
     # Assignments

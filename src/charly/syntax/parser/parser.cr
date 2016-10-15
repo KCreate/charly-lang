@@ -312,6 +312,12 @@ class Parser
       end
       match
     }, ->{
+      token(TokenType::Keyword, "const") &&
+      token(TokenType::Identifier) &&
+      token(TokenType::Assignment) &&
+      expression &&
+      skip_optional_token(TokenType::Semicolon)
+    }, ->{
       expression && skip_optional_token(TokenType::Semicolon)
     }, ->{
       if_statement && skip_optional_token(TokenType::Semicolon)

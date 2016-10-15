@@ -145,6 +145,13 @@ class Linker
       return
     end
 
+    if node.is_a? ConstantInitialisation
+      node.linked = true
+      node.identifier = node.children[0]
+      node.expression = node.children[1]
+      return
+    end
+
     if node.is_a? WhileStatement
       node.linked = true
       node.test = node.children[0]
