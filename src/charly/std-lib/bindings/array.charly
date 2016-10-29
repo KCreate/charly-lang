@@ -1,5 +1,0 @@
-export = {
-  func of_size(size, default) {
-    call_internal("array_of_size", size, default)
-  }
-}
