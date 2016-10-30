@@ -2,7 +2,7 @@ module Charly
 
   # A `Reader` reads from a String or any IO
   # It keeps read data inside an internal cache
-  class Reader
+  struct Reader
     property source : File | MemoryIO
     property pos : UInt32
     property pos_buffer : UInt32

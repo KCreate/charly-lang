@@ -1,13 +1,12 @@
 require "./token.cr"
 require "./reader.cr"
-require "../exceptions.cr"
+require "../exception.cr"
 
 module Charly
 
   # The `Lexer` turns a sequence of chars into a list
   # of tokens
   class Lexer
-    property tokens : Array(Token)
     property reader : Reader
     property filename : String
     property token : Token
@@ -17,7 +16,6 @@ module Charly
 
     def initialize(source : IO, @filename : String)
       @token = Token.new
-      @tokens = [] of Token
       @reader = Reader.new(source)
 
       @row = 1
@@ -104,7 +102,7 @@ module Charly
         when '*'
           consume_operator_or_assignment TokenType::Pow
         else
-          @token.type = TokenType::Mult
+          consume_operator_or_assignment TokenType::Mult
         end
       when '%'
         consume_operator_or_assignment TokenType::Mod
@@ -118,12 +116,12 @@ module Charly
       when '&'
         case read_char
         when '&'
-          @token.type = TokenType::AND
+          read_char TokenType::AND
         end
       when '|'
         case read_char
         when '|'
-          @token.type = TokenType::OR
+          read_char TokenType::OR
         end
       when '!'
         read_char TokenType::Not
@@ -155,6 +153,268 @@ module Charly
         read_char TokenType::RightBracket
       when '#'
         consume_comment
+      when 'b'
+        case read_char
+        when 'r'
+          case read_char
+          when 'e'
+            case read_char
+            when 'a'
+              case read_char
+              when 'k'
+                check_ident_or_keyword(TokenType::Keyword)
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 'c'
+        case read_char
+        when 'a'
+          case read_char
+          when 't'
+            case read_char
+            when 'c'
+              case read_char
+              when 'h'
+                check_ident_or_keyword(TokenType::Keyword)
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        when 'l'
+          case read_char
+          when 'a'
+            case read_char
+            when 's'
+              case read_char
+              when 's'
+                check_ident_or_keyword(TokenType::Keyword)
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        when 'o'
+          case read_char
+          when 'n'
+            case read_char
+            when 's'
+              case read_char
+              when 't'
+                check_ident_or_keyword(TokenType::Keyword)
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 'e'
+        case read_char
+        when 'l'
+          case read_char
+          when 's'
+            case read_char
+            when 'e'
+              check_ident_or_keyword(TokenType::Keyword)
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 'f'
+        case read_char
+        when 'u'
+          case read_char
+          when 'n'
+            case read_char
+            when 'c'
+              check_ident_or_keyword(TokenType::Keyword)
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        when 'a'
+          case read_char
+          when 'l'
+            case read_char
+            when 's'
+              case read_char
+              when 'e'
+                check_ident_or_keyword(TokenType::Boolean)
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 'i'
+        case read_char
+        when 'f'
+          check_ident_or_keyword(TokenType::Keyword)
+        else
+          consume_ident
+        end
+      when 'l'
+        case read_char
+        when 'e'
+          case read_char
+          when 't'
+            check_ident_or_keyword(TokenType::Keyword)
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 'n'
+        case read_char
+        when 'u'
+          case read_char
+          when 'l'
+            case read_char
+            when 'l'
+              check_ident_or_keyword(TokenType::Null)
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 'N'
+        case read_char
+        when 'A'
+          case read_char
+          when 'N'
+            check_ident_or_keyword(TokenType::NAN)
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 'r'
+        case read_char
+        when 'e'
+          case read_char
+          when 't'
+            case read_char
+            when 'u'
+              case read_char
+              when 'r'
+                case read_char
+                when 'n'
+                  check_ident_or_keyword(TokenType::Keyword)
+                else
+                  consume_ident
+                end
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 't'
+        case read_char
+        when 'h'
+          case read_char
+          when 'r'
+            case read_char
+            when 'o'
+              case read_char
+              when 'w'
+                check_ident_or_keyword(TokenType::Keyword)
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        when 'r'
+          case read_char
+          when 'u'
+            case read_char
+            when 'e'
+              check_ident_or_keyword(TokenType::Boolean)
+            else
+              consume_ident
+            end
+          when 'y'
+            check_ident_or_keyword(TokenType::Keyword)
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 'w'
+        case read_char
+        when 'h'
+          case read_char
+          when 'i'
+            case read_char
+            when 'l'
+              case read_char
+              when 'e'
+                check_ident_or_keyword(TokenType::Keyword)
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
       else
         if ident_start(current_char)
           consume_ident
@@ -165,14 +425,13 @@ module Charly
 
       @token.raw = @reader.buffer.to_s[0..-2]
       @token.location.row = @row
-      @token.location.column = @column - (@token.raw.size - 1)
+      @token.location.column = @column - @token.raw.size
       @token.location.length = @token.raw.size
       @token.location.filename = @filename
 
       @reader.reset
       @reader.buffer << current_char
 
-      @tokens << @token
       @token
     end
 
@@ -371,13 +630,6 @@ module Charly
       loc.length = 1
 
       raise SyntaxError.new(loc, "Unexpected '#{current_char}'")
-    end
-
-    # Dump all tokens to STDOUT
-    def token_dump
-      @tokens.each do |token|
-        puts token
-      end
     end
   end
 end

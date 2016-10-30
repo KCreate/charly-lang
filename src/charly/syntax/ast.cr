@@ -2,7 +2,7 @@ require "../helper.cr"
 require "./token.cr"
 require "./location.cr"
 
-module Charly
+module Charly::AST
 
   # The `AST` is the result of the parsing step, holding all variable names
   # function declarations and language constructs.
@@ -106,6 +106,12 @@ module Charly
   ast_node Empty
   ast_node Block
   ast_node Statement
+  ast_node Debug,
+    token : TokenType do
+      def info
+        "#{@token}"
+      end
+    end
 
   ast_node IfStatement,
     test : ASTNode,

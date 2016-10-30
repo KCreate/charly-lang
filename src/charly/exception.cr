@@ -12,7 +12,4 @@ module Charly
       self.new(location_start, location_start, message)
     end
   end
-
-  class SyntaxError < BaseException
-  end
 end

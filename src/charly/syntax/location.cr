@@ -1,5 +1,5 @@
 module Charly
-  class Location
+  struct Location
     property pos : UInt32
     property row : Int32
     property column : Int32
@@ -11,7 +11,7 @@ module Charly
 
     def to_s(io)
       io << "#{@filename}:"
-    io << "#{@row}:#{@column}".ljust(9, ' ')
+      io << "#{@row}:#{@column}:#{@length}".ljust(9, ' ')
     end
   end
 end
