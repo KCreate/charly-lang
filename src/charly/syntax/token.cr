@@ -77,5 +77,9 @@ module Charly
       io << "│ "
       io << "#{@raw.strip}"
     end
+
+    def inspect(io)
+      io << "#{@type}:#{@raw.strip}"
+    end
   end
 end
