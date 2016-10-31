@@ -100,9 +100,6 @@ module Charly::AST
     end
   end
 
-  ast_node Program,
-    block : Block
-
   ast_node Empty
   ast_node Block
   ast_node Statement

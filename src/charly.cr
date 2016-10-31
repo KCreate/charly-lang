@@ -12,7 +12,8 @@ module Charly
   begin
     myParser = Parser.new(File.open(ARGV[0]), "debug")
     program = myParser.parse
-    puts program
+    puts File.basename(program.path)
+    puts program.tree
   rescue e : SyntaxError
     puts e
   end

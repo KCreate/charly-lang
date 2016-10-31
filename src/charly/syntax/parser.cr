@@ -2,6 +2,7 @@ require "../exception.cr"
 require "./lexer.cr"
 require "./token.cr"
 require "./ast.cr"
+require "../program.cr"
 
 module Charly
 
@@ -26,75 +27,36 @@ module Charly
       TokenType::PowAssignment => TokenType::Pow
     }
 
-    property tokens : Array(Token)
-    property pos : Int32
-
     def initialize(source : IO, @filename : String)
       super
-      @tokens = [] of Token
-      @pos = 0
 
       # We immediately consume the first token
       advance
     end
 
+    # Parses a program and resets the @file_buffer afterwards
+    def parse
+      tree = parse_program
+      Program.new(@filename, tree)
+    end
+
     # Advance to the next token, skipping any tokens we don't care about
     @[AlwaysInline]
-    def advance
+    private def advance
       while SKIP_TOKENS.includes? read_token.type
       end
       @token
     end
 
-    # Tries all productions
-    # Catches SyntaxErrors
-    # The first production that succeeds will be returned
-    # If no production succeeded this will raise the last
-    # SyntaxError thrown by the productions
-    def try(*prods : Proc(ASTNode | Bool))
-      start_pos = @pos
-      result = nil
-
-      prods.each_with_index do |prod, index|
-        begin
-          result = prod.call
-          break
-        rescue e : SyntaxError
-          if index == prods.size - 1
-            raise e
-          end
-
-          @pos = start_pos
-          @token = @tokens[@pos]
-        end
-      end
-
-      if result.is_a?(Nil)
-        raise "fail"
-      end
-
-      return result
-    end
-
-    #:nodoc:
-    @[AlwaysInline]
-    def optional(*prods)
-      begin
-        return try(*prods)
-      rescue e : SyntaxError
-        return Empty.new
-      end
-    end
-
     # :nodoc:
     @[AlwaysInline]
-    def unexpected_token
+    private def unexpected_token
       raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, "Unexpected token: #{@token.type}")
     end
 
     # :nodoc:
     @[AlwaysInline]
-    def assert_token(type : TokenType)
+    private def assert_token(type : TokenType)
       unless @token.type == type
         unexpected_token
       end
@@ -104,7 +66,7 @@ module Charly
 
     # :nodoc:
     @[AlwaysInline]
-    def assert_token(type : TokenType, value : String)
+    private def assert_token(type : TokenType, value : String)
       unless @token.type == type && @token.value == value
         unexpected_token
       end
@@ -114,7 +76,7 @@ module Charly
 
     # :nodoc:
     @[AlwaysInline]
-    def expect(type : TokenType)
+    private def expect(type : TokenType)
       unless @token.type == type
         unexpected_token
       end
@@ -124,7 +86,7 @@ module Charly
 
     # :nodoc:
     @[AlwaysInline]
-    def expect(type : TokenType, value : String)
+    private def expect(type : TokenType, value : String)
       unless @token.type == type && @token.value == value
         unexpected_token
       end
@@ -134,40 +96,35 @@ module Charly
 
     # :nodoc:
     @[AlwaysInline]
-    def skip(type : TokenType)
+    private def skip(type : TokenType)
       advance if @token.type == type
     end
 
     # :nodoc:
     @[AlwaysInline]
-    def skip(type : TokenType, value : String)
+    private def skip(type : TokenType, value : String)
       advance if @token.type == type && @token.value == value
     end
 
     # :nodoc:
     @[AlwaysInline]
-    def if_token(type : TokenType)
+    private def if_token(type : TokenType)
       yield if @token.type == type
     end
 
     # :nodoc:
     @[AlwaysInline]
-    def if_token(type : TokenType, value : String)
+    private def if_token(type : TokenType, value : String)
       yield if @token.type == type && @token.value == value
     end
 
-    # Parses a program and resets the @file_buffer afterwards
-    def parse
-      parse_program
-    end
-
     # Parses a program
-    def parse_program
+    private def parse_program
       parse_block_body false
     end
 
     # Parses a block
-    def parse_block
+    private def parse_block
       expect TokenType::LeftCurly
       body = parse_block_body
       expect TokenType::RightCurly
@@ -175,7 +132,7 @@ module Charly
     end
 
     # Parses the body of a block
-    def parse_block_body(stop_on_curly = true)
+    private def parse_block_body(stop_on_curly = true)
       exps = [] of ASTNode
 
       if stop_on_curly
@@ -192,7 +149,7 @@ module Charly
     end
 
     # Parses a statement
-    def parse_statement
+    private def parse_statement
       case @token.type
       when TokenType::Keyword
         case @token.value
@@ -232,7 +189,7 @@ module Charly
           return parse_try_statement
         when "return"
           advance
-          node = ReturnStatement.new(optional ->{ parse_expression })
+          node = ReturnStatement.new(parse_expression)
           skip TokenType::Semicolon
           return node
         when "break"
@@ -259,7 +216,7 @@ module Charly
       unexpected_token
     end
 
-    def parse_if_statement
+    private def parse_if_statement
       expect TokenType::Keyword, "if"
 
       case @token.type
@@ -293,7 +250,7 @@ module Charly
       node = IfStatement.new(test, consequent, alternate)
     end
 
-    def parse_while_statement
+    private def parse_while_statement
       expect TokenType::Keyword, "while"
 
       case @token.type
@@ -309,7 +266,7 @@ module Charly
       return WhileStatement.new(test, consequent)
     end
 
-    def parse_try_statement
+    private def parse_try_statement
       expect TokenType::Keyword, "try"
 
       try_block = Empty.new
@@ -334,7 +291,7 @@ module Charly
 
     # Helper macro to prevent duplicate code for operator precedence parsing
     macro parse_operator(name, next_operator, node, *operators)
-      def parse_{{name.id}}
+      private def parse_{{name.id}}
           left = parse_{{next_operator.id}}
           while true
             case @token.type
@@ -355,11 +312,11 @@ module Charly
     end
 
     # Parse an expression
-    def parse_expression
+    private def parse_expression
       return parse_assignment
     end
 
-    def parse_assignment
+    private def parse_assignment
       left = parse_logical_and
       while true
         case @token.type
@@ -395,7 +352,7 @@ module Charly
     parse_operator :mult_div, :mod_pow, "BinaryExpression.new operator, left, right", "Mult", "Divd"
     parse_operator :mod_pow, :unary_expression, "BinaryExpression.new operator, left, right", "Pow", "Mod"
 
-    def parse_unary_expression
+    private def parse_unary_expression
       case operator = @token.type
       when TokenType::Minus, TokenType::Not
         advance
@@ -405,7 +362,7 @@ module Charly
       end
     end
 
-    def parse_call_expression
+    private def parse_call_expression
       identifier = parse_literal
       while true
         case @token.type
@@ -440,7 +397,7 @@ module Charly
       end
     end
 
-    def parse_literal
+    private def parse_literal
       case @token.type
       when TokenType::AtSign
         advance
@@ -491,7 +448,7 @@ module Charly
       return node
     end
 
-    def parse_expression_list(end_token : TokenType)
+    private def parse_expression_list(end_token : TokenType)
       exps = [] of ASTNode
 
       should_read = @token.type != end_token
@@ -509,7 +466,7 @@ module Charly
       return ExpressionList.new(exps)
     end
 
-    def parse_identifier_list(end_token : TokenType)
+    private def parse_identifier_list(end_token : TokenType)
       exps = [] of ASTNode
 
       should_read = @token.type != end_token
@@ -530,19 +487,19 @@ module Charly
       return IdentifierList.new(exps)
     end
 
-    def parse_array_literal
+    private def parse_array_literal
       expect TokenType::LeftBracket
       exps = parse_expression_list(TokenType::RightBracket)
       expect TokenType::RightBracket
       return ArrayLiteral.new(exps.children)
     end
 
-    def parse_container_literal
+    private def parse_container_literal
       block = parse_block
       return ContainerLiteral.new(block)
     end
 
-    def parse_func_literal
+    private def parse_func_literal
       expect TokenType::Keyword, "func"
 
       identifier = Empty.new
@@ -564,7 +521,7 @@ module Charly
       end
     end
 
-    def parse_class_literal
+    private def parse_class_literal
 
       expect TokenType::Keyword, "class"
 
