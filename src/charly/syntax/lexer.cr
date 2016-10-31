@@ -153,6 +153,8 @@ module Charly
         read_char TokenType::RightBracket
       when '#'
         consume_comment
+      when '@'
+        read_char TokenType::AtSign
       when 'b'
         case read_char
         when 'r'

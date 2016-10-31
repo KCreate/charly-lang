@@ -442,6 +442,13 @@ module Charly
 
     def parse_literal
       case @token.type
+      when TokenType::AtSign
+        advance
+        node = Empty.new
+        assert_token TokenType::Identifier do
+          node = MemberExpression.new(IdentifierLiteral.new("self"), IdentifierLiteral.new(@token.value))
+          advance
+        end
       when TokenType::LeftParen
         advance
         node = parse_expression

@@ -48,6 +48,7 @@ module Charly
     Comma
     Point
     Comment
+    AtSign
 
     # Whitespace
     Whitespace
