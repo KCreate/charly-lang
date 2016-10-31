@@ -8,8 +8,11 @@ module Charly
   end
 
   start = Time.now
-  myParser = Parser.new(File.open(ARGV[0]), "debug")
-  program = myParser.parse_program
 
-  puts "Done: #{Time.now - start}"
+  begin
+    myParser = Parser.new(File.open(ARGV[0]), "debug")
+    program = myParser.parse
+  rescue e : SyntaxError
+    puts e
+  end
 end

@@ -7,7 +7,7 @@ module Charly
   # The `Lexer` turns a sequence of chars into a list
   # of tokens
   class Lexer
-    property reader : Reader
+    property reader : FramedReader
     property filename : String
     property token : Token
     property row : Int32
@@ -16,7 +16,7 @@ module Charly
 
     def initialize(source : IO, @filename : String)
       @token = Token.new
-      @reader = Reader.new(source)
+      @reader = FramedReader.new(source)
 
       @row = 1
       @column = 1
@@ -423,14 +423,14 @@ module Charly
         end
       end
 
-      @token.raw = @reader.buffer.to_s[0..-2]
+      @token.raw = @reader.frame.to_s[0..-2]
       @token.location.row = @row
       @token.location.column = @column - @token.raw.size
       @token.location.length = @token.raw.size
       @token.location.filename = @filename
 
       @reader.reset
-      @reader.buffer << current_char
+      @reader.frame << current_char
 
       @token
     end
@@ -525,7 +525,7 @@ module Charly
         end
       end
 
-      number_value = @reader.buffer.to_s[0..-2]
+      number_value = @reader.frame.to_s[0..-2]
 
       if has_underscore
         number_value = number_value.tr("_", "")
@@ -557,11 +557,11 @@ module Charly
           loc.pos = initial_pos
           loc.length = (@reader.pos - initial_pos).to_i32
 
-          raise SyntaxError.new(loc, "Unclosed string")
+          raise SyntaxError.new(loc, @reader.finish.buffer.to_s, "Unclosed string")
         end
       end
 
-      @token.value = @reader.buffer.to_s[1..-2]
+      @token.value = @reader.frame.to_s[1..-2]
       read_char
     end
 
@@ -585,7 +585,7 @@ module Charly
         end
       end
 
-      @token.value = @reader.buffer.to_s[0..-2]
+      @token.value = @reader.frame.to_s[0..-2]
     end
 
     # Consume an identifier
@@ -595,7 +595,7 @@ module Charly
       end
 
       @token.type = TokenType::Identifier
-      @token.value = @reader.buffer.to_s[0..-2]
+      @token.value = @reader.frame.to_s[0..-2]
     end
 
     # Returns true if *char* could be the start of an identifier
@@ -615,7 +615,7 @@ module Charly
       else
         read_char
         @token.type = symbol
-        @token.value = @reader.buffer.to_s[0..-2]
+        @token.value = @reader.frame.to_s[0..-2]
       end
     end
 
@@ -629,7 +629,7 @@ module Charly
       loc.column = @column
       loc.length = 1
 
-      raise SyntaxError.new(loc, "Unexpected '#{current_char}'")
+      raise SyntaxError.new(loc, @reader.finish.buffer.to_s, "Unexpected '#{current_char}'")
     end
   end
 end

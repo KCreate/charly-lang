@@ -1,7 +1,7 @@
 require "../exception.cr"
 
 module Charly
-  class ReferenceError < BaseException
+  class ContainerReferenceError
   end
 
   @[Flags]
@@ -70,7 +70,7 @@ module Charly
 
         # Check if the value already exists
         if contains key
-          raise ReferenceError.new("#{key} is already defined")
+          raise ContainerReferenceError.new("#{key} is already defined")
         end
 
         @values[key] = Entry(V).new(value, flags)
@@ -82,7 +82,7 @@ module Charly
         # Check if the value is a constant
         entry = @values[key]
         if !flags.includes?(Flag::OVERWRITE_CONSTANT) && entry.is_constant
-          raise ReferenceError.new("#{key} is a constant")
+          raise ContainerReferenceError.new("#{key} is a constant")
         end
 
         # Update the entry
@@ -92,7 +92,7 @@ module Charly
       elsif !flags.includes?(Flag::IGNORE_PARENT) && (parent = @parent).is_a?(Container(V))
         return parent.write(key, value, flags)
       else
-        raise ReferenceError.new("#{key} is not defined")
+        raise ContainerReferenceError.new("#{key} is not defined")
       end
     end
 
@@ -116,7 +116,7 @@ module Charly
       elsif !flags.includes?(Flag::IGNORE_PARENT) && (parent = @parent).is_a? Container(V)
         return parent.get(key, flags)
       else
-        raise ReferenceError.new("#{key} is not defined")
+        raise ContainerReferenceError.new("#{key} is not defined")
       end
     end
 
@@ -147,7 +147,7 @@ module Charly
       elsif !flags.includes?(Flag::IGNORE_PARENT) && (parent = @parent).is_a? Container(V)
         return parent.delete(key, flags)
       else
-        raise ReferenceError.new("#{key} is not defined")
+        raise ContainerReferenceError.new("#{key} is not defined")
       end
     end
 

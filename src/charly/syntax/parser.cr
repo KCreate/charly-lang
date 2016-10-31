@@ -4,8 +4,6 @@ require "./token.cr"
 require "./ast.cr"
 
 module Charly
-  class SyntaxError < BaseException
-  end
 
   # The `Parser` turns a list of tokens into a Parse Tree (AST)
   class Parser < Lexer
@@ -91,7 +89,7 @@ module Charly
     # :nodoc:
     @[AlwaysInline]
     def unexpected_token
-      raise SyntaxError.new(@token.location, "Unexpected token: #{@token.type}")
+      raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, "Unexpected token: #{@token.type}")
     end
 
     # :nodoc:
@@ -158,8 +156,12 @@ module Charly
       yield if @token.type == type && @token.value == value
     end
 
+    # Parses a program and resets the @file_buffer afterwards
+    def parse
+      parse_program
+    end
+
     # Parses a program
-    @[AlwaysInline]
     def parse_program
       parse_block_body false
     end
@@ -288,7 +290,7 @@ module Charly
         end
       end
 
-      return IfStatement.new(test, consequent, alternate)
+      node = IfStatement.new(test, consequent, alternate)
     end
 
     def parse_while_statement
