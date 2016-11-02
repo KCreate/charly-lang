@@ -15,6 +15,7 @@ module Charly
     program = myParser.parse
     puts program.tree
     puts program.path
+    puts program.source
   rescue e : SyntaxError
     puts e
   end
