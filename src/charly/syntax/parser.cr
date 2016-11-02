@@ -196,8 +196,11 @@ module Charly
         when "return"
           advance
 
-          return_value = Empty.new
-          unless @token.type == TokenType::RightCurly
+          return_value = NullLiteral.new
+
+          unless @token.type == TokenType::Semicolon ||
+                 @token.type == TokenType::RightCurly ||
+                 @token.type == TokenType::EOF
             return_value = parse_expression
           end
 
