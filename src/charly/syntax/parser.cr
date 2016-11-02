@@ -51,7 +51,13 @@ module Charly
     # :nodoc:
     @[AlwaysInline]
     private def unexpected_token
-      raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, "Unexpected token: #{@token.type}")
+      error_message = "Unexpected #{@token.type}"
+
+      if @token.type == TokenType::EOF
+        error_message = "Unexpected end of file"
+      end
+
+      raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, error_message)
     end
 
     # :nodoc:
@@ -189,7 +195,13 @@ module Charly
           return parse_try_statement
         when "return"
           advance
-          node = ReturnStatement.new(parse_expression)
+
+          return_value = Empty.new
+          unless @token.type == TokenType::RightCurly
+            return_value = parse_expression
+          end
+
+          node = ReturnStatement.new(return_value)
           skip TokenType::Semicolon
           return node
         when "break"
@@ -349,10 +361,21 @@ module Charly
     parse_operator :equal_not, :less_greater, "ComparisonExpression.new operator, left, right", "Equal", "Not"
     parse_operator :less_greater, :add_sub, "ComparisonExpression.new operator, left, right", "Less", "Greater", "LessEqual", "GreaterEqual"
     parse_operator :add_sub, :mult_div, "BinaryExpression.new operator, left, right", "Plus", "Minus"
-    parse_operator :mult_div, :pow, "BinaryExpression.new operator, left, right", "Mult", "Divd"
+    parse_operator :mult_div, :mod, "BinaryExpression.new operator, left, right", "Mult", "Divd"
+    parse_operator :mod, :unary_expression, "BinaryExpression.new operator, left, right", "Mod"
+
+    private def parse_unary_expression
+      case operator = @token.type
+      when TokenType::Minus, TokenType::Not
+        advance
+        return UnaryExpression.new(operator, parse_unary_expression)
+      else
+        parse_pow
+      end
+    end
 
     private def parse_pow
-      left = parse_mod
+      left = parse_call_expression
       while true
         case @token.type
         when TokenType::Pow
@@ -363,18 +386,6 @@ module Charly
         else
           return left
         end
-      end
-    end
-
-    parse_operator :mod, :unary_expression, "BinaryExpression.new operator, left, right", "Mod"
-
-    private def parse_unary_expression
-      case operator = @token.type
-      when TokenType::Minus, TokenType::Not
-        advance
-        return UnaryExpression.new(operator, parse_unary_expression)
-      else
-        parse_call_expression
       end
     end
 

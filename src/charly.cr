@@ -6,14 +6,15 @@ module Charly
     puts "Missing filename"
     exit 1
   end
+  filename = ARGV[0]
 
   start = Time.now
 
   begin
-    myParser = Parser.new(File.open(ARGV[0]), "debug")
+    myParser = Parser.new(File.open(filename), filename)
     program = myParser.parse
-    puts File.basename(program.path)
     puts program.tree
+    puts program.path
   rescue e : SyntaxError
     puts e
   end

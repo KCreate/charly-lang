@@ -11,7 +11,7 @@ module Charly
 
     def to_s(io)
       io << "#{@filename}:"
-      io << "#{@row}:#{@column}:#{@length}".ljust(9, ' ')
+      io << "#{@row + 1}:#{@column + 1}:#{@length}".ljust(9, ' ')
     end
   end
 end

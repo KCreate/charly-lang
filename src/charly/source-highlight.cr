@@ -19,29 +19,31 @@ module Charly
 
       # The range we need to color in red
       color_pos_range = @location_start.pos...(@location_end.pos + @location_end.length)
+      color_range = @location_start.row..@location_end.row
       print_range = (@location_start.row - LOOKBACK_ROW)..(@location_end.row + LOOKFORWARD_ROW)
 
       # Highlight the source
-      source_io = MemoryIO.new(source)
-      highlighted_source = source_io.to_s.each_char.map_with_index { |char, index|
-        index += 2
-
+      highlighted_source = source.each_char.map_with_index { |char, index|
         if color_pos_range.covers? index
           char.colorize(:white).back(:red)
         else
-          char
+          char.colorize.mode(:dim)
         end
       }.join("")
 
       # Append line number to the beginning
       highlighted_source.each_line.each_with_index do |line, index|
-        index += 1
         line = line.rstrip
 
         if print_range.covers? index
-          io << "#{index}.".colorize(:yellow)
+          if color_range.covers? index
+            io << "#{index + 1}.".colorize(:yellow).mode(:bold)
+          else
+            io << "#{index + 1}.".colorize(:yellow).mode(:dim)
+          end
           io << ' '
           io << line
+          io << "\e[0m"
         else
           next
         end

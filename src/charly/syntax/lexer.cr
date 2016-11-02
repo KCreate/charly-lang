@@ -18,8 +18,8 @@ module Charly
       @token = Token.new
       @reader = FramedReader.new(source)
 
-      @row = 1
-      @column = 1
+      @row = 0
+      @column = 0
       @last_char = ' '
     end
 
@@ -46,7 +46,7 @@ module Charly
 
       if last_char == '\n'
         @row += 1
-        @column = 1
+        @column = 0
       end
 
       @reader.read_char
@@ -65,12 +65,15 @@ module Charly
       @token.value = ""
       @token.raw = ""
       @token.location = Location.new
+      @token.location.pos = @reader.pos - 1
+      @token.location.row = @row
+      @token.location.column = @column
+      @token.location.filename = @filename
     end
 
     # Return the next token in the source
     def read_token
       reset_token
-      @token.location.pos = @reader.pos + 1
 
       case current_char
       when '\0'
@@ -88,7 +91,7 @@ module Charly
       when '.'
         read_char TokenType::Point
       when '"'
-        consume_string
+        consume_string(@row, @column, @token.location.pos)
       when '0'..'9'
         consume_numeric
       when '+'
@@ -426,10 +429,7 @@ module Charly
       end
 
       @token.raw = @reader.frame.to_s[0..-2]
-      @token.location.row = @row
-      @token.location.column = @column - @token.raw.size
       @token.location.length = @token.raw.size
-      @token.location.filename = @filename
 
       @reader.reset
       @reader.frame << current_char
@@ -537,13 +537,9 @@ module Charly
     end
 
     # Consume a string literal
-    def consume_string
+    def consume_string(initial_row, initial_column, initial_pos)
 
       @token.type = TokenType::String
-
-      initial_row = @row
-      initial_column = @column
-      initial_pos = @reader.pos
 
       loop do
         case char = read_char
@@ -627,11 +623,13 @@ module Charly
       # Create a location
       loc = Location.new
       loc.filename = @filename
+      loc.pos = @reader.pos - 1
       loc.row = @row
       loc.column = @column
       loc.length = 1
 
-      raise SyntaxError.new(loc, @reader.finish.buffer.to_s, "Unexpected '#{current_char}'")
+      char = current_char
+      raise SyntaxError.new(loc, @reader.finish.buffer.to_s, "Unexpected '#{char}'")
     end
   end
 end
