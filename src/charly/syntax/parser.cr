@@ -329,7 +329,7 @@ module Charly
               TokenType::PowAssignment
           operator = @token.type
           advance
-          right = parse_logical_and
+          right = parse_assignment
 
           if operator == TokenType::Assignment
             left = VariableAssignment.new(left, right)
@@ -349,8 +349,24 @@ module Charly
     parse_operator :equal_not, :less_greater, "ComparisonExpression.new operator, left, right", "Equal", "Not"
     parse_operator :less_greater, :add_sub, "ComparisonExpression.new operator, left, right", "Less", "Greater", "LessEqual", "GreaterEqual"
     parse_operator :add_sub, :mult_div, "BinaryExpression.new operator, left, right", "Plus", "Minus"
-    parse_operator :mult_div, :mod_pow, "BinaryExpression.new operator, left, right", "Mult", "Divd"
-    parse_operator :mod_pow, :unary_expression, "BinaryExpression.new operator, left, right", "Pow", "Mod"
+    parse_operator :mult_div, :pow, "BinaryExpression.new operator, left, right", "Mult", "Divd"
+
+    private def parse_pow
+      left = parse_mod
+      while true
+        case @token.type
+        when TokenType::Pow
+          operator = @token.type
+          advance
+          right = parse_pow
+          left = BinaryExpression.new operator, left, right
+        else
+          return left
+        end
+      end
+    end
+
+    parse_operator :mod, :unary_expression, "BinaryExpression.new operator, left, right", "Mod"
 
     private def parse_unary_expression
       case operator = @token.type
