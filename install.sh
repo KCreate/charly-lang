@@ -8,3 +8,6 @@ sudo cp bin/charly /usr/bin/charly
 echo ""
 echo "## IMPORTANT ##"
 echo "Don't forget to set \$CHARLYDIR to $(pwd)/src/charly/std-lib"
+echo "You have to add the following line to ~/.bashrc"
+echo ""
+echo "export CHARLYDIR="$(pwd)/src/charly/std-lib
