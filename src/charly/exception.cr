@@ -6,7 +6,7 @@ module Charly
   # The base for all exceptions in charly
   class BaseException < Exception
     def to_s(io)
-      io << "#{self.class.name}\n".colorize(:red)
+      io << "#{self.class.name.split("::").last}\n".colorize(:red)
       meta(io)
       io << "#{@message}".colorize(:red)
     end
@@ -50,6 +50,6 @@ module Charly
   end
 
   # A `InvalidNode` describes unexpected nodes in a parse tree
-  class InvalidNode < LocalException
+  class RunTimeError < LocalException
   end
 end

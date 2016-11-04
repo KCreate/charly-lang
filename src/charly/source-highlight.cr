@@ -20,7 +20,7 @@ module Charly
       # The range we need to color in red
       color_pos_range = @location_start.pos...(@location_end.pos + @location_end.length)
       color_range = @location_start.row..@location_end.row
-      print_range = (@location_start.row - LOOKBACK_ROW)..(@location_end.row + LOOKFORWARD_ROW)
+      print_range = Math.max(0, @location_start.row - LOOKBACK_ROW)..(@location_end.row + LOOKFORWARD_ROW)
 
       # Highlight the source
       highlighted_source = source.each_char.map_with_index { |char, index|
@@ -32,10 +32,16 @@ module Charly
       }.join("")
 
       # Append line number to the beginning
-      highlighted_source.each_line.each_with_index do |line, index|
+      lines = highlighted_source.each_line
+      lines.each_with_index do |line, index|
         line = line.rstrip
 
         if print_range.covers? index
+
+          unless print_range.first == index
+            io << "\n"
+          end
+
           if color_range.covers? index
             io << "#{index + 1}.".colorize(:yellow).mode(:bold)
           else
@@ -44,12 +50,6 @@ module Charly
           io << ' '
           io << line
           io << "\e[0m"
-        else
-          next
-        end
-
-        unless index == print_range.end
-          io << '\n'
         end
       end
 

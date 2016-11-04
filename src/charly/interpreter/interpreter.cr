@@ -63,11 +63,11 @@ module Charly
     end
 
     private def exec_expression(node : ASTNode, scope : Scope)
-      raise InvalidNode.new(
+      raise RunTimeError.new(
         node.location_start,
         node.location_end,
         @program.not_nil!.source,
-        "Unexpected node #{node.class.name}"
+        "Unexpected node #{node.class.name.split("::").last}"
       )
     end
   end
