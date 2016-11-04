@@ -1,7 +1,7 @@
 require "../exception.cr"
 
 module Charly
-  class ContainerReferenceError
+  class ContainerReferenceError < Exception
   end
 
   @[Flags]

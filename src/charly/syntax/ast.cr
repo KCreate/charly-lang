@@ -38,6 +38,7 @@ module Charly::AST
       if (meta = info).size > 0
         io << " | #{meta}"
       end
+      io << " | #{@location_start} - #{@location_end}"
       io << "\n"
 
       children.each do |child|

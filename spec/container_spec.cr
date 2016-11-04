@@ -30,7 +30,7 @@ describe Container do
 
     c["PI", Flag::CONSTANT | Flag::INIT] = 3.14
 
-    expect_raises(ReferenceError) do
+    expect_raises(ContainerReferenceError) do
       c["PI"] = 4.14
     end
   end
@@ -62,7 +62,7 @@ describe Container do
 
     parent["a", Flag::INIT] = 25
 
-    expect_raises(ReferenceError) do
+    expect_raises(ContainerReferenceError) do
       child["a", Flag::IGNORE_PARENT]
     end
   end
