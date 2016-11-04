@@ -101,8 +101,9 @@ module Charly
       when '/'
         consume_operator_or_assignment TokenType::Divd
       when '*'
-        case read_char
+        case peek_char
         when '*'
+          read_char
           consume_operator_or_assignment TokenType::Pow
         else
           consume_operator_or_assignment TokenType::Mult
