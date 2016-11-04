@@ -450,7 +450,7 @@ module Charly
 
           member = Empty.new
           assert_token TokenType::Identifier do
-            member = IdentifierLiteral.new(@token.value)
+            member = IdentifierLiteral.new(@token.value).at(@token.location)
             advance
           end
 
