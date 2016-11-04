@@ -1,22 +1,29 @@
 require "./charly/syntax/parser.cr"
+require "./charly/interpreter/interpreter.cr"
 
 module Charly
 
+  # Check for the filename
   unless ARGV.size > 0
     puts "Missing filename"
     exit 1
   end
   filename = ARGV[0]
 
-  start = Time.now
-
-  begin
-    myParser = Parser.new(File.open(filename), filename)
-    program = myParser.parse
-    puts program.tree
-    puts program.path
-    puts program.source
-  rescue e : SyntaxError
-    puts e
+  # Check if $CHARLYDIR is set
+  unless ENV.has_key? "CHARLYDIR"
+    puts "$CHARLYDIR is not configured!"
+    exit 1
   end
+
+  # Parse the program
+  program = Parser.create(File.open(filename), filename)
+
+  puts program.tree
+  exit 0
+
+  # Run the program
+  interpreter = Interpreter.new
+  result = interpreter.exec_program program
+  puts result
 end

@@ -5,6 +5,19 @@ module Charly
 
   # The base for all exceptions in charly
   class BaseException < Exception
+    def to_s(io)
+      io << "#{self.class.name}\n".colorize(:red)
+      meta(io)
+      io << "#{@message}".colorize(:red)
+    end
+
+    # :nodoc:
+    private def meta(io)
+    end
+  end
+
+  # `IOException` is thrown when a file could not be read
+  class IOException < BaseException
   end
 
   # `LocalException` is the base type for all exceptions that can highlight
@@ -21,9 +34,7 @@ module Charly
       self.new(location_start, location_start, source, message)
     end
 
-    def to_s(io)
-      io << "#{self.class.name}\n".colorize(:red)
-
+    private def meta(io)
       if (source = @source).is_a? String
         loc_start, loc_end = @location_start, @location_end
         if loc_start.is_a?(Location) && loc_end.is_a?(Location)
@@ -31,12 +42,14 @@ module Charly
           highlighter.present(source, io)
         end
       end
-
-      io << "#{@message}".colorize(:red)
     end
   end
 
   # A `SyntaxError` describes unexpected chars or tokens in the source string
   class SyntaxError < LocalException
+  end
+
+  # A `InvalidNode` describes unexpected nodes in a parse tree
+  class InvalidNode < LocalException
   end
 end

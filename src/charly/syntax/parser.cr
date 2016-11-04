@@ -27,6 +27,18 @@ module Charly
       TokenType::PowAssignment => TokenType::Pow
     }
 
+    # Create a Program from *source* called *filename*
+    def self.create(source : IO, filename : String)
+      parser = Parser.new(source, filename)
+      return parser.parse
+    end
+
+    # Creates a program from *source* located inside the virtual directory *basedirectory*
+    def self.create(source : String, basedirectory : String)
+      self.create(MemoryIO.new(source), basedirectory + "/VM-#{Time.now.epoch}")
+    end
+
+    # Creates a program from *source* called *filename*
     def initialize(source : IO, @filename : String)
       super
 

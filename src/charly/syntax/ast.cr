@@ -9,8 +9,8 @@ module Charly::AST
   abstract class ASTNode
     property children : Array(ASTNode)
 
-    property location_start : Location?
-    property location_end : Location?
+    property! location_start : Location?
+    property! location_end : Location?
 
     def initialize(@children = [] of ASTNode)
     end
