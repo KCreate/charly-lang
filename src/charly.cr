@@ -16,14 +16,15 @@ module Charly
     exit 1
   end
 
-  # Parse the program
-  program = Parser.create(File.open(filename), filename)
+  begin
+    # Parse the program
+    program = Parser.create(File.open(filename), filename)
 
-  puts program.tree
-  exit 0
-
-  # Run the program
-  interpreter = Interpreter.new
-  result = interpreter.exec_program program
-  puts result
+    # Run the program
+    interpreter = Interpreter.new
+    result = interpreter.exec_program program
+    puts result
+  rescue e : Exception
+    puts e
+  end
 end

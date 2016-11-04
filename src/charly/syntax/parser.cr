@@ -143,10 +143,22 @@ module Charly
 
     # Parses a block
     private def parse_block
-      expect TokenType::LeftCurly
+      start_location = nil
+      end_location = nil
+
+      assert_token TokenType::LeftCurly do
+          start_location = @token.location
+          advance
+      end
+
       body = parse_block_body
-      expect TokenType::RightCurly
-      body
+
+      assert_token TokenType::RightCurly do
+        end_location = @token.location
+        advance
+      end
+
+      body.at(start_location, end_location)
     end
 
     # Parses the body of a block
@@ -170,34 +182,39 @@ module Charly
     private def parse_statement
       case @token.type
       when TokenType::Keyword
+        start_location = @token.location
+
         case @token.value
         when "let"
           case advance.type
           when TokenType::Identifier
-            identifier = IdentifierLiteral.new(@token.value)
+            identifier = IdentifierLiteral.new(@token.value).at(@token.location)
+            ident_location = @token.location
 
             case advance.type
             when TokenType::Semicolon
               advance
-              return VariableDeclaration.new(identifier)
+              return VariableDeclaration.new(identifier).at(start_location, ident_location)
             when TokenType::Assignment
               advance
               value = parse_expression
+              end_location = value.location_end
               skip TokenType::Semicolon
-              return VariableInitialisation.new(identifier, value)
+              return VariableInitialisation.new(identifier, value).at(start_location, end_location)
             else
-              return VariableDeclaration.new(identifier)
+              return VariableDeclaration.new(identifier).at(start_location)
             end
           end
         when "const"
           case advance.type
           when TokenType::Identifier
-            identifier = IdentifierLiteral.new(@token.value)
+            identifier = IdentifierLiteral.new(@token.value).at(@token.location)
             advance
             expect TokenType::Assignment
             value = parse_expression
+            end_location = value.location_end
             skip TokenType::Semicolon
-            return ConstantInitialisation.new(identifier, value)
+            return ConstantInitialisation.new(identifier, value).at(start_location, end_location)
           end
         when "if"
           return parse_if_statement
@@ -208,29 +225,32 @@ module Charly
         when "return"
           advance
 
-          return_value = NullLiteral.new
+          return_value = NullLiteral.new.at(start_location)
+          end_location = start_location
 
           unless @token.type == TokenType::Semicolon ||
                  @token.type == TokenType::RightCurly ||
                  @token.type == TokenType::EOF
             return_value = parse_expression
+            end_location = return_value.location_end
           end
 
-          node = ReturnStatement.new(return_value)
           skip TokenType::Semicolon
-          return node
+          return ReturnStatement.new(return_value).at(start_location, end_location)
         when "break"
           advance
-          node = BreakStatement.new
+          end_location = start_location
           skip TokenType::Semicolon
-          return node
+          return BreakStatement.new.at(start_location, end_location)
         when "throw"
           advance
-          node = ThrowStatement.new(parse_expression)
+          value = parse_expression
+          end_location = value.location_end
           skip TokenType::Semicolon
-          return node
+          return ThrowStatement.new(value).at(start_location, end_location)
         when "func", "class"
           node = parse_expression
+          end_location = start_location
           skip TokenType::Semicolon
           return node
         end
@@ -330,7 +350,7 @@ module Charly
               operator = @token.type
               advance
               right = parse_{{next_operator.id}}
-              left = ({{node.id}})
+              left = ({{node.id}}).at(left.location_start, right.location_end)
             else
               return left
             end
@@ -359,10 +379,10 @@ module Charly
           right = parse_assignment
 
           if operator == TokenType::Assignment
-            left = VariableAssignment.new(left, right)
+            left = VariableAssignment.new(left, right).at(left.location_start, right.location_end)
           else
             left = VariableAssignment.new(left,
-              BinaryExpression.new(OPERATOR_MAPPING[operator], left, right)
+              BinaryExpression.new(OPERATOR_MAPPING[operator], left, right).at(left.location_start, right.location_end)
             )
           end
         else
@@ -380,10 +400,12 @@ module Charly
     parse_operator :mod, :unary_expression, "BinaryExpression.new operator, left, right", "Mod"
 
     private def parse_unary_expression
+      start_location = @token.location
       case operator = @token.type
       when TokenType::Minus, TokenType::Not
         advance
-        return UnaryExpression.new(operator, parse_unary_expression)
+        value = parse_unary_expression
+        return UnaryExpression.new(operator, value).at(start_location, value.location_end)
       else
         parse_pow
       end
@@ -397,7 +419,7 @@ module Charly
           operator = @token.type
           advance
           right = parse_pow
-          left = BinaryExpression.new operator, left, right
+          left = BinaryExpression.new(operator, left, right).at(left.location_start, right.location_end)
         else
           return left
         end
@@ -412,15 +434,17 @@ module Charly
           advance
 
           args = parse_expression_list(TokenType::RightParen)
+          end_location = @token.location
           expect TokenType::RightParen
-          identifier = CallExpression.new(identifier, args)
+          identifier = CallExpression.new(identifier, args).at(identifier.location_start, end_location)
         when TokenType::LeftBracket
           advance
 
           args = parse_expression_list(TokenType::RightBracket)
 
+          end_location = @token.location
           expect TokenType::RightBracket
-          identifier = IndexExpression.new(identifier, args)
+          identifier = IndexExpression.new(identifier, args).at(identifier.location_start, end_location)
         when TokenType::Point
           advance
 
@@ -431,7 +455,7 @@ module Charly
           end
 
           if member.is_a? IdentifierLiteral
-            identifier = MemberExpression.new(identifier, member)
+            identifier = MemberExpression.new(identifier, member).at(identifier.location_start, member.location_end)
           end
         else
           return identifier
@@ -442,10 +466,14 @@ module Charly
     private def parse_literal
       case @token.type
       when TokenType::AtSign
+        start_location = @token.location
         advance
         node = Empty.new
         assert_token TokenType::Identifier do
-          node = MemberExpression.new(IdentifierLiteral.new("self"), IdentifierLiteral.new(@token.value))
+          node = MemberExpression.new(
+            IdentifierLiteral.new("self").at(start_location),
+            IdentifierLiteral.new(@token.value).at(@token.location)
+          ).at(start_location, @token.location)
           advance
         end
       when TokenType::LeftParen
@@ -453,22 +481,22 @@ module Charly
         node = parse_expression
         expect TokenType::RightParen
       when TokenType::Identifier
-        node = IdentifierLiteral.new(@token.value)
+        node = IdentifierLiteral.new(@token.value).at(@token.location)
         advance
       when TokenType::Numeric
-        node = NumericLiteral.new(@token.value.to_f64)
+        node = NumericLiteral.new(@token.value.to_f64).at(@token.location)
         advance
       when TokenType::String
-        node = StringLiteral.new(@token.value)
+        node = StringLiteral.new(@token.value).at(@token.location)
         advance
       when TokenType::Boolean
-        node = BooleanLiteral.new(@token.value[0] == 't')
+        node = BooleanLiteral.new(@token.value[0] == 't').at(@token.location)
         advance
       when TokenType::Null
-        node = NullLiteral.new
+        node = NullLiteral.new.at(@token.location)
         advance
       when TokenType::NAN
-        node = NANLiteral.new
+        node = NANLiteral.new.at(@token.location)
         advance
       when TokenType::LeftBracket
         node = parse_array_literal
@@ -530,23 +558,28 @@ module Charly
     end
 
     private def parse_array_literal
+      start_location = @token.location
+
       expect TokenType::LeftBracket
       exps = parse_expression_list(TokenType::RightBracket)
+
+      end_location = @token.location
       expect TokenType::RightBracket
-      return ArrayLiteral.new(exps.children)
+      return ArrayLiteral.new(exps.children).at(start_location, end_location)
     end
 
     private def parse_container_literal
       block = parse_block
-      return ContainerLiteral.new(block)
+      return ContainerLiteral.new(block).at(block.location_start, block.location_end)
     end
 
     private def parse_func_literal
+      start_location = @token.location
       expect TokenType::Keyword, "func"
 
       identifier = Empty.new
       if_token TokenType::Identifier do
-        identifier = IdentifierLiteral.new(@token.value)
+        identifier = IdentifierLiteral.new(@token.value).at(@token.location)
         advance
       end
 
@@ -557,14 +590,18 @@ module Charly
       block = parse_block
 
       if identifier.is_a? IdentifierLiteral
-        return VariableInitialisation.new(identifier, FunctionLiteral.new(arguments, block))
+        return VariableInitialisation.new(
+          identifier,
+          FunctionLiteral.new(arguments, block).at(start_location, block.location_end)
+        ).at(start_location, block.location_end)
       else
-        return FunctionLiteral.new(arguments, block)
+        return FunctionLiteral.new(arguments, block).at(start_location, block.location_end)
       end
     end
 
     private def parse_class_literal
 
+      start_location = @token.location
       expect TokenType::Keyword, "class"
 
       identifier = Empty.new
@@ -576,9 +613,12 @@ module Charly
       block = parse_block
 
       if identifier.is_a? IdentifierLiteral
-        return VariableInitialisation.new(identifier, ClassLiteral.new(block))
+        return VariableInitialisation.new(
+          identifier,
+          ClassLiteral.new(block).at(start_location, block.location_end)
+        ).at(start_location, block.location_end)
       else
-        return ClassLiteral.new(block)
+        return ClassLiteral.new(block).at(start_location, block.location_end)
       end
     end
 
