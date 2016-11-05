@@ -1,4 +1,5 @@
 require "./syntax/location.cr"
+require "./syntax/ast.cr"
 require "./source-highlight.cr"
 
 module Charly
@@ -32,6 +33,10 @@ module Charly
 
     def self.new(location_start : Location, source : String, message : String)
       self.new(location_start, location_start, source, message)
+    end
+
+    def self.new(node : ASTNode, source : String, message : String)
+      self.new(node.location_start, node.location_end, source, message)
     end
 
     private def meta(io)
