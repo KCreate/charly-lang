@@ -1,3 +1,6 @@
+require "./container.cr"
+require "../syntax/ast.cr"
+
 module Charly
 
   # `BaseType` is the common class all types in charly depend on
@@ -87,6 +90,25 @@ module Charly
     # :nodoc:
     def self.to_s(io)
       io << "Array"
+    end
+  end
+
+  class TFunc < BaseType
+    property argumentlist : IdentifierList
+    property block : Block
+    property parent_scope : Scope
+
+    def initialize(@argumentlist, @block, @parent_scope)
+    end
+
+    # :nodoc:
+    def value_to_s(io)
+      io << "Function:#{@argumentlist.children.size}"
+    end
+
+    # :nodoc:
+    def self.to_s(io)
+      io << "Function"
     end
   end
 

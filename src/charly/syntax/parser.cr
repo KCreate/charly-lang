@@ -256,7 +256,16 @@ module Charly
           return ThrowStatement.new(value).at(start_location, end_location)
         when "func", "class"
           node = parse_expression
-          end_location = start_location
+
+          if node.is_a?(FunctionLiteral) || node.is_a?(ClassLiteral)
+            if (name = node.name).is_a?(String)
+              node = VariableInitialisation.new(
+                IdentifierLiteral.new(name).at(node.location_start, node.location_end),
+                node
+              ).at(node.location_start, node.location_end)
+            end
+          end
+
           skip TokenType::Semicolon
           return node
         end
@@ -599,12 +608,9 @@ module Charly
       block = parse_block
 
       if identifier.is_a? IdentifierLiteral
-        return VariableInitialisation.new(
-          identifier,
-          FunctionLiteral.new(arguments, block).at(start_location, block.location_end)
-        ).at(start_location, block.location_end)
+        FunctionLiteral.new(identifier.name, arguments, block).at(start_location, block.location_end)
       else
-        return FunctionLiteral.new(arguments, block).at(start_location, block.location_end)
+        FunctionLiteral.new(nil, arguments, block).at(start_location, block.location_end)
       end
     end
 
@@ -614,20 +620,28 @@ module Charly
       expect TokenType::Keyword, "class"
 
       identifier = Empty.new
+      parents = IdentifierList.new
       if_token TokenType::Identifier do
         identifier = IdentifierLiteral.new(@token.value)
         advance
       end
 
+      if_token TokenType::Less do
+        advance
+
+        if @token.type == TokenType::LeftCurly
+          unexpected_token
+        end
+
+        parents = parse_identifier_list(TokenType::LeftCurly)
+      end
+
       block = parse_block
 
       if identifier.is_a? IdentifierLiteral
-        return VariableInitialisation.new(
-          identifier,
-          ClassLiteral.new(block).at(start_location, block.location_end)
-        ).at(start_location, block.location_end)
+        ClassLiteral.new(identifier.name, block, parents).at(start_location, block.location_end)
       else
-        return ClassLiteral.new(block).at(start_location, block.location_end)
+        ClassLiteral.new(nil, block, parents).at(start_location, block.location_end)
       end
     end
 

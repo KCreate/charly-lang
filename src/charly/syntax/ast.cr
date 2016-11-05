@@ -84,7 +84,7 @@ module Charly::AST
             *properties.map do |field|
               field.var
             end
-          }}] of ASTNode | TokenType
+          }}] of ASTNode | TokenType | String | Nil
 
           tmp_children = [] of ASTNode
 
@@ -259,6 +259,7 @@ module Charly::AST
   ast_node ArrayLiteral
 
   ast_node FunctionLiteral,
+    name : String?,
     argumentlist : IdentifierList,
     block : Block
 
@@ -266,7 +267,9 @@ module Charly::AST
     block : Block
 
   ast_node ClassLiteral,
-    block : Block
+    name : String?,
+    block : Block,
+    parents : IdentifierList
 
   ast_node LeftParenLiteral
   ast_node RightParenLiteral
