@@ -159,9 +159,6 @@ module Charly::AST
     left : ASTNode,
     right : ASTNode
 
-  ast_node VariableDeclaration,
-    identifier : IdentifierLiteral
-
   ast_node VariableInitialisation,
     identifier : IdentifierLiteral,
     expression : ASTNode

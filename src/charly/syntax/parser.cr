@@ -194,7 +194,10 @@ module Charly
             case advance.type
             when TokenType::Semicolon
               advance
-              return VariableDeclaration.new(identifier).at(start_location, ident_location)
+              return VariableInitialisation.new(
+                identifier,
+                NullLiteral.new.at(start_location, ident_location)
+              ).at(start_location, ident_location)
             when TokenType::Assignment
               advance
               value = parse_expression
@@ -202,7 +205,10 @@ module Charly
               skip TokenType::Semicolon
               return VariableInitialisation.new(identifier, value).at(start_location, end_location)
             else
-              return VariableDeclaration.new(identifier).at(start_location)
+              return VariableInitialisation.new(
+                identifier,
+                NullLiteral.new.at(start_location, ident_location)
+              ).at(start_location)
             end
           end
         when "const"

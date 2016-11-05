@@ -1,6 +1,7 @@
 require "./syntax/location.cr"
 require "./syntax/ast.cr"
 require "./source-highlight.cr"
+require "./interpreter/context.cr"
 
 module Charly
 
@@ -37,6 +38,10 @@ module Charly
 
     def self.new(node : ASTNode, source : String, message : String)
       self.new(node.location_start, node.location_end, source, message)
+    end
+
+    def self.new(node : ASTNode, context : Context, message : String)
+      self.new(node.location_start, node.location_end, context.program.source, message)
     end
 
     private def meta(io)
