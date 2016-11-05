@@ -24,6 +24,11 @@ module Charly
     property top : Scope
     property trace : Array(Trace)
 
+    # A list of disallowed variable names
+    DISALLOWED_VARS = [
+      "self"
+    ]
+
     # Creates a new Interpreter inside *top*
     # Setting *load_prelude* to false will prevent loading the prelude file
     def initialize(@top : Scope, load_prelude : Bool = true)
@@ -66,23 +71,9 @@ module Charly
 
       case node
       when .is_a?(VariableInitialisation), .is_a?(ConstantInitialisation)
-
-        # Check if the current scope already contains such a value
-        if scope.contains(node.identifier.name)
-          raise RunTimeError.new(node, context, "#{node.identifier.name} is already defined")
-        end
-
-        # Resolve the expression
-        expression = exec_expression(node.expression, scope, context)
-
-        # Check if we have to assign a constant or not
-        if node.is_a? VariableInitialisation
-          scope.write(node.identifier.name, expression, Flag::INIT)
-        else
-          scope.write(node.identifier.name, expression, Flag::INIT | Flag::CONSTANT)
-        end
-
-        return expression
+        return exec_initialisation(node, scope, context)
+      when .is_a? VariableAssignment
+        return exec_assignment(node, scope, context)
       when .is_a? IdentifierLiteral
 
         # Check if such a value exists
@@ -99,6 +90,69 @@ module Charly
 
       # Catch unknown nodes
       raise RunTimeError.new(node, context, "Unexpected node #{node.class.name.split("::").last}")
+    end
+
+    @[AlwaysInline]
+    private def exec_initialisation(node : ASTNode, scope : Scope, context : Context)
+
+      # Check if this is a disallowed variable name
+      if DISALLOWED_VARS.includes? node.identifier.name
+        raise RunTimeError.new(node.identifier, context, "#{node.identifier.name} is a reserved keyword")
+      end
+
+      # Check if the current scope already contains such a value
+      if scope.contains(node.identifier.name)
+        raise RunTimeError.new(node.identifier, context, "#{node.identifier.name} is already defined")
+      end
+
+      # Resolve the expression
+      expression = exec_expression(node.expression, scope, context)
+
+      # Check if we have to assign a constant or not
+      if node.is_a? VariableInitialisation
+        scope.write(node.identifier.name, expression, Flag::INIT)
+      else
+        scope.write(node.identifier.name, expression, Flag::INIT | Flag::CONSTANT)
+      end
+
+      return expression
+    end
+
+    @[AlwaysInline]
+    private def exec_assignment(node : VariableAssignment, scope : Scope, context : Context)
+
+      # Resolve the expression
+      expression = exec_expression(node.expression, scope, context)
+
+      # Check the type of the assignment
+      case (identifier = node.identifier)
+      when IdentifierLiteral
+
+        # Check if the identifier name is disallowed
+        if DISALLOWED_VARS.includes? identifier.name
+          raise RunTimeError.new(node, context, "#{identifier.name} is a reserved key")
+        end
+
+        # Check if the identifier exists
+        unless scope.defined identifier.name
+          raise RunTimeError.new(node, context, "#{identifier.name} is not defined")
+        end
+
+        # Check if the identifier is a constant
+        if scope.get_reference(identifier.name).is_constant
+          raise RunTimeError.new(node, context, "#{identifier.name} is a constant")
+        end
+
+        # Write to the scope
+        scope.write(identifier.name, expression, Flag::None)
+        return expression
+      when MemberExpression
+        raise RunTimeError.new(node, context, "Member assignments are not implemented yet")
+      when IndexExpression
+        raise RunTimeError.new(node, context, "Index assignments are not implemented yet")
+      end
+
+      return TNull.new
     end
   end
 end

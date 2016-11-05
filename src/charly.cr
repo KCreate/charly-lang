@@ -28,5 +28,6 @@ module Charly
     puts interpreter.top
   rescue e : Exception
     puts e
+    exit 1
   end
 end
