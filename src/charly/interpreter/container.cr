@@ -1,4 +1,5 @@
 require "../exception.cr"
+require "../../table/table.cr"
 
 module Charly
   class ContainerReferenceError < Exception
@@ -184,6 +185,13 @@ module Charly
     # :nodoc:
     def finalize
       @values.clear
+    end
+
+    # :nodoc:
+    def to_s(io)
+      Table.present(["Name", "Value"], [["a", "25"]]) do |result|
+        io << result
+      end
     end
   end
 end
