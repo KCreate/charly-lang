@@ -94,11 +94,12 @@ module Charly
   end
 
   class TFunc < BaseType
+    property name : String?
     property argumentlist : IdentifierList
     property block : Block
     property parent_scope : Scope
 
-    def initialize(@argumentlist, @block, @parent_scope)
+    def initialize(@name, @argumentlist, @block, @parent_scope)
     end
 
     # :nodoc:

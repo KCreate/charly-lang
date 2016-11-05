@@ -63,7 +63,7 @@ module Charly
 
     private def exec_block(block : Block, scope : Scope, context : Context)
       last_result = TNull.new
-      block.children.each do |statement|
+      block.each do |statement|
         last_result = exec_expression(statement, scope, context)
       end
       last_result
@@ -94,6 +94,10 @@ module Charly
         return exec_array_literal(node, scope, context)
       when .is_a? NullLiteral
         return TNull.new
+      when .is_a? FunctionLiteral
+        return exec_function_literal(node, scope, context)
+      when .is_a? CallExpression
+        return exec_call_expression(node, scope, context)
       when .is_a? NANLiteral
         return TNumeric.new(Float64::NAN)
       end
@@ -169,11 +173,79 @@ module Charly
     private def exec_array_literal(node : ArrayLiteral, scope : Scope, context : Context)
       content = [] of BaseType
 
-      node.children.each do |item|
+      node.each do |item|
         content << exec_expression(item, scope, context)
       end
 
       return TArray.new(content)
+    end
+
+    @[AlwaysInline]
+    private def exec_function_literal(node : FunctionLiteral, scope : Scope, context : Context)
+      TFunc.new(
+        node.name,
+        node.argumentlist,
+        node.block,
+        scope
+      )
+    end
+
+    @[AlwaysInline]
+    private def exec_call_expression(node : CallExpression, scope : Scope, context : Context)
+
+      # Resolve the identifier
+      target = exec_expression(node.identifier, scope, context)
+
+      if target.is_a? TFunc
+        return exec_function_call(target, node, scope, context)
+      else
+        raise RunTimeError.new(node.identifier, context, "#{target} is not a function")
+      end
+    end
+
+    @[AlwaysInline]
+    private def exec_function_call(target : TFunc, node : CallExpression, scope : Scope, context : Context)
+
+      # The scope in which the function will run
+      function_scope = Scope.new(target.parent_scope)
+
+      # Check if enough arguments were supplied
+      if node.argumentlist.size < target.argumentlist.size
+        raise RunTimeError.new(
+          node.identifier,
+          context,
+          "Function expected #{target.argumentlist.size} arguments, got #{node.argumentlist.size}"
+        )
+      end
+
+      # Resolve the arguments
+      arguments = [] of BaseType
+      node.argumentlist.each do |arg|
+        arguments << exec_expression(arg, scope, context)
+      end
+
+      # Insert the arguments
+      i = 0
+      target.argumentlist.each do |arg|
+
+        unless arg.is_a? IdentifierLiteral
+          raise RunTimeError.new(arg, context, "#{arg} is not an identifier. You've found a bug in the interpreter.")
+        end
+
+        function_scope.write(arg.name, arguments[i], Flag::INIT)
+        i += 0
+      end
+
+      # Execute the functions block inside the function_scope
+      result = exec_block(target.block, function_scope, context)
+
+      # If the return value is a function
+      # we keep the function_scope in tact to form a closure
+      unless result.is_a? TFunc
+        function_scope.finalize unless result.is_a? TFunc
+      end
+
+      return result
     end
   end
 end

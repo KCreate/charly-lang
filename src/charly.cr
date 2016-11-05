@@ -23,8 +23,6 @@ module Charly
     # Run the program
     interpreter = Interpreter.new
 
-    puts program.tree
-
     result = interpreter.exec_program program
     puts result
     puts interpreter.top

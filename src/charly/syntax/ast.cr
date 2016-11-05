@@ -26,6 +26,17 @@ module Charly::AST
       self
     end
 
+    def size
+      @children.size
+    end
+
+    # :nodoc:
+    def each
+      @children.each do |child|
+        yield child
+      end
+    end
+
     # Append a node to this node as a child
     def <<(node : ASTNode)
       @children << node
