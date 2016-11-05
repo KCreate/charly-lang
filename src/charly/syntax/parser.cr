@@ -264,6 +264,7 @@ module Charly
     end
 
     private def parse_if_statement
+      start_location = @token.location
       expect TokenType::Keyword, "if"
 
       case @token.type
@@ -277,7 +278,7 @@ module Charly
 
       consequent = parse_block
 
-      alternate = Empty.new
+      alternate = Empty.new.at(consequent.location_start, consequent.location_end)
       if_token TokenType::Keyword, "else" do
         advance
 
@@ -294,10 +295,11 @@ module Charly
         end
       end
 
-      node = IfStatement.new(test, consequent, alternate)
+      node = IfStatement.new(test, consequent, alternate).at(start_location, alternate.location_end)
     end
 
     private def parse_while_statement
+      start_location = @token.location
       expect TokenType::Keyword, "while"
 
       case @token.type
@@ -310,10 +312,11 @@ module Charly
       end
 
       consequent = parse_block
-      return WhileStatement.new(test, consequent)
+      return WhileStatement.new(test, consequent).at(start_location, consequent.location_end)
     end
 
     private def parse_try_statement
+      start_location = @token.location
       expect TokenType::Keyword, "try"
 
       try_block = Empty.new
@@ -326,14 +329,14 @@ module Charly
 
       expect TokenType::LeftParen
       assert_token TokenType::Identifier do
-        exception_name = IdentifierLiteral.new(@token.value)
+        exception_name = IdentifierLiteral.new(@token.value).at(@token.location)
         advance
       end
       expect TokenType::RightParen
 
       catch_block = parse_block
 
-      return TryCatchStatement.new(try_block, exception_name, catch_block)
+      return TryCatchStatement.new(try_block, exception_name, catch_block).at(start_location, catch_block.location_end)
     end
 
     # Helper macro to prevent duplicate code for operator precedence parsing
@@ -383,7 +386,7 @@ module Charly
           else
             left = VariableAssignment.new(left,
               BinaryExpression.new(OPERATOR_MAPPING[operator], left, right).at(left.location_start, right.location_end)
-            )
+            ).at(left.location_start, right.location_end)
           end
         else
           return left
