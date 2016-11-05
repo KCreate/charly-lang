@@ -83,6 +83,14 @@ module Charly
         end
 
         return expression
+      when .is_a? IdentifierLiteral
+
+        # Check if such a value exists
+        unless scope.defined(node.name)
+          raise RunTimeError.new(node, context, "#{node.name} is not defined")
+        end
+
+        return scope.get(node.name)
       when .is_a? NumericLiteral
         return TNumeric.new(node.value.to_f64)
       when .is_a? NullLiteral

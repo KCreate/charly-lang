@@ -34,7 +34,7 @@ module Charly
   # This allows to store values in a hierarchy
   # Here it is used for CallStacks
   class Container(V)
-    include Enumerable(Tuple(String, V))
+    include Enumerable(Tuple(String, V, Flag))
 
     property parent : Container(V)?
     property values : Hash(String, Entry(V))
@@ -51,7 +51,7 @@ module Charly
     # :nodoc:
     def each
       @values.each do |key, value|
-        yield ({key, value})
+        yield ({key, value.value, value.flags})
       end
     end
 
@@ -111,11 +111,11 @@ module Charly
     #
     # Throws a ReferenceError in the following cases
     # - *key* is not defined
-    def get_reference(key : String, flags : Flag = Flag::None) : V
+    def get_reference(key : String, flags : Flag = Flag::None) : Entry(V)
       if contains key
-        return @values[key].value
+        return @values[key]
       elsif !flags.includes?(Flag::IGNORE_PARENT) && (parent = @parent).is_a? Container(V)
-        return parent.get(key, flags)
+        return parent.get_reference(key, flags)
       else
         raise ContainerReferenceError.new("#{key} is not defined")
       end
@@ -128,7 +128,7 @@ module Charly
     # Throws a ReferenceError in the following cases
     # - *key* is not defined
     def get(key : String, flags : Flag = Flag::None) : V
-      get_reference key, flags
+      get_reference(key, flags).value
     end
 
     # Same as #get
@@ -189,7 +189,19 @@ module Charly
 
     # :nodoc:
     def to_s(io)
-      Table.present(["Name", "Value"], [["a", "25"]]) do |result|
+
+      # Collect the data we need to print
+      data = [] of Array(String)
+
+      each do |key, value, flags|
+        data << [
+          "#{key}",
+          "#{value}",
+          "#{flags}"
+        ]
+      end
+
+      Table.present(["Name", "Value", "Flags"], data) do |result|
         io << result
       end
     end
