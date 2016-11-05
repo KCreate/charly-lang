@@ -84,8 +84,16 @@ module Charly
         return scope.get(node.name)
       when .is_a? NumericLiteral
         return TNumeric.new(node.value.to_f64)
+      when .is_a? StringLiteral
+        return TString.new(node.value)
+      when .is_a? BooleanLiteral
+        return TBoolean.new(node.value)
+      when .is_a? ArrayLiteral
+        return exec_array_literal(node, scope, context)
       when .is_a? NullLiteral
         return TNull.new
+      when .is_a? NANLiteral
+        return TNumeric.new(Float64::NAN)
       end
 
       # Catch unknown nodes
@@ -153,6 +161,17 @@ module Charly
       end
 
       return TNull.new
+    end
+
+    @[AlwaysInline]
+    private def exec_array_literal(node : ArrayLiteral, scope : Scope, context : Context)
+      content = [] of BaseType
+
+      node.children.each do |item|
+        content << exec_expression(item, scope, context)
+      end
+
+      return TArray.new(content)
     end
   end
 end

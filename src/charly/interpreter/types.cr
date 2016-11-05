@@ -39,6 +39,57 @@ module Charly
     end
   end
 
+  class TString < BaseType
+    property value : String
+
+    def initialize(@value)
+    end
+
+    # :nodoc:
+    def value_to_s(io)
+      io << @value
+    end
+
+    # :nodoc:
+    def self.to_s(io)
+      io << "String"
+    end
+  end
+
+  class TBoolean < BaseType
+    property value : Bool
+
+    def initialize(@value)
+    end
+
+    # :nodoc:
+    def value_to_s(io)
+      io << @value
+    end
+
+    # :nodoc:
+    def self.to_s(io)
+      io << "Boolean"
+    end
+  end
+
+  class TArray < BaseType
+    property value : Array(BaseType)
+
+    def initialize(@value)
+    end
+
+    # :nodoc:
+    def value_to_s(io)
+      io << "Array:#{@value.size}"
+    end
+
+    # :nodoc:
+    def self.to_s(io)
+      io << "Array"
+    end
+  end
+
   class TNull < BaseType
     def initialize
     end
