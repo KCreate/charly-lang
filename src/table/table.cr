@@ -38,27 +38,61 @@ class Table
     data.shift
 
     # Print the header row
-    self.render_divider(cell_spacing, io)
+    self.render_divider(cell_spacing, io, DividerConnection::Down)
     self.render_row(cell_spacing, headers, io)
-    self.render_divider(cell_spacing, io)
+    self.render_divider(cell_spacing, io, DividerConnection::Both)
 
     # Render all rows
     data.each do |row|
       self.render_row(cell_spacing, row, io)
     end
-    self.render_divider(cell_spacing, io)
+    self.render_divider(cell_spacing, io, DividerConnection::Up)
 
     yield io.to_s
   end
 
+  enum DividerConnection
+    Up
+    Down
+    Both
+  end
+
   # Renders a divider with *spacing* into *io*
-  protected def self.render_divider(spacing : Array(Int32), io : IO)
-    spacing.each do |width|
-      io << "+"
-      io << "-" * (width + 2)
-      io << ""
+  protected def self.render_divider(spacing : Array(Int32), io : IO, connection : DividerConnection)
+    lchar = ' '
+    mchar = ' '
+    rchar = ' '
+
+    case connection
+    when DividerConnection::Up
+      lchar = '└'
+      mchar = '┴'
+      rchar = '┘'
+    when DividerConnection::Down
+      lchar = '┌'
+      mchar = '┬'
+      rchar = '┐'
+    when DividerConnection::Both
+      lchar = '├'
+      mchar = '┼'
+      rchar = '┤'
     end
-    io << "+\n"
+
+    io << lchar
+
+    amount = spacing.size
+    i = 0
+    spacing.each do |width|
+      io << "─" * (width + 2)
+
+      unless i == amount - 1
+        io << mchar
+      end
+
+      i += 1
+    end
+    io << rchar
+    io << '\n'
   end
 
   # Renders *data* with the given cell spacing into *io*
@@ -70,10 +104,10 @@ class Table
     data.each_with_index do |entry, index|
       width = spacing[index]
 
-      io << "| "
+      io << "│ "
       io << entry.ljust(width, ' ')
       io << " "
     end
-    io << "|\n"
+    io << "│\n"
   end
 end
