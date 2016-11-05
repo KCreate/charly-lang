@@ -29,6 +29,9 @@ module Charly
       "self"
     ]
 
+    # The path at which the prelude is saved
+    PRELUDE_PATH = File.real_path(ENV["CHARLYDIR"] + "/src/std/prelude.charly")
+
     # Creates a new Interpreter inside *top*
     # Setting *load_prelude* to false will prevent loading the prelude file
     def initialize(@top : Scope, load_prelude : Bool = true)
@@ -38,9 +41,8 @@ module Charly
       if load_prelude
 
         # Check if the prelude exists
-        prelude_path = File.real_path(ENV["CHARLYDIR"] + "/src/std/prelude.charly")
-        if File.readable?(prelude_path)
-          program = Parser.create(File.open(prelude_path), prelude_path)
+        if File.readable?(PRELUDE_PATH)
+          program = Parser.create(File.open(PRELUDE_PATH), PRELUDE_PATH)
           exec_program(program, @top)
         else
           raise IOException.new "Could not locate prelude file"
@@ -76,7 +78,7 @@ module Charly
         return exec_assignment(node, scope, context)
       when .is_a? IdentifierLiteral
 
-        # Check if such a value exists
+        # Check if the identifier exists
         unless scope.defined(node.name)
           raise RunTimeError.new(node, context, "#{node.name} is not defined")
         end
