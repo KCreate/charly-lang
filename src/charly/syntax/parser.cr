@@ -27,6 +27,10 @@ module Charly
       TokenType::PowAssignment => TokenType::Pow
     }
 
+    # Some properties to make the parser context aware
+    property return_allowed : Bool
+    property break_allowed : Bool
+
     # Create a Program from *source* called *filename*
     def self.create(source : IO, filename : String)
       parser = Parser.new(source, filename)
@@ -44,6 +48,9 @@ module Charly
 
       # We immediately consume the first token
       advance
+
+      @return_allowed = false
+      @break_allowed = false
     end
 
     # Parses a program and resets the @file_buffer afterwards
@@ -68,6 +75,14 @@ module Charly
       if @token.type == TokenType::EOF
         error_message = "Unexpected end of file"
       end
+
+      raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, error_message)
+    end
+
+    # :nodoc:
+    @[AlwaysInline]
+    private def unallowed_token
+      error_message = "You are not allowed to use #{@token.value} at this location"
 
       raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, error_message)
     end
@@ -229,6 +244,10 @@ module Charly
         when "try"
           return parse_try_statement
         when "return"
+          unless @return_allowed
+            unallowed_token
+          end
+
           advance
 
           return_value = NullLiteral.new.at(start_location)
@@ -244,6 +263,11 @@ module Charly
           skip TokenType::Semicolon
           return ReturnStatement.new(return_value).at(start_location, end_location)
         when "break"
+
+          unless @break_allowed
+            unallowed_token
+          end
+
           advance
           end_location = start_location
           skip TokenType::Semicolon
@@ -326,7 +350,10 @@ module Charly
         test = parse_expression
       end
 
+      backup_break_allowed = @break_allowed
+      @break_allowed = true
       consequent = parse_block
+      @break_allowed = backup_break_allowed
       return WhileStatement.new(test, consequent).at(start_location, consequent.location_end)
     end
 
@@ -587,7 +614,13 @@ module Charly
     end
 
     private def parse_container_literal
+      backup_return_allowed = @return_allowed
+      backup_break_allowed = @break_allowed
+      @return_allowed = false
+      @break_allowed = false
       block = parse_block
+      @return_allowed = backup_return_allowed
+      @break_allowed = backup_break_allowed
       return ContainerLiteral.new(block).at(block.location_start, block.location_end)
     end
 
@@ -605,7 +638,13 @@ module Charly
       arguments = parse_identifier_list(TokenType::RightParen)
       expect TokenType::RightParen
 
+      backup_return_allowed = @return_allowed
+      backup_break_allowed = @break_allowed
+      @return_allowed = true
+      @break_allowed = false
       block = parse_block
+      @return_allowed = backup_return_allowed
+      @break_allowed = backup_break_allowed
 
       if identifier.is_a? IdentifierLiteral
         FunctionLiteral.new(identifier.name, arguments, block).at(start_location, block.location_end)
@@ -636,7 +675,13 @@ module Charly
         parents = parse_identifier_list(TokenType::LeftCurly)
       end
 
+      backup_return_allowed = @return_allowed
+      backup_break_allowed = @break_allowed
+      @return_allowed = false
+      @break_allowed = false
       block = parse_block
+      @return_allowed = backup_return_allowed
+      @break_allowed = backup_break_allowed
 
       if identifier.is_a? IdentifierLiteral
         ClassLiteral.new(identifier.name, block, parents).at(start_location, block.location_end)
