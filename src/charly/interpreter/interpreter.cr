@@ -85,6 +85,8 @@ module Charly
         return expression
       when .is_a? NumericLiteral
         return TNumeric.new(node.value.to_f64)
+      when .is_a? NullLiteral
+        return TNull.new
       end
 
       # Catch unknown nodes
