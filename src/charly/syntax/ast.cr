@@ -282,6 +282,9 @@ module Charly::AST
     block : Block,
     parents : IdentifierList
 
+  ast_node PropertyDeclaration,
+    name : IdentifierLiteral
+
   ast_node LeftParenLiteral
   ast_node RightParenLiteral
   ast_node LeftCurlyLiteral

@@ -176,6 +176,25 @@ module Charly
       body.at(start_location, end_location)
     end
 
+    private def parse_class_block
+      start_location = nil
+      end_location = nil
+
+      assert_token TokenType::LeftCurly do
+          start_location = @token.location
+          advance
+      end
+
+      body = parse_class_body
+
+      assert_token TokenType::RightCurly do
+        end_location = @token.location
+        advance
+      end
+
+      body.at(start_location, end_location)
+    end
+
     # Parses the body of a block
     private def parse_block_body(stop_on_curly = true)
       exps = [] of ASTNode
@@ -188,6 +207,17 @@ module Charly
         until @token.type == TokenType::EOF
           exps << parse_statement
         end
+      end
+
+      return Block.new(exps)
+    end
+
+    # Parses the body of a block
+    private def parse_class_body
+      exps = [] of ASTNode
+
+      until @token.type == TokenType::RightCurly
+        exps << parse_class_statement
       end
 
       return Block.new(exps)
@@ -304,6 +334,31 @@ module Charly
         expression = parse_expression
         skip TokenType::Semicolon
         return expression
+      end
+
+      unexpected_token
+    end
+
+    private def parse_class_statement
+      case @token.type
+      when TokenType::Keyword
+        case @token.value
+        when "property"
+          start_location = @token.location
+          advance
+
+          identifier = IdentifierLiteral.new("-")
+          assert_token TokenType::Identifier do
+            identifier = IdentifierLiteral.new(@token.value).at(@token.location)
+            advance
+          end
+
+          return PropertyDeclaration.new(identifier).at(start_location, identifier.location_end)
+        when "func"
+          return parse_func_literal
+        when "class"
+          return parse_class_literal
+        end
       end
 
       unexpected_token
@@ -686,7 +741,7 @@ module Charly
       backup_break_allowed = @break_allowed
       @return_allowed = false
       @break_allowed = false
-      block = parse_block
+      block = parse_class_block
       @return_allowed = backup_return_allowed
       @break_allowed = backup_break_allowed
 
