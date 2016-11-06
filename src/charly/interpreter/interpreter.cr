@@ -113,6 +113,8 @@ module Charly
         raise ReturnException.new(expression)
       when .is_a? IfStatement
         return exec_if_statement(node, scope, context)
+      when .is_a? WhileStatement
+        return exec_while_statement(node, scope, context)
       end
 
       # Catch unknown nodes
@@ -286,6 +288,20 @@ module Charly
           raise RunTimeError.new(node, context, "Alternate is not a valid node. You've found a bug in the interpreter.")
         end
       end
+    end
+
+    @[AlwaysInline]
+    private def exec_while_statement(node : WhileStatement, scope : Scope, context : Context)
+
+      scope = Scope.new(scope)
+
+      # Resolve the expression first
+      last_result = TNull.new
+      while exec_get_truthyness(exec_expression(node.test, scope, context), scope, context)
+        last_result = exec_block(node.consequent, scope, context)
+      end
+
+      return last_result
     end
 
     @[AlwaysInline]
