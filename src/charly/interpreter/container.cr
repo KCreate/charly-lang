@@ -11,6 +11,8 @@ module Charly
     CONSTANT
     OVERWRITE_CONSTANT
     IGNORE_PARENT
+    NONREADABLE
+    FORCEREAD
   end
 
   # :nodoc:
@@ -48,11 +50,27 @@ module Charly
       return self.new(nil)
     end
 
-    # :nodoc:
     def each
-      @values.each do |key, value|
-        yield ({key, value.value, value.flags})
+      dump_values.each do |key, value, flags|
+        yield ({key, value, flags})
       end
+    end
+
+    # :nodoc:
+    def dump_values
+      collection = [] of Tuple(String, V, Flag)
+
+      # Add all parent values first
+      if (parent = @parent).is_a? Container(V)
+        collection += parent.dump_values
+      end
+
+      # Add the values of this stack
+      @values.each do |key, value|
+        collection << {key, value.value, value.flags}
+      end
+
+      return collection
     end
 
     # Writes to the container
@@ -113,7 +131,14 @@ module Charly
     # - *key* is not defined
     def get_reference(key : String, flags : Flag = Flag::None) : Entry(V)
       if contains key
-        return @values[key]
+        entry = @values[key]
+
+        # Check if the value is readable
+        if entry.flags.includes?(Flag::NONREADABLE) && !flags.includes?(Flag::FORCEREAD)
+          raise ContainerReferenceError.new("#{key} is not defined")
+        end
+
+        return entry
       elsif !flags.includes?(Flag::IGNORE_PARENT) && (parent = @parent).is_a? Container(V)
         return parent.get_reference(key, flags)
       else
@@ -158,7 +183,7 @@ module Charly
     #     Top - 0
     #     Middle - 1
     #     Bottom - 2
-    private def depth(n = 0)
+    def depth(n = 0)
       if (parent = @parent).is_a? Container(V)
         return parent.depth(n + 1)
       end
@@ -166,8 +191,20 @@ module Charly
     end
 
     # Checks if the current container contains *key*
-    def contains(key : String) : Bool
+    def contains(key : String, flags : Flag = Flag::None) : Bool
       @values.has_key? key
+
+      if @values.has_key? key
+        entry = @values[key]
+
+        if entry.flags.includes?(Flag::NONREADABLE) && !flags.includes?(Flag::FORCEREAD)
+          return false
+        end
+
+        return true
+      end
+
+      return false
     end
 
     # Checks if the current container _or_ any of the parent containers
