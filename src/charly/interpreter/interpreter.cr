@@ -111,6 +111,8 @@ module Charly
       when .is_a? ReturnStatement
         expression = exec_expression(node.expression, scope, context)
         raise ReturnException.new(expression)
+      when .is_a? IfStatement
+        return exec_if_statement(node, scope, context)
       end
 
       # Catch unknown nodes
@@ -261,6 +263,41 @@ module Charly
       end
 
       return result
+    end
+
+    @[AlwaysInline]
+    private def exec_if_statement(node : IfStatement, scope : Scope, context : Context)
+
+      scope = Scope.new(scope)
+
+      # Resolve the expression first
+      test = exec_expression(node.test, scope, context)
+      test = exec_get_truthyness(test, scope, context)
+
+      if test
+        return exec_block(node.consequent, scope, context)
+      else
+        alternate = node.alternate
+        if alternate.is_a? IfStatement
+          return exec_if_statement(alternate, scope, context)
+        elsif alternate.is_a? Block
+          return exec_block(alternate, scope, context)
+        else
+          raise RunTimeError.new(node, context, "Alternate is not a valid node. You've found a bug in the interpreter.")
+        end
+      end
+    end
+
+    @[AlwaysInline]
+    private def exec_get_truthyness(value : BaseType, scope : Scope, context : Context)
+      case value
+      when .is_a? TBoolean
+        return value.value
+      when .is_a? TNull
+        return false
+      else
+        return true
+      end
     end
   end
 end
