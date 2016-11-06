@@ -5,6 +5,11 @@ module Charly
 
   # `BaseType` is the common class all types in charly depend on
   abstract class BaseType
+    property data : Scope
+
+    def initialize
+      @data = Scope.new
+    end
 
     # :nodoc:
     def to_s(io)
@@ -19,6 +24,7 @@ module Charly
     property value : Float64
 
     def initialize(value)
+      super()
       @value = value.to_f64
     end
 
@@ -46,6 +52,7 @@ module Charly
     property value : String
 
     def initialize(@value)
+      super()
     end
 
     # :nodoc:
@@ -63,6 +70,7 @@ module Charly
     property value : Bool
 
     def initialize(@value)
+      super()
     end
 
     # :nodoc:
@@ -80,6 +88,7 @@ module Charly
     property value : Array(BaseType)
 
     def initialize(@value)
+      super()
     end
 
     # :nodoc:
@@ -100,6 +109,7 @@ module Charly
     property parent_scope : Scope
 
     def initialize(@name, @argumentlist, @block, @parent_scope)
+      super()
     end
 
     # :nodoc:
@@ -115,11 +125,14 @@ module Charly
 
   class TClass < BaseType
     property name : String
+    property properties : Array(IdentifierLiteral)
+    property methods : Array(TFunc)
+    property internal_classes : Array(TClass)
     property parents : Array(TClass)
-    property block : Block
     property parent_scope : Scope
 
-    def initialize(@name, @parents, @block, @parent_scope)
+    def initialize(@name, @properties, @methods, @internal_classes, @parents, @parent_scope)
+      super()
     end
 
     # :nodoc:
@@ -133,8 +146,27 @@ module Charly
     end
   end
 
+  class TObject < BaseType
+    property type : TClass
+
+    def initialize(@type)
+      super()
+    end
+
+    # :nodoc:
+    def value_to_s(io)
+      io << "Object:#{@type.name}"
+    end
+
+    # :nodoc:
+    def self.to_s(io)
+      io << "Object"
+    end
+  end
+
   class TNull < BaseType
     def initialize
+      super()
     end
 
     # :nodoc:

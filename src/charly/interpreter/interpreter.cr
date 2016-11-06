@@ -44,6 +44,17 @@ module Charly
     # The path at which the prelude is saved
     PRELUDE_PATH = File.real_path(ENV["CHARLYDIR"] + "/src/std/prelude.charly")
 
+    # Mapping between types and their class names
+    CLASS_MAPPING = {
+      TObject => "Object",
+      TClass => "Class",
+      TNumeric => "Numeric",
+      TString => "String",
+      TBoolean => "Boolean",
+      TArray => "Array",
+      TFunc => "Function"
+    }
+
     # Creates a new Interpreter inside *top*
     # Setting *load_prelude* to false will prevent loading the prelude file
     def initialize(@top : Scope, load_prelude : Bool = true)
@@ -243,6 +254,11 @@ module Charly
           raise RunTimeError.new(parent, context, "Node is not an identifier. You've found a bug in the interpreter.")
         end
 
+        # Check if the variable name is allowed
+        if DISALLOWED_VARS.includes? parent.name
+          raise RunTimeError.new(parent, context, "#{parent.name} is a reserved keyword")
+        end
+
         # Check if the class is defined
         unless scope.defined parent.name
           raise RunTimeError.new(parent, context, "#{parent.name} is not defined")
@@ -257,12 +273,47 @@ module Charly
         parents << value
       end
 
+      # Extract properties and methods
+      properties = [] of IdentifierLiteral
+      methods = [] of TFunc
+      internal_classes = [] of TClass
+
+      class_scope = Scope.new(scope)
+      node.block.each do |child|
+        case child
+        when .is_a? PropertyDeclaration
+          properties << child.identifier
+        when .is_a? FunctionLiteral
+          value = exec_expression(child, scope, context)
+
+          if value.is_a? TFunc
+            methods << value
+          else
+            raise RunTimeError.new(child, context, "Not a function")
+          end
+        when .is_a? ClassLiteral
+          value = exec_expression(child, scope, context)
+
+          if value.is_a? TClass
+            internal_classes << value
+          else
+            raise RunTimeError.new(child, context, "Not a class")
+          end
+        else
+          raise RunTimeError.new(child, context, "Unallowed #{child.class.name}")
+        end
+      end
+
       return TClass.new(
         node.name,
+        properties,
+        methods,
+        internal_classes,
         parents,
-        node.block,
         scope
-      )
+      ).tap { |obj|
+        obj.data = class_scope
+      }
     end
 
     @[AlwaysInline]
@@ -273,8 +324,10 @@ module Charly
 
       if target.is_a? TFunc
         return exec_function_call(target, node, scope, context)
+      elsif target.is_a? TClass
+        return exec_class_call(target, node, scope, context)
       else
-        raise RunTimeError.new(node.identifier, context, "#{target} is not a function")
+        raise RunTimeError.new(node.identifier, context, "#{target} is not a function or class")
       end
     end
 
@@ -320,11 +373,27 @@ module Charly
 
       # If the return value is a function
       # we keep the function_scope in tact to form a closure
-      unless result.is_a? TFunc
-        function_scope.finalize unless result.is_a? TFunc
+      unless result.is_a?(TFunc) || result.is_a?(TClass)
+        function_scope.finalize
       end
 
       return result
+    end
+
+    @[AlwaysInline]
+    private def exec_class_call(target : TClass, node : CallExpression, scope : Scope, context : Context)
+
+      scope = Scope.new(target.parent_scope)
+      object = TObject.new(target)
+      object.data = scope
+
+      return TNull.new
+    end
+
+    # Returns *name* on *target* by checking parent classes
+    private def get_class_property(target : BaseType, node : ASTNode, name : String, scope : Scope, context : Context)
+
+      raise "... L 365"
     end
 
     @[AlwaysInline]
