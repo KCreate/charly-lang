@@ -19,6 +19,14 @@ module Charly
     end
   end
 
+  # Exception used to return prematurely from functions
+  private class ReturnException < Exception
+    property payload : BaseType
+
+    def initialize(@payload)
+    end
+  end
+
   # The interpreter takes a Program instance and executes the tree recursively.
   class Interpreter
     property top : Scope
@@ -100,6 +108,9 @@ module Charly
         return exec_call_expression(node, scope, context)
       when .is_a? NANLiteral
         return TNumeric.new(Float64::NAN)
+      when .is_a? ReturnStatement
+        expression = exec_expression(node.expression, scope, context)
+        raise ReturnException.new(expression)
       end
 
       # Catch unknown nodes
@@ -237,7 +248,11 @@ module Charly
       end
 
       # Execute the functions block inside the function_scope
-      result = exec_block(target.block, function_scope, context)
+      begin
+        result = exec_block(target.block, function_scope, context)
+      rescue e : ReturnException
+        result = e.payload
+      end
 
       # If the return value is a function
       # we keep the function_scope in tact to form a closure
