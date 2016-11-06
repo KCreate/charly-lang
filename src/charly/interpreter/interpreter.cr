@@ -27,6 +27,10 @@ module Charly
     end
   end
 
+  # Exception used to return prematurely from while loops
+  private class BreakException < Exception
+  end
+
   # The interpreter takes a Program instance and executes the tree recursively.
   class Interpreter
     property top : Scope
@@ -111,10 +115,30 @@ module Charly
       when .is_a? ReturnStatement
         expression = exec_expression(node.expression, scope, context)
         raise ReturnException.new(expression)
+      when .is_a? BreakStatement
+        raise BreakException.new
       when .is_a? IfStatement
         return exec_if_statement(node, scope, context)
       when .is_a? WhileStatement
         return exec_while_statement(node, scope, context)
+      when .is_a? And
+        left = exec_get_truthyness(exec_expression(node.left, scope, context), scope, context)
+
+        if left
+          right = exec_get_truthyness(exec_expression(node.right, scope, context), scope, context)
+          return TBoolean.new(right)
+        else
+          return TBoolean.new(false)
+        end
+      when .is_a? Or
+        left = exec_get_truthyness(exec_expression(node.left, scope, context), scope, context)
+
+        if left
+          return TBoolean.new(true)
+        else
+          right = exec_get_truthyness(exec_expression(node.right, scope, context), scope, context)
+          return TBoolean.new(right)
+        end
       end
 
       # Catch unknown nodes
@@ -285,7 +309,7 @@ module Charly
         elsif alternate.is_a? Block
           return exec_block(alternate, scope, context)
         else
-          raise RunTimeError.new(node, context, "Alternate is not a valid node. You've found a bug in the interpreter.")
+          return TNull.new
         end
       end
     end
@@ -298,7 +322,11 @@ module Charly
       # Resolve the expression first
       last_result = TNull.new
       while exec_get_truthyness(exec_expression(node.test, scope, context), scope, context)
-        last_result = exec_block(node.consequent, scope, context)
+        begin
+          last_result = exec_block(node.consequent, scope, context)
+        rescue e : BreakException
+          break
+        end
       end
 
       return last_result
