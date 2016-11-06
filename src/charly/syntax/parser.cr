@@ -281,13 +281,20 @@ module Charly
         when "func", "class"
           node = parse_expression
 
-          if node.is_a?(FunctionLiteral) || node.is_a?(ClassLiteral)
+          if node.is_a?(FunctionLiteral)
             if (name = node.name).is_a?(String)
               node = VariableInitialisation.new(
                 IdentifierLiteral.new(name).at(node.location_start, node.location_end),
                 node
               ).at(node.location_start, node.location_end)
             end
+          end
+
+          if node.is_a? ClassLiteral
+            node = VariableInitialisation.new(
+              IdentifierLiteral.new(node.name).at(node.location_start, node.location_end),
+              node
+            ).at(node.location_start, node.location_end)
           end
 
           skip TokenType::Semicolon
@@ -589,7 +596,7 @@ module Charly
         should_read = false
 
         assert_token TokenType::Identifier do
-          exps << IdentifierLiteral.new(@token.value)
+          exps << IdentifierLiteral.new(@token.value).at(@token.location)
           advance
         end
 
@@ -658,10 +665,10 @@ module Charly
       start_location = @token.location
       expect TokenType::Keyword, "class"
 
-      identifier = Empty.new
+      identifier = ""
       parents = IdentifierList.new
-      if_token TokenType::Identifier do
-        identifier = IdentifierLiteral.new(@token.value)
+      assert_token TokenType::Identifier do
+        identifier = @token.value
         advance
       end
 
@@ -683,11 +690,7 @@ module Charly
       @return_allowed = backup_return_allowed
       @break_allowed = backup_break_allowed
 
-      if identifier.is_a? IdentifierLiteral
-        ClassLiteral.new(identifier.name, block, parents).at(start_location, block.location_end)
-      else
-        ClassLiteral.new(nil, block, parents).at(start_location, block.location_end)
-      end
+      ClassLiteral.new(identifier, block, parents).at(start_location, block.location_end)
     end
 
   end

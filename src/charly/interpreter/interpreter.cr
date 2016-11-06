@@ -108,6 +108,8 @@ module Charly
         return TNull.new
       when .is_a? FunctionLiteral
         return exec_function_literal(node, scope, context)
+      when .is_a? ClassLiteral
+        return exec_class_literal(node, scope, context)
       when .is_a? CallExpression
         return exec_call_expression(node, scope, context)
       when .is_a? NANLiteral
@@ -224,6 +226,40 @@ module Charly
       TFunc.new(
         node.name,
         node.argumentlist,
+        node.block,
+        scope
+      )
+    end
+
+    @[AlwaysInline]
+    private def exec_class_literal(node : ClassLiteral, scope : Scope, context : Context)
+
+      # Check if parent classes exist
+      parents = [] of TClass
+      node.parents.each do |parent|
+
+        # Sanity check
+        unless parent.is_a? IdentifierLiteral
+          raise RunTimeError.new(parent, context, "Node is not an identifier. You've found a bug in the interpreter.")
+        end
+
+        # Check if the class is defined
+        unless scope.defined parent.name
+          raise RunTimeError.new(parent, context, "#{parent.name} is not defined")
+        end
+
+        value = scope.get(parent.name)
+
+        unless value.is_a? TClass
+          raise RunTimeError.new(parent, context, "#{parent.name} is not a class")
+        end
+
+        parents << value
+      end
+
+      return TClass.new(
+        node.name,
+        parents,
         node.block,
         scope
       )

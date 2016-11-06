@@ -278,7 +278,7 @@ module Charly::AST
     block : Block
 
   ast_node ClassLiteral,
-    name : String?,
+    name : String,
     block : Block,
     parents : IdentifierList
 

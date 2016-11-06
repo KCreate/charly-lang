@@ -113,6 +113,26 @@ module Charly
     end
   end
 
+  class TClass < BaseType
+    property name : String
+    property parents : Array(TClass)
+    property block : Block
+    property parent_scope : Scope
+
+    def initialize(@name, @parents, @block, @parent_scope)
+    end
+
+    # :nodoc:
+    def value_to_s(io)
+      io << "Class:#{@parents.size}:#{@name}"
+    end
+
+    # :nodoc:
+    def self.to_s(io)
+      io << "Class"
+    end
+  end
+
   class TNull < BaseType
     def initialize
     end
