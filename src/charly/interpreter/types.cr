@@ -155,6 +155,22 @@ module Charly
     # :nodoc:
     def value_to_s(io)
       io << "Object:#{@type.name}"
+
+      values = @data.dump_values(false)
+      if values.size > 0
+        io << ":("
+        i = 0
+        values.each do |key, value, flags|
+          io << "#{key}"
+
+          unless i == values.size - 1
+            io << ", "
+          end
+
+          i += 1
+        end
+        io << ")"
+      end
     end
 
     # :nodoc:
