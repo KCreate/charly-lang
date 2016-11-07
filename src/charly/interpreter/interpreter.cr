@@ -64,7 +64,7 @@ module Charly
 
     # Creates a new Interpreter inside *top*
     # Setting *load_prelude* to false will prevent loading the prelude file
-    def initialize(@top : Scope, load_prelude : Bool = true)
+    def initialize(@top : Scope, load_prelude = true)
       @trace = [] of Trace
 
       # Load the prelude if *load_prelude* is set to true
@@ -99,7 +99,7 @@ module Charly
       exec_block(program.tree, scope, context)
     end
 
-    private def exec_block(block : Block, scope : Scope, context : Context)
+    private def exec_block(block : Block, scope, context)
       last_result = TNull.new
       block.each do |statement|
         last_result = exec_expression(statement, scope, context)
@@ -107,7 +107,7 @@ module Charly
       last_result
     end
 
-    private def exec_expression(node : ASTNode | BaseType, scope : Scope, context : Context)
+    private def exec_expression(node : ASTNode | BaseType, scope, context)
 
       case node
       when .is_a? BaseType
@@ -117,15 +117,6 @@ module Charly
       when .is_a? VariableAssignment
         return exec_assignment(node, scope, context)
       when .is_a? IdentifierLiteral
-
-        case node.name
-        when "trace"
-          io = MemoryIO.new
-          render_trace(io)
-          puts io.to_s
-          io.clear
-          return TNull.new
-        end
 
         # Check if the identifier exists
         unless scope.defined(node.name)
@@ -189,7 +180,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_initialisation(node : ASTNode, scope : Scope, context : Context)
+    private def exec_initialisation(node : ASTNode, scope, context)
 
       # Check if this is a disallowed variable name
       if DISALLOWED_VARS.includes? node.identifier.name
@@ -215,7 +206,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_assignment(node : VariableAssignment, scope : Scope, context : Context)
+    private def exec_assignment(node : VariableAssignment, scope, context)
 
       # Resolve the expression
       expression = exec_expression(node.expression, scope, context)
@@ -231,7 +222,7 @@ module Charly
 
         # Check if the identifier exists
         unless scope.defined identifier.name
-          raise RunTimeError.new(node, context, "#{identifier.name} is not defined")
+          raise RunTimeError.new(identifier, context, "#{identifier.name} is not defined")
         end
 
         # Check if the identifier is a constant
@@ -252,7 +243,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_array_literal(node : ArrayLiteral, scope : Scope, context : Context)
+    private def exec_array_literal(node : ArrayLiteral, scope, context)
       content = [] of BaseType
 
       node.each do |item|
@@ -263,7 +254,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_function_literal(node : FunctionLiteral, scope : Scope, context : Context)
+    private def exec_function_literal(node : FunctionLiteral, scope, context)
       TFunc.new(
         node.name,
         node.argumentlist,
@@ -273,7 +264,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_class_literal(node : ClassLiteral, scope : Scope, context : Context)
+    private def exec_class_literal(node : ClassLiteral, scope, context)
 
       # Check if parent classes exist
       parents = [] of TClass
@@ -334,68 +325,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_class_literal(node : ClassLiteral, scope : Scope, context : Context)
-
-      # Check if parent classes exist
-      parents = [] of TClass
-      node.parents.each do |parent|
-
-        # Sanity check
-        unless parent.is_a? IdentifierLiteral
-          raise RunTimeError.new(parent, context, "Node is not an identifier. You've found a bug in the interpreter.")
-        end
-
-        # Check if the variable name is allowed
-        if DISALLOWED_VARS.includes? parent.name
-          raise RunTimeError.new(parent, context, "#{parent.name} is a reserved keyword")
-        end
-
-        # Check if the class is defined
-        unless scope.defined parent.name
-          raise RunTimeError.new(parent, context, "#{parent.name} is not defined")
-        end
-
-        value = scope.get(parent.name)
-
-        unless value.is_a? TClass
-          raise RunTimeError.new(parent, context, "#{parent.name} is not a class")
-        end
-
-        parents << value
-      end
-
-      # Extract properties and methods
-      properties = [] of IdentifierLiteral
-      methods = [] of FunctionLiteral
-      internal_classes = [] of TClass
-
-      class_scope = Scope.new(scope)
-      node.block.each do |child|
-        case child
-        when .is_a? PropertyDeclaration
-          properties << child.identifier
-        when .is_a? FunctionLiteral
-          if child.name.is_a? String
-            methods << child
-          end
-        else
-          raise RunTimeError.new(child, context, "Unallowed #{child.class.name}")
-        end
-      end
-
-      return TClass.new(
-        node.name,
-        properties,
-        methods,
-        parents,
-        scope
-      ).tap { |obj|
-        obj.data = class_scope
-      }
-    end
-
-    @[AlwaysInline]
-    private def exec_primitive_class_literal(node : PrimitiveClassLiteral, scope : Scope, context : Context)
+    private def exec_primitive_class_literal(node : PrimitiveClassLiteral, scope, context)
 
       # Extract methods of the primitive class
       methods = [] of TFunc
@@ -438,13 +368,19 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_call_expression(node : CallExpression, scope : Scope, context : Context)
+    private def exec_call_expression(node : CallExpression, scope, context)
 
-      # Resolve the identifier
-      target = exec_expression(node.identifier, scope, context)
+      # If the identifier is a MemberExpression
+      # we need the parts seperately
+      if (memberex = node.identifier).is_a? MemberExpression
+        identifier, target = exec_get_member_expression_pairs(memberex, scope, context)
+      else
+        identifier = nil
+        target = exec_expression(node.identifier, scope, context)
+      end
 
       if target.is_a? TFunc
-        return exec_function_call(target, node, scope, context)
+        return exec_function_call(target, node, identifier, scope, context)
       elsif target.is_a? TClass
         return exec_class_call(target, node, scope, context)
       elsif target.is_a? TPrimitiveClass
@@ -455,7 +391,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_function_call(target : TFunc, node : CallExpression, scope : Scope, context : Context)
+    private def exec_function_call(target : TFunc, node : CallExpression, identifier : BaseType?, scope, context)
 
       # The scope in which the function will run
       function_scope = Scope.new(target.parent_scope)
@@ -493,6 +429,11 @@ module Charly
         i += 0
       end
 
+      # If an identifier is given, assign it to the self keyword
+      if identifier.is_a? BaseType
+        function_scope.write("self", identifier, Flag::INIT | Flag::CONSTANT)
+      end
+
       # Execute the functions block inside the function_scope
       @trace << Trace.new("#{target.name}", node, scope, context)
       begin
@@ -502,17 +443,11 @@ module Charly
       end
       @trace.pop
 
-      # If the return value is a function
-      # we keep the function_scope in tact to form a closure
-      unless result.is_a?(TFunc) || result.is_a?(TClass)
-        function_scope.finalize
-      end
-
       return result
     end
 
     @[AlwaysInline]
-    private def exec_class_call(target : TClass, node : CallExpression, scope : Scope, context : Context)
+    private def exec_class_call(target : TClass, node : CallExpression, scope, context)
 
       # Initialize an empty object
       object = TObject.new(target)
@@ -553,6 +488,9 @@ module Charly
       # Search for a constructor function and execute
       if constructor.is_a?(TFunc)
 
+        # Remove the constuctor again
+        object_scope.delete("constructor", Flag::IGNORE_PARENT)
+
         # Create a fake call expression containing the arguments from the original expression
         callex = CallExpression.new(
           IdentifierLiteral.new("constructor").at(node.identifier.location_start),
@@ -561,11 +499,8 @@ module Charly
 
         # Execute the constructor function inside the object_scope
         @trace << Trace.new("#{target.name}:constructor", node, scope, context)
-        exec_function_call(constructor, callex, object_scope, context)
+        exec_function_call(constructor, callex, object, object_scope, context)
         @trace.pop
-
-        # Remove the constuctor again
-        object_scope.delete("constructor", Flag::IGNORE_PARENT)
       end
 
       return object
@@ -590,7 +525,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def get_class_methods(target : TClass, context : Context)
+    private def get_class_methods(target : TClass, context)
       methods = [] of TFunc
       if target.parents.size > 0
         target.parents.each do |parent|
@@ -608,12 +543,12 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_member_expression(node : MemberExpression, scope : Scope, context : Context)
+    private def exec_member_expression(node : MemberExpression, scope, context)
       return exec_get_member_expression_pairs(node, scope, context)[1]
     end
 
     @[AlwaysInline]
-    private def exec_get_member_expression_pairs(node : MemberExpression, scope : Scope, context : Context)
+    private def exec_get_member_expression_pairs(node : MemberExpression, scope, context)
 
       # Resolve the left side
       identifier = exec_expression(node.identifier, scope, context)
@@ -650,7 +585,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_if_statement(node : IfStatement, scope : Scope, context : Context)
+    private def exec_if_statement(node : IfStatement, scope, context)
 
       scope = Scope.new(scope)
 
@@ -673,7 +608,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_while_statement(node : WhileStatement, scope : Scope, context : Context)
+    private def exec_while_statement(node : WhileStatement, scope, context)
 
       scope = Scope.new(scope)
 
@@ -691,7 +626,7 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def exec_get_truthyness(value : BaseType, scope : Scope, context : Context)
+    private def exec_get_truthyness(value : BaseType, scope, context)
       case value
       when .is_a? TBoolean
         return value.value

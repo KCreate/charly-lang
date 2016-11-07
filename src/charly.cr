@@ -24,7 +24,6 @@ module Charly
     interpreter = Interpreter.new
 
     result = interpreter.exec_program program
-    puts result
     puts interpreter.top
   rescue e : Exception
     puts e
