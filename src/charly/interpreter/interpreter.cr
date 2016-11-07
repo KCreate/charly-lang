@@ -226,7 +226,7 @@ module Charly
 
         # Check if the identifier name is disallowed
         if DISALLOWED_VARS.includes? identifier.name
-          raise RunTimeError.new(node, context, "#{identifier.name} is a reserved key")
+          raise RunTimeError.new(node, context, "#{identifier.name} is a reserved keyword")
         end
 
         # Check if the identifier exists
