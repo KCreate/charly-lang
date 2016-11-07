@@ -413,7 +413,7 @@ module Charly
       unexpected_token
     end
 
-    private def parse_class_statement
+    private def parse_primitive_class_statement
       case @token.type
       when TokenType::Keyword
         case @token.value
