@@ -1,0 +1,16 @@
+title: Executing additions
+
+participant exec_binary_expression as ebe
+
+Note over Interpreter: Encounters BinaryExpression
+Interpreter->ebe: Resolve BinaryExpression
+
+ebe-->Interpreter: Resolve left side
+
+ebe-->Interpreter: Resolve right side
+
+ebe->ebe: Check if valid expression
+ebe-->Interpreter: optional error
+
+Note over ebe: Resolve expression
+ebe->Interpreter: Return result of expression

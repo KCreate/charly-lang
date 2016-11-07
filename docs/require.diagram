@@ -1,0 +1,13 @@
+title: Module loading
+
+Note over Interpreter: Request file
+Interpreter->Require: Load file
+Note right of Require: Resolve relative path
+Note right of Require: Check if file exists
+Require-->Interpreter: optional error
+Note right of Require: Request file execution
+Require->Interpreter: Execute file
+Interpreter->Interpreter: Executes file
+Interpreter->Require: Execution result
+Note right of Require: Caches result
+Require->Interpreter: Return execution result

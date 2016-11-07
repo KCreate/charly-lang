@@ -1,0 +1,10 @@
+title: How a single node is parsed
+
+Parser->Lexer: Request Token
+  Note over Parser, Lexer: Request tokens until node can be parsed
+  Lexer->Reader: Request chars
+    Note over Lexer, Reader: Repeat until token is found
+    Note right of Reader: Saves char inside internal buffer
+    Reader->Lexer: Return char
+  Lexer->Parser: Return token
+Note over Parser: Append node to the AST
