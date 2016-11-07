@@ -126,12 +126,11 @@ module Charly
   class TClass < BaseType
     property name : String
     property properties : Array(IdentifierLiteral)
-    property methods : Array(TFunc)
-    property internal_classes : Array(TClass)
+    property methods : Array(FunctionLiteral)
     property parents : Array(TClass)
     property parent_scope : Scope
 
-    def initialize(@name, @properties, @methods, @internal_classes, @parents, @parent_scope)
+    def initialize(@name, @properties, @methods, @parents, @parent_scope)
       super()
     end
 

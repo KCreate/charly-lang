@@ -64,6 +64,13 @@ module Charly::AST
     end
 
     # :nodoc:
+    def inspect(io)
+      io << self.class.name.split("::").last
+      io << ":"
+      io << @children.size
+    end
+
+    # :nodoc:
     def info
       ""
     end

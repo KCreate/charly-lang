@@ -275,7 +275,7 @@ module Charly
 
       # Extract properties and methods
       properties = [] of IdentifierLiteral
-      methods = [] of TFunc
+      methods = [] of FunctionLiteral
       internal_classes = [] of TClass
 
       class_scope = Scope.new(scope)
@@ -284,21 +284,7 @@ module Charly
         when .is_a? PropertyDeclaration
           properties << child.identifier
         when .is_a? FunctionLiteral
-          value = exec_expression(child, scope, context)
-
-          if value.is_a? TFunc
-            methods << value
-          else
-            raise RunTimeError.new(child, context, "Not a function")
-          end
-        when .is_a? ClassLiteral
-          value = exec_expression(child, scope, context)
-
-          if value.is_a? TClass
-            internal_classes << value
-          else
-            raise RunTimeError.new(child, context, "Not a class")
-          end
+          methods << child
         else
           raise RunTimeError.new(child, context, "Unallowed #{child.class.name}")
         end
@@ -308,7 +294,6 @@ module Charly
         node.name,
         properties,
         methods,
-        internal_classes,
         parents,
         scope
       ).tap { |obj|
@@ -383,17 +368,55 @@ module Charly
     @[AlwaysInline]
     private def exec_class_call(target : TClass, node : CallExpression, scope : Scope, context : Context)
 
-      scope = Scope.new(target.parent_scope)
+      # Initialize an empty object
       object = TObject.new(target)
-      object.data = scope
+      object_scope = Scope.new(target.parent_scope)
 
-      return TNull.new
+      # The properties the method needs
+      properties = get_class_props(target)
+
+      # Register the properties
+      properties.each do |prop|
+        object_scope.write(prop, TNull.new, Flag::INIT)
+      end
+
+      return object
     end
 
-    # Returns *name* on *target* by checking parent classes
-    private def get_class_property(target : BaseType, node : ASTNode, name : String, scope : Scope, context : Context)
+    @[AlwaysInline]
+    private def get_class_props(target : TClass)
+      properties = [] of String
+      if target.parents.size > 0
+        target.parents.each do |parent|
+          get_class_props(parent).each do |prop|
+            properties << prop
+          end
+        end
+      end
 
-      raise "... L 365"
+      target.properties.each do |prop|
+        properties << prop.name
+      end
+
+      properties
+    end
+
+    @[AlwaysInline]
+    private def get_class_methods(target : TClass)
+      methods = [] of FunctionLiteral
+      if target.parents.size > 0
+        target.parents.each do |parent|
+          get_class_methods(parent).each do |method|
+            methods << method
+          end
+        end
+      end
+
+      target.methods.each do |method|
+        methods << method
+      end
+
+      methods
     end
 
     @[AlwaysInline]

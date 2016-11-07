@@ -76,7 +76,7 @@ module Charly
         error_message = "Unexpected end of file"
       end
 
-      raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, error_message)
+      raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, @filename, error_message)
     end
 
     # :nodoc:
@@ -84,7 +84,7 @@ module Charly
     private def unallowed_token
       error_message = "You are not allowed to use #{@token.value} at this location"
 
-      raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, error_message)
+      raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, @filename, error_message)
     end
 
     # :nodoc:
@@ -353,11 +353,19 @@ module Charly
             advance
           end
 
+          if_token TokenType::Semicolon do
+            advance
+          end
+
           return PropertyDeclaration.new(identifier).at(start_location, identifier.location_end)
         when "func"
-          return parse_func_literal
-        when "class"
-          return parse_class_literal
+          value = parse_func_literal
+
+          if_token TokenType::Semicolon do
+            advance
+          end
+
+          return value
         end
       end
 
@@ -735,6 +743,10 @@ module Charly
         end
 
         parents = parse_identifier_list(TokenType::LeftCurly)
+      end
+
+      if parents.size == 0 && identifier != "Object"
+        parents << IdentifierLiteral.new("Object").at(start_location)
       end
 
       backup_return_allowed = @return_allowed

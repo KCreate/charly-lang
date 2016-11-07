@@ -2,6 +2,7 @@ require "./syntax/location.cr"
 require "./syntax/ast.cr"
 require "./source-highlight.cr"
 require "./interpreter/context.cr"
+require "colorize"
 
 module Charly
 
@@ -28,23 +29,26 @@ module Charly
     property location_start : Location
     property location_end : Location
     property source : String
+    property filename : String
 
-    def initialize(@location_start, @location_end, @source, @message)
+    def initialize(@location_start, @location_end, @source, @filename, @message)
     end
 
-    def self.new(location_start : Location, source : String, message : String)
-      self.new(location_start, location_start, source, message)
+    def self.new(location_start : Location, source : String, filename : String, message : String)
+      self.new(location_start, location_start, source, filename, message)
     end
 
-    def self.new(node : ASTNode, source : String, message : String)
-      self.new(node.location_start, node.location_end, source, message)
+    def self.new(node : ASTNode, source : String, filename : String, message : String)
+      self.new(node.location_start, node.location_end, source, filename, message)
     end
 
     def self.new(node : ASTNode, context : Context, message : String)
-      self.new(node.location_start, node.location_end, context.program.source, message)
+      self.new(node.location_start, node.location_end, context.program.source, context.program.path, message)
     end
 
     private def meta(io)
+      io << @filename.colorize(:red)
+      io << "\n"
       if (source = @source).is_a? String
         loc_start, loc_end = @location_start, @location_end
         if loc_start.is_a?(Location) && loc_end.is_a?(Location)

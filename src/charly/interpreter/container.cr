@@ -57,12 +57,14 @@ module Charly
     end
 
     # :nodoc:
-    def dump_values
+    def dump_values(parents : Bool = true)
       collection = [] of Tuple(String, V, Flag)
 
       # Add all parent values first
-      if (parent = @parent).is_a? Container(V)
-        collection += parent.dump_values
+      if parents
+        if (parent = @parent).is_a? Container(V)
+          collection += parent.dump_values
+        end
       end
 
       # Add the values of this stack
@@ -241,6 +243,8 @@ module Charly
       Table.present(["Name", "Value", "Flags"], data) do |result|
         io << result
       end
+
+      io
     end
   end
 end
