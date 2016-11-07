@@ -44,9 +44,12 @@ module Charly
 
           if color_range.covers? index
             io << "-> ".colorize(:yellow)
-            io << (index + 1).colorize(:yellow).mode(:bold)
+            io << (index + 1).to_s.rjust(4).colorize(:yellow).mode(:bold)
+            io << ".".colorize(:yellow).mode(:bold)
           else
-            io << "   #{index + 1}.".colorize(:yellow).mode(:dim)
+            io << "   "
+            io << (index + 1).to_s.rjust(4).colorize(:yellow).mode(:dim)
+            io << ".".colorize(:yellow).mode(:dim)
           end
           io << ' '
           io << line
