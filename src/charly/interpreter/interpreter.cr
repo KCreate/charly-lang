@@ -234,7 +234,22 @@ module Charly
         scope.write(identifier.name, expression, Flag::None)
         return expression
       when MemberExpression
-        raise RunTimeError.new(node, context, "Member assignments are not implemented yet")
+
+        # Manually resolve the member expression
+        member = identifier.member
+        identifier = identifier.identifier
+
+        # Resolve the identifier
+        identifier = exec_expression(identifier, scope, context)
+
+        # Write to the data field of the value
+        if identifier.data.contains(member.name)
+          identifier.data.write(member.name, expression, Flag::None)
+        else
+          identifier.data.write(member.name, expression, Flag::INIT)
+        end
+
+        return expression
       when IndexExpression
         raise RunTimeError.new(node, context, "Index assignments are not implemented yet")
       end
