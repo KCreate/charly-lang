@@ -291,8 +291,7 @@ module Charly::AST
 
   ast_node PrimitiveClassLiteral,
     name : String,
-    block : Block,
-    parents : IdentifierList
+    block : Block
 
   ast_node PropertyDeclaration,
     identifier : IdentifierLiteral

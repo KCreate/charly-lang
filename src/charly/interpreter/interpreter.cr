@@ -46,13 +46,13 @@ module Charly
 
     # Mapping between types and their class names
     CLASS_MAPPING = {
-      TObject => "Object",
       TClass => "Class",
       TNumeric => "Numeric",
       TString => "String",
       TBoolean => "Boolean",
       TArray => "Array",
-      TFunc => "Function"
+      TFunc => "Function",
+      TNull => "Null"
     }
 
     # Creates a new Interpreter inside *top*
@@ -92,9 +92,11 @@ module Charly
       last_result
     end
 
-    private def exec_expression(node : ASTNode, scope : Scope, context : Context)
+    private def exec_expression(node : ASTNode | BaseType, scope : Scope, context : Context)
 
       case node
+      when .is_a? BaseType
+        return node
       when .is_a?(VariableInitialisation), .is_a?(ConstantInitialisation)
         return exec_initialisation(node, scope, context)
       when .is_a? VariableAssignment
@@ -121,6 +123,8 @@ module Charly
         return exec_function_literal(node, scope, context)
       when .is_a? ClassLiteral
         return exec_class_literal(node, scope, context)
+      when .is_a? PrimitiveClassLiteral
+        return exec_primitive_class_literal(node, scope, context)
       when .is_a? CallExpression
         return exec_call_expression(node, scope, context)
       when .is_a? NANLiteral
@@ -152,6 +156,8 @@ module Charly
           right = exec_get_truthyness(exec_expression(node.right, scope, context), scope, context)
           return TBoolean.new(right)
         end
+      when .is_a? MemberExpression
+        return exec_member_expression(node, scope, context)
       end
 
       # Catch unknown nodes
@@ -304,6 +310,110 @@ module Charly
     end
 
     @[AlwaysInline]
+    private def exec_class_literal(node : ClassLiteral, scope : Scope, context : Context)
+
+      # Check if parent classes exist
+      parents = [] of TClass
+      node.parents.each do |parent|
+
+        # Sanity check
+        unless parent.is_a? IdentifierLiteral
+          raise RunTimeError.new(parent, context, "Node is not an identifier. You've found a bug in the interpreter.")
+        end
+
+        # Check if the variable name is allowed
+        if DISALLOWED_VARS.includes? parent.name
+          raise RunTimeError.new(parent, context, "#{parent.name} is a reserved keyword")
+        end
+
+        # Check if the class is defined
+        unless scope.defined parent.name
+          raise RunTimeError.new(parent, context, "#{parent.name} is not defined")
+        end
+
+        value = scope.get(parent.name)
+
+        unless value.is_a? TClass
+          raise RunTimeError.new(parent, context, "#{parent.name} is not a class")
+        end
+
+        parents << value
+      end
+
+      # Extract properties and methods
+      properties = [] of IdentifierLiteral
+      methods = [] of FunctionLiteral
+      internal_classes = [] of TClass
+
+      class_scope = Scope.new(scope)
+      node.block.each do |child|
+        case child
+        when .is_a? PropertyDeclaration
+          properties << child.identifier
+        when .is_a? FunctionLiteral
+          if child.name.is_a? String
+            methods << child
+          end
+        else
+          raise RunTimeError.new(child, context, "Unallowed #{child.class.name}")
+        end
+      end
+
+      return TClass.new(
+        node.name,
+        properties,
+        methods,
+        parents,
+        scope
+      ).tap { |obj|
+        obj.data = class_scope
+      }
+    end
+
+    @[AlwaysInline]
+    private def exec_primitive_class_literal(node : PrimitiveClassLiteral, scope : Scope, context : Context)
+
+      # Extract methods of the primitive class
+      methods = [] of TFunc
+
+      # Check if a class called Object is defined
+      if scope.defined("Object")
+        entry = scope.get("Object")
+        if entry.is_a? TClass
+          get_class_methods(entry, context).each do |method|
+            methods << method
+          end
+        end
+      end
+
+      # Append the primitive classes own methods
+      node.block.each do |statement|
+        if statement.is_a? FunctionLiteral
+          methods << exec_function_literal(statement, scope, context)
+        end
+      end
+
+      # Setup the primitive class and scope
+      primscope = Scope.new(scope)
+      primclass = TPrimitiveClass.new(node.name, scope)
+      primclass.data = primscope
+
+      # Reverse to use correct precedence
+      methods.reverse!
+
+      # Insert the methods
+      methods.each do |method|
+        if (name = method.name).is_a? String
+          unless primscope.contains(name)
+            primscope.write(name, method, Flag::INIT | Flag::CONSTANT)
+          end
+        end
+      end
+
+      return primclass
+    end
+
+    @[AlwaysInline]
     private def exec_call_expression(node : CallExpression, scope : Scope, context : Context)
 
       # Resolve the identifier
@@ -313,6 +423,8 @@ module Charly
         return exec_function_call(target, node, scope, context)
       elsif target.is_a? TClass
         return exec_class_call(target, node, scope, context)
+      elsif target.is_a? TPrimitiveClass
+        raise RunTimeError.new(node.identifier, context, "Can't instantiate primitive class #{target}")
       else
         raise RunTimeError.new(node.identifier, context, "#{target} is not a function or class")
       end
@@ -386,7 +498,7 @@ module Charly
 
       # The methods are reversed to make sure we obtain methods in the correct precedence
       # Parent methods are loaded first
-      methods = get_class_methods(target).reverse
+      methods = get_class_methods(target, context).reverse
 
       # Register the properties
       properties.each do |prop|
@@ -394,8 +506,7 @@ module Charly
       end
 
       # Run the first constructor we can find
-      constructor_function = nil
-      constructor_method = nil
+      constructor = nil
       methods.each do |method|
 
         # Functions without names are filtered out when the class is set up
@@ -404,19 +515,17 @@ module Charly
         if name.is_a? String
           # Check if such a method was already registered
           unless object_scope.contains(name, Flag::IGNORE_PARENT)
-            function = exec_function_literal(method, object_scope, context)
-            object_scope.write(name, function, Flag::INIT | Flag::CONSTANT)
+            object_scope.write(name, method, Flag::INIT | Flag::CONSTANT)
 
             if name == "constructor"
-              constructor_function = function
-              constructor_method = method
+              constructor = method
             end
           end
         end
       end
 
       # Search for a constructor function and execute
-      if constructor_function.is_a?(TFunc) && constructor_method.is_a?(FunctionLiteral)
+      if constructor.is_a?(TFunc)
 
         # Create a fake call expression containing the arguments from the original expression
         callex = CallExpression.new(
@@ -425,7 +534,7 @@ module Charly
         ).at(node.location_start, node.location_end)
 
         # Execute the constructor function inside the object_scope
-        exec_function_call(constructor_function, callex, object_scope, context)
+        exec_function_call(constructor, callex, object_scope, context)
 
         # Remove the constuctor again
         object_scope.delete("constructor", Flag::IGNORE_PARENT)
@@ -453,21 +562,71 @@ module Charly
     end
 
     @[AlwaysInline]
-    private def get_class_methods(target : TClass)
-      methods = [] of FunctionLiteral
+    private def get_class_methods(target : TClass, context : Context)
+      methods = [] of TFunc
       if target.parents.size > 0
         target.parents.each do |parent|
-          get_class_methods(parent).each do |method|
+          get_class_methods(parent, context).each do |method|
             methods << method
           end
         end
       end
 
       target.methods.each do |method|
-        methods << method
+        methods << exec_function_literal(method, target.parent_scope, context)
       end
 
       methods
+    end
+
+    @[AlwaysInline]
+    private def exec_member_expression(node : MemberExpression, scope : Scope, context : Context)
+
+      # Resolve the left side
+      identifier = exec_expression(node.identifier, scope, context)
+
+      # Check if the left side is a different type than TObject
+      unless identifier.is_a? TObject
+
+
+      end
+
+      # Check if the value contains the key that's asked for
+      if identifier.data.contains node.member.name
+        return identifier.data.get(node.member.name, Flag::IGNORE_PARENT)
+      elsif !identifier.is_a?(TObject)
+
+        # If this is a "primitive" type, we have to check parent classes
+        # This is defined in CLASS_MAPPING
+        classname = CLASS_MAPPING[identifier.class]
+
+        # Check if such a class exists in the scope
+        if scope.defined(classname)
+
+          # Check if this is a class
+          entry = scope.get(classname)
+          if entry.is_a? TClass
+
+            # Check if this class contains the given method
+            method = nil
+            entry.methods.each do |met|
+              if (name = met.name).is_a? String
+                if name == node.member.name
+                  method = exec_function_literal(met, entry.parent_scope, context)
+                  break
+                end
+              end
+            end
+
+            # If we found the method
+            if method.is_a? TFunc
+              return method
+            end
+          end
+        end
+      end
+
+      return TNull.new
     end
 
     @[AlwaysInline]

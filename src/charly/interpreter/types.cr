@@ -17,6 +17,25 @@ module Charly
     end
 
     abstract def value_to_s(io)
+
+    # :nodoc:
+    private def display_data(data : Scope, io)
+      values = data.dump_values(false)
+      if values.size > 0
+        io << ":("
+        i = 0
+        values.each do |key, value, flags|
+          io << "#{key}"
+
+          unless i == values.size - 1
+            io << ", "
+          end
+
+          i += 1
+        end
+        io << ")"
+      end
+    end
   end
 
   # `TNumeric` is a 64 bit floating point number
@@ -145,6 +164,26 @@ module Charly
     end
   end
 
+  class TPrimitiveClass < BaseType
+    property name : String
+    property parent_scope : Scope
+
+    def initialize(@name, @parent_scope)
+      super()
+    end
+
+    # :nodoc:
+    def value_to_s(io)
+      io << "PrimitiveClass:#{@name}"
+      display_data(@data, io)
+    end
+
+    # :nodoc:
+    def self.to_s(io)
+      io << "PrimitiveClass"
+    end
+  end
+
   class TObject < BaseType
     property type : TClass
 
@@ -155,22 +194,7 @@ module Charly
     # :nodoc:
     def value_to_s(io)
       io << "Object:#{@type.name}"
-
-      values = @data.dump_values(false)
-      if values.size > 0
-        io << ":("
-        i = 0
-        values.each do |key, value, flags|
-          io << "#{key}"
-
-          unless i == values.size - 1
-            io << ", "
-          end
-
-          i += 1
-        end
-        io << ")"
-      end
+      display_data(@data, io)
     end
 
     # :nodoc:
