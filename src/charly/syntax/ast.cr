@@ -289,6 +289,11 @@ module Charly::AST
     block : Block,
     parents : IdentifierList
 
+  ast_node PrimitiveClassLiteral,
+    name : String,
+    block : Block,
+    parents : IdentifierList
+
   ast_node PropertyDeclaration,
     identifier : IdentifierLiteral
 

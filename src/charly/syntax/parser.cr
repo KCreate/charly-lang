@@ -308,7 +308,7 @@ module Charly
           end_location = value.location_end
           skip TokenType::Semicolon
           return ThrowStatement.new(value).at(start_location, end_location)
-        when "func", "class"
+        when "func", "class", "primitive"
           node = parse_expression
 
           if node.is_a?(FunctionLiteral)
@@ -321,6 +321,13 @@ module Charly
           end
 
           if node.is_a? ClassLiteral
+            node = VariableInitialisation.new(
+              IdentifierLiteral.new(node.name).at(node.location_start, node.location_end),
+              node
+            ).at(node.location_start, node.location_end)
+          end
+
+          if node.is_a? PrimitiveClassLiteral
             node = VariableInitialisation.new(
               IdentifierLiteral.new(node.name).at(node.location_start, node.location_end),
               node
@@ -623,6 +630,16 @@ module Charly
           node = parse_func_literal
         when "class"
           node = parse_class_literal
+        when "primitive"
+          start_location = @token.location
+          advance
+          class_literal = parse_class_literal
+
+          node = PrimitiveClassLiteral.new(
+            class_literal.name,
+            class_literal.block,
+            IdentifierList.new([IdentifierLiteral.new("Object").at(start_location)] of ASTNode).at(start_location)
+          ).at(start_location, class_literal.location_end)
         else
           unexpected_token
         end
