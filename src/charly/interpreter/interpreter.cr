@@ -14,8 +14,15 @@ module Charly
     property name : String
     property node : ASTNode
     property top : Scope
+    property context : Context
 
-    def initialize(@name, @node, @top)
+    def initialize(@name, @node, @top, @context)
+    end
+
+    def to_s(io)
+      io << "at #{@name} (#{@context.program.path}:"
+      io << @node.location_start.to_s.split(":").last(3).join(":")
+      io << ")"
     end
   end
 
@@ -34,7 +41,7 @@ module Charly
   # The interpreter takes a Program instance and executes the tree recursively.
   class Interpreter
     property top : Scope
-    property trace : Array(Trace)
+    property trace : Array(Trace) # The leftmost value is the main trace entry
 
     # A list of disallowed variable names
     DISALLOWED_VARS = [
@@ -78,9 +85,17 @@ module Charly
       self.new(Scope.new)
     end
 
+    # :nodoc:
+    def render_trace(io)
+      @trace.reverse.each do |entry|
+        io << entry
+        io << '\n'
+      end
+    end
+
     # Executes *program* inside *scope*
     def exec_program(program : Program, scope : Scope = @top)
-      context = Context.new(program)
+      context = Context.new(program, @trace)
       exec_block(program.tree, scope, context)
     end
 
@@ -102,6 +117,15 @@ module Charly
       when .is_a? VariableAssignment
         return exec_assignment(node, scope, context)
       when .is_a? IdentifierLiteral
+
+        case node.name
+        when "trace"
+          io = MemoryIO.new
+          render_trace(io)
+          puts io.to_s
+          io.clear
+          return TNull.new
+        end
 
         # Check if the identifier exists
         unless scope.defined(node.name)
@@ -470,11 +494,13 @@ module Charly
       end
 
       # Execute the functions block inside the function_scope
+      @trace << Trace.new("#{target.name}", node, scope, context)
       begin
         result = exec_block(target.block, function_scope, context)
       rescue e : ReturnException
         result = e.payload
       end
+      @trace.pop
 
       # If the return value is a function
       # we keep the function_scope in tact to form a closure
@@ -534,7 +560,9 @@ module Charly
         ).at(node.location_start, node.location_end)
 
         # Execute the constructor function inside the object_scope
+        @trace << Trace.new("#{target.name}:constructor", node, scope, context)
         exec_function_call(constructor, callex, object_scope, context)
+        @trace.pop
 
         # Remove the constuctor again
         object_scope.delete("constructor", Flag::IGNORE_PARENT)
@@ -581,13 +609,18 @@ module Charly
 
     @[AlwaysInline]
     private def exec_member_expression(node : MemberExpression, scope : Scope, context : Context)
+      return exec_get_member_expression_pairs(node, scope, context)[1]
+    end
+
+    @[AlwaysInline]
+    private def exec_get_member_expression_pairs(node : MemberExpression, scope : Scope, context : Context)
 
       # Resolve the left side
       identifier = exec_expression(node.identifier, scope, context)
 
       # Check if the value contains the key that's asked for
       if identifier.data.contains node.member.name
-        return identifier.data.get(node.member.name, Flag::IGNORE_PARENT)
+        return ({identifier, identifier.data.get(node.member.name, Flag::IGNORE_PARENT)})
       elsif !identifier.is_a?(TObject)
 
         # If this is a "primitive" type, we have to check parent classes
@@ -606,14 +639,14 @@ module Charly
               method = entry.data.get(node.member.name, Flag::IGNORE_PARENT)
 
               if method.is_a? TFunc
-                return method
+                return ({identifier, method})
               end
             end
           end
         end
       end
 
-      return TNull.new
+      return ({ identifier, TNull.new })
     end
 
     @[AlwaysInline]

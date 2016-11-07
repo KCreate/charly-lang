@@ -43,17 +43,24 @@ module Charly
     end
 
     def self.new(node : ASTNode, context : Context, message : String)
+
+      message = "\n#{message.colorize(:red)}"
+      context.trace.each do |entry|
+        message = "#{entry.colorize(:green)}\n#{message}"
+      end
+
       self.new(node.location_start, node.location_end, context.program.source, context.program.path, message)
     end
 
     private def meta(io)
-      io << @filename.colorize(:red)
+      io << @filename.colorize(:yellow)
       io << "\n"
       if (source = @source).is_a? String
         loc_start, loc_end = @location_start, @location_end
         if loc_start.is_a?(Location) && loc_end.is_a?(Location)
           highlighter = SourceHighlight.new(loc_start, loc_end)
           highlighter.present(source, io)
+          io << "at #{loc_start}\n".colorize(:green)
         end
       end
     end
