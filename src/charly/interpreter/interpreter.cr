@@ -585,12 +585,6 @@ module Charly
       # Resolve the left side
       identifier = exec_expression(node.identifier, scope, context)
 
-      # Check if the left side is a different type than TObject
-      unless identifier.is_a? TObject
-
-
-      end
-
       # Check if the value contains the key that's asked for
       if identifier.data.contains node.member.name
         return identifier.data.get(node.member.name, Flag::IGNORE_PARENT)
@@ -605,22 +599,15 @@ module Charly
 
           # Check if this is a class
           entry = scope.get(classname)
-          if entry.is_a? TClass
+          if entry.is_a? TPrimitiveClass
 
             # Check if this class contains the given method
-            method = nil
-            entry.methods.each do |met|
-              if (name = met.name).is_a? String
-                if name == node.member.name
-                  method = exec_function_literal(met, entry.parent_scope, context)
-                  break
-                end
-              end
-            end
+            if entry.data.contains(node.member.name)
+              method = entry.data.get(node.member.name, Flag::IGNORE_PARENT)
 
-            # If we found the method
-            if method.is_a? TFunc
-              return method
+              if method.is_a? TFunc
+                return method
+              end
             end
           end
         end
