@@ -206,7 +206,7 @@ module Charly
 
         # Check if the identifier is a constant
         if scope.get_reference(identifier.name).is_constant
-          raise RunTimeError.new(node, context, "#{identifier.name} is a constant")
+          raise RunTimeError.new(identifier, context, "#{identifier.name} is a constant")
         end
 
         # Write to the scope
@@ -284,7 +284,9 @@ module Charly
         when .is_a? PropertyDeclaration
           properties << child.identifier
         when .is_a? FunctionLiteral
-          methods << child
+          if child.name.is_a? String
+            methods << child
+          end
         else
           raise RunTimeError.new(child, context, "Unallowed #{child.class.name}")
         end
@@ -324,10 +326,16 @@ module Charly
 
       # Check if enough arguments were supplied
       if node.argumentlist.size < target.argumentlist.size
+        if target.argumentlist.size == 1
+          error_message = "Method expected 1 argument, got #{node.argumentlist.size}"
+        else
+          error_message = "Method expected #{target.argumentlist.size} arguments, got #{node.argumentlist.size}"
+        end
+
         raise RunTimeError.new(
           node.identifier,
           context,
-          "Function expected #{target.argumentlist.size} arguments, got #{node.argumentlist.size}"
+          error_message
         )
       end
 
@@ -371,13 +379,56 @@ module Charly
       # Initialize an empty object
       object = TObject.new(target)
       object_scope = Scope.new(target.parent_scope)
+      object.data = object_scope
 
       # The properties the method needs
       properties = get_class_props(target)
 
+      # The methods are reversed to make sure we obtain methods in the correct precedence
+      # Parent methods are loaded first
+      methods = get_class_methods(target).reverse
+
       # Register the properties
       properties.each do |prop|
         object_scope.write(prop, TNull.new, Flag::INIT)
+      end
+
+      # Run the first constructor we can find
+      constructor_function = nil
+      constructor_method = nil
+      methods.each do |method|
+
+        # Functions without names are filtered out when the class is set up
+        # We still have to check because it could technically be nil
+        name = method.name
+        if name.is_a? String
+          # Check if such a method was already registered
+          unless object_scope.contains(name, Flag::IGNORE_PARENT)
+            function = exec_function_literal(method, object_scope, context)
+            object_scope.write(name, function, Flag::INIT | Flag::CONSTANT)
+
+            if name == "constructor"
+              constructor_function = function
+              constructor_method = method
+            end
+          end
+        end
+      end
+
+      # Search for a constructor function and execute
+      if constructor_function.is_a?(TFunc) && constructor_method.is_a?(FunctionLiteral)
+
+        # Create a fake call expression containing the arguments from the original expression
+        callex = CallExpression.new(
+          IdentifierLiteral.new("constructor").at(node.identifier.location_start),
+          node.argumentlist
+        ).at(node.location_start, node.location_end)
+
+        # Execute the constructor function inside the object_scope
+        exec_function_call(constructor_function, callex, object_scope, context)
+
+        # Remove the constuctor again
+        object_scope.delete("constructor", Flag::IGNORE_PARENT)
       end
 
       return object
