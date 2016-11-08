@@ -940,17 +940,17 @@ module Charly
       # Resolve the left side
       identifier = exec_expression(node.identifier, scope, context)
 
+      # Resolve the argument
+      argument = exec_expression(node.argument, scope, context)
+
+      # Check that the first argument is a numeric
+      unless argument.is_a? TNumeric
+        raise RunTimeError.new(node.argument, context, "Invalid type. Expected number")
+      end
+
       # Check if the left side is an array or a string
       case identifier
       when .is_a? TArray
-
-        # Resolve the argument
-        argument = exec_expression(node.argument, scope, context)
-
-        # Check that the first argument is a numeric
-        unless argument.is_a? TNumeric
-          raise RunTimeError.new(node.argument, context, "Invalid type. Expected number")
-        end
 
         # Check for out-of-bounds errors
         argument = argument.value.to_i64
@@ -960,14 +960,6 @@ module Charly
 
         return ({ identifier, identifier.value[argument] })
       when .is_a? TString
-
-        # Resolve the argument
-        argument = exec_expression(node.argument, scope, context)
-
-        # Check that the first argument is a numeric
-        unless argument.is_a? TNumeric
-          raise RunTimeError.new(node.argument, context, "Invalid type. Expected number")
-        end
 
         # Check for out-of-bounds errors
         argument = argument.value.to_i64
