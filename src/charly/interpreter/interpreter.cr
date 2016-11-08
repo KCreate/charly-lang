@@ -62,6 +62,16 @@ module Charly
       TNull => "Null"
     }
 
+    # Mapping between operators and function names you use to override them
+    OPERATOR_MAPPING = {
+      TokenType::Plus => "__plus",
+      TokenType::Minus => "__minus",
+      TokenType::Mult => "__mult",
+      TokenType::Divd => "__divd",
+      TokenType::Mod => "__mod",
+      TokenType::Pow => "__pow"
+    }
+
     # Creates a new Interpreter inside *top*
     # Setting *load_prelude* to false will prevent loading the prelude file
     def initialize(@top : Scope, load_prelude = true)
@@ -116,6 +126,8 @@ module Charly
         return exec_initialisation(node, scope, context)
       when .is_a? VariableAssignment
         return exec_assignment(node, scope, context)
+      when .is_a? BinaryExpression
+        return exec_binary_expression(node, scope, context)
       when .is_a? IdentifierLiteral
 
         # Check if the identifier exists
@@ -255,6 +267,105 @@ module Charly
       end
 
       return TNull.new
+    end
+
+    @[AlwaysInline]
+    private def exec_binary_expression(node : BinaryExpression, scope, context)
+
+      # Resolve the left side
+      operator = node.operator
+      left = exec_expression(node.left, scope, context)
+
+      override_method_name = OPERATOR_MAPPING[operator]
+
+      # Check if the data of the value contains this method
+      # If it doesn't check if the primitive class has an entry for it
+      method = nil
+      if left.data.contains override_method_name
+        method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
+      else
+        method = get_primitive_method(left, override_method_name, scope, context)
+      end
+
+      if method.is_a? TFunc
+
+        # Create a fake call expression
+        callex = CallExpression.new(
+          MemberExpression.new(
+            node.left,
+            IdentifierLiteral.new("#{operator}").at(node.left)
+          ).at(node.left),
+          ExpressionList.new([
+            node.right
+          ] of ASTNode).at(node.right)
+        ).at(node)
+
+        return exec_function_call(method, callex, left, scope, context)
+      end
+
+      # No primitive method was found
+      right = exec_expression(node.right, scope, context)
+
+      if left.is_a?(TNumeric) && right.is_a?(TNumeric)
+        case operator
+        when TokenType::Plus
+          return TNumeric.new(left.value + right.value)
+        when TokenType::Minus
+          return TNumeric.new(left.value - right.value)
+        when TokenType::Mult
+          if left.value == 0 || right.value == 0
+            return TNumeric.new(0)
+          end
+          return TNumeric.new(left.value * right.value)
+        when TokenType::Divd
+          if left.value == 0 || right.value == 0
+            return TNull.new
+          end
+          return TNumeric.new(left.value / right.value)
+        when TokenType::Mod
+          if right.value == 0
+            return TNull.new
+          end
+          return TNumeric.new(left.value.to_i64 % right.value.to_i64)
+        when TokenType::Pow
+          return TNumeric.new(left.value ** right.value)
+        end
+      end
+
+      if left.is_a?(TString) && right.is_a?(TString)
+        case operator
+        when TokenType::Plus
+          return TString.new("#{left}#{right}")
+        end
+      end
+
+      if left.is_a?(TString) && !right.is_a?(TString)
+        case operator
+        when TokenType::Plus
+          return TString.new("#{left}#{right}")
+        when TokenType::Mult
+
+          # Check if the right side is a TNumeric
+          if right.is_a?(TNumeric)
+            return TString.new(left.value * right.value.to_i64)
+          end
+        end
+      end
+
+      if !left.is_a?(TString) && right.is_a?(TString)
+        case operator
+        when TokenType::Plus
+          return TString.new("#{left}" + "#{right}")
+        when TokenType::Mult
+
+          # Check if the left side is a TNumeric
+          if left.is_a?(TNumeric)
+            return TString.new(right.value * left.value.to_i64)
+          end
+        end
+      end
+
+      return TNumeric.new(Float64::NAN)
     end
 
     @[AlwaysInline]
@@ -572,31 +683,40 @@ module Charly
       if identifier.data.contains node.member.name
         return ({identifier, identifier.data.get(node.member.name, Flag::IGNORE_PARENT)})
       elsif !identifier.is_a?(TObject)
+        method = get_primitive_method(identifier, node.member.name, scope, context)
 
-        # If this is a "primitive" type, we have to check parent classes
-        # This is defined in CLASS_MAPPING
-        classname = CLASS_MAPPING[identifier.class]
+        if method.is_a? TFunc
+          return ({ identifier, method })
+        end
+      end
 
-        # Check if such a class exists in the scope
-        if scope.defined(classname)
+      return ({ identifier, TNull.new })
+    end
 
-          # Check if this is a class
-          entry = scope.get(classname)
-          if entry.is_a? TPrimitiveClass
+    private def get_primitive_method(type : BaseType, methodname : String, scope, context)
 
-            # Check if this class contains the given method
-            if entry.data.contains(node.member.name)
-              method = entry.data.get(node.member.name, Flag::IGNORE_PARENT)
+      # This is defined in CLASS_MAPPING
+      classname = CLASS_MAPPING[type.class]
 
-              if method.is_a? TFunc
-                return ({identifier, method})
-              end
+      # Check if such a class exists in the scope
+      if scope.defined(classname)
+
+        # Check if this is a class
+        entry = scope.get(classname)
+        if entry.is_a? TPrimitiveClass
+
+          # Check if this class contains the given method
+          if entry.data.contains(methodname)
+            method = entry.data.get(methodname, Flag::IGNORE_PARENT)
+
+            if method.is_a? TFunc
+              return method
             end
           end
         end
       end
 
-      return ({ identifier, TNull.new })
+      return TNull.new
     end
 
     @[AlwaysInline]

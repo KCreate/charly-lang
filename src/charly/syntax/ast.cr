@@ -26,6 +26,11 @@ module Charly::AST
       self
     end
 
+    # Set the location_start and location_end values to these of *node*
+    def at(node : ASTNode)
+      at(node.location_start, node.location_end)
+    end
+
     def size
       @children.size
     end
