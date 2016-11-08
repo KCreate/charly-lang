@@ -199,6 +199,8 @@ module Charly
         end
       when .is_a? MemberExpression
         return exec_member_expression(node, scope, context)
+      when .is_a? IndexExpression
+        return exec_index_expression(node, scope, context)
       end
 
       # Catch unknown nodes
@@ -746,7 +748,7 @@ module Charly
       elsif target.is_a? TPrimitiveClass
         raise RunTimeError.new(node.identifier, context, "Can't instantiate primitive class #{target}")
       else
-        raise RunTimeError.new(node.identifier, context, "#{target} is not a function or class")
+        raise RunTimeError.new(node.identifier, context, "Not a function or class")
       end
     end
 
@@ -927,6 +929,59 @@ module Charly
       return ({ identifier, TNull.new })
     end
 
+    @[AlwaysInline]
+    private def exec_index_expression(node : IndexExpression, scope, context)
+      return exec_get_index_expression_pairs(node, scope, context)[1]
+    end
+
+    @[AlwaysInline]
+    private def exec_get_index_expression_pairs(node : IndexExpression, scope, context)
+
+      # Resolve the left side
+      identifier = exec_expression(node.identifier, scope, context)
+
+      # Check if the left side is an array or a string
+      case identifier
+      when .is_a? TArray
+
+        # Resolve the argument
+        argument = exec_expression(node.argument, scope, context)
+
+        # Check that the first argument is a numeric
+        unless argument.is_a? TNumeric
+          raise RunTimeError.new(node.argument, context, "Invalid type. Expected number")
+        end
+
+        # Check for out-of-bounds errors
+        argument = argument.value.to_i64
+        if argument > identifier.value.size - 1 || argument < 0
+          return ({ identifier, TNull.new })
+        end
+
+        return ({ identifier, identifier.value[argument] })
+      when .is_a? TString
+
+        # Resolve the argument
+        argument = exec_expression(node.argument, scope, context)
+
+        # Check that the first argument is a numeric
+        unless argument.is_a? TNumeric
+          raise RunTimeError.new(node.argument, context, "Invalid type. Expected number")
+        end
+
+        # Check for out-of-bounds errors
+        argument = argument.value.to_i64
+        if argument > identifier.value.size - 1 || argument < 0
+          return ({ identifier, TNull.new })
+        end
+
+        return ({ identifier, TString.new(identifier.value[argument].to_s) })
+      else
+        raise RunTimeError.new(node, context, "Expected left side to be an array or string. Got: #{identifier.class}")
+      end
+    end
+
+    @[AlwaysInline]
     private def get_primitive_method(type : BaseType, methodname : String, scope, context)
 
       # This is defined in CLASS_MAPPING

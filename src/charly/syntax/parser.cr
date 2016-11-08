@@ -618,11 +618,11 @@ module Charly
         when TokenType::LeftBracket
           advance
 
-          args = parse_expression_list(TokenType::RightBracket)
+          arg = parse_expression
 
           end_location = @token.location
           expect TokenType::RightBracket
-          identifier = IndexExpression.new(identifier, args).at(identifier.location_start, end_location)
+          identifier = IndexExpression.new(identifier, arg).at(identifier.location_start, end_location)
         when TokenType::Point
           advance
 

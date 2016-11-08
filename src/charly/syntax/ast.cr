@@ -204,7 +204,7 @@ module Charly::AST
 
   ast_node IndexExpression,
     identifier : ASTNode,
-    argumentlist : ExpressionList
+    argument : ASTNode
 
   ast_node ExpressionList
   ast_node IdentifierList
