@@ -64,12 +64,22 @@ module Charly
 
     # Mapping between operators and function names you use to override them
     OPERATOR_MAPPING = {
+
+      # Arithmetic
       TokenType::Plus => "__plus",
       TokenType::Minus => "__minus",
       TokenType::Mult => "__mult",
       TokenType::Divd => "__divd",
       TokenType::Mod => "__mod",
-      TokenType::Pow => "__pow"
+      TokenType::Pow => "__pow",
+
+      # Comparison
+      TokenType::Less => "__less",
+      TokenType::Greater => "__greater",
+      TokenType::LessEqual => "__lessequal",
+      TokenType::GreaterEqual => "__greaterequal",
+      TokenType::Equal => "__equal",
+      TokenType::Not => "__not"
     }
 
     # Creates a new Interpreter inside *top*
@@ -126,8 +136,12 @@ module Charly
         return exec_initialisation(node, scope, context)
       when .is_a? VariableAssignment
         return exec_assignment(node, scope, context)
+      when .is_a? UnaryExpression
+        return exec_unary_expression(node, scope, context)
       when .is_a? BinaryExpression
         return exec_binary_expression(node, scope, context)
+      when .is_a? ComparisonExpression
+        return exec_comparison_expression(node, scope, context)
       when .is_a? IdentifierLiteral
 
         # Check if the identifier exists
@@ -270,6 +284,50 @@ module Charly
     end
 
     @[AlwaysInline]
+    private def exec_unary_expression(node : UnaryExpression, scope, context)
+
+      # Resolve the right side
+      operator = node.operator
+      right = exec_expression(node.right, scope, context)
+
+      override_method_name = OPERATOR_MAPPING[operator]
+
+      # Check if the data of the value contains this method
+      # If it doesn't check if the primitive class has an entry for it
+      method = nil
+      if right.data.contains override_method_name
+        method = right.data.get(override_method_name, Flag::IGNORE_PARENT)
+      else
+        method = get_primitive_method(right, override_method_name, scope, context)
+      end
+
+      if method.is_a? TFunc
+
+        # Create a fake call expression
+        callex = CallExpression.new(
+          MemberExpression.new(
+            node.right,
+            IdentifierLiteral.new("#{operator}").at(node.right)
+          ).at(node.right),
+          ExpressionList.new([] of ASTNode).at(node.right)
+        ).at(node)
+
+        return exec_function_call(method, callex, right, scope, context)
+      end
+
+      case node.operator
+      when TokenType::Minus
+        if right.is_a? TNumeric
+          return TNumeric.new(-right.value)
+        end
+      when TokenType::Not
+        return TBoolean.new(!exec_get_truthyness(right, scope, context))
+      end
+
+      return TNull.new
+    end
+
+    @[AlwaysInline]
     private def exec_binary_expression(node : BinaryExpression, scope, context)
 
       # Resolve the left side
@@ -366,6 +424,182 @@ module Charly
       end
 
       return TNumeric.new(Float64::NAN)
+    end
+
+    @[AlwaysInline]
+    private def exec_comparison_expression(node : ComparisonExpression, scope, context)
+
+      # Resolve the left side
+      operator = node.operator
+      left = exec_expression(node.left, scope, context)
+
+      override_method_name = OPERATOR_MAPPING[operator]
+
+      # Check if the data of the value contains this method
+      # If it doesn't check if the primitive class has an entry for it
+      method = nil
+      if left.data.contains override_method_name
+        method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
+      else
+        method = get_primitive_method(left, override_method_name, scope, context)
+      end
+
+      if method.is_a? TFunc
+
+        # Create a fake call expression
+        callex = CallExpression.new(
+          MemberExpression.new(
+            node.left,
+            IdentifierLiteral.new("#{operator}").at(node.left)
+          ).at(node.left),
+          ExpressionList.new([
+            node.right
+          ] of ASTNode).at(node.right)
+        ).at(node)
+
+        return exec_function_call(method, callex, left, scope, context)
+      end
+
+      # No primitive method was found
+      right = exec_expression(node.right, scope, context)
+
+      # When comparing TNumeric's
+      if left.is_a?(TNumeric) && right.is_a?(TNumeric)
+
+        # Different types of operators
+        case operator
+        when TokenType::Greater
+          return TBoolean.new(left.value > right.value)
+        when TokenType::Less
+          return TBoolean.new(left.value < right.value)
+        when TokenType::GreaterEqual
+          return TBoolean.new(left.value >= right.value)
+        when TokenType::LessEqual
+          return TBoolean.new(left.value <= right.value)
+        when TokenType::Equal
+          return TBoolean.new(left.value == right.value)
+        when TokenType::Not
+          return TBoolean.new(left.value != right.value)
+        end
+      end
+
+      # When comparing TBools
+      if left.is_a?(TBoolean) && right.is_a?(TBoolean)
+        case operator
+        when TokenType::Equal
+          return TBoolean.new(left.value == right.value)
+        when TokenType::Not
+          return TBoolean.new(left.value != right.value)
+        end
+      end
+
+      # When comparing strings
+      if left.is_a?(TString) && right.is_a?(TString)
+        case operator
+        when TokenType::Greater
+          return TBoolean.new(left.value.size > right.value.size)
+        when TokenType::Less
+          return TBoolean.new(left.value.size < right.value.size)
+        when TokenType::GreaterEqual
+          return TBoolean.new(left.value.size >= right.value.size)
+        when TokenType::LessEqual
+          return TBoolean.new(left.value.size <= right.value.size)
+        when TokenType::Equal
+          return TBoolean.new(left.value == right.value)
+        when TokenType::Not
+          return TBoolean.new(left.value != right.value)
+        end
+      end
+
+      # When comparing TFunc
+      if left.is_a?(TFunc) && right.is_a?(TFunc)
+        case operator
+        when TokenType::Equal
+          return TBoolean.new(left == right)
+        when TokenType::Not
+          return TBoolean.new(left != right)
+        end
+      end
+
+      # When comparing TClass
+      if left.is_a?(TClass) && right.is_a?(TClass)
+        case operator
+        when TokenType::Equal
+          return TBoolean.new(left == right)
+        when TokenType::Not
+          return TBoolean.new(left != right)
+        end
+      end
+
+      # When comparing TObject
+      if left.is_a?(TObject) && right.is_a?(TObject)
+        case operator
+        when TokenType::Equal
+          return TBoolean.new(left == right)
+        when TokenType::Not
+          return TBoolean.new(left != right)
+        end
+      end
+
+      if left.is_a? TNull
+
+        case operator
+        when TokenType::Equal
+
+          if right.is_a? TBoolean
+            return TBoolean.new(!right.value)
+          end
+
+          return TBoolean.new(right.is_a? TNull)
+        when TokenType::Not
+
+          if right.is_a? TBoolean
+            return TBoolean.new(right.value)
+          end
+
+          return TBoolean.new(!right.is_a?(TNull))
+        end
+      end
+
+      if right.is_a? TNull
+        case operator
+        when TokenType::Equal
+
+          if left.is_a? TBoolean
+            return TBoolean.new(left.value)
+          end
+
+          return TBoolean.new(left.is_a? TNull)
+        when TokenType::Not
+
+          if left.is_a? TBoolean
+            return TBoolean.new(!left.value)
+          end
+
+          return TBoolean.new(!left.is_a?(TNull))
+        end
+      end
+
+      # If the left side is bool
+      if left.is_a?(TBoolean) && !right.is_a?(TBoolean)
+        case operator
+        when TokenType::Equal
+          return TBoolean.new(left.value == exec_get_truthyness(right, scope, context))
+        when TokenType::Not
+          return TBoolean.new(left.value != exec_get_truthyness(right, scope, context))
+        end
+      end
+
+      if !left.is_a?(TBoolean) && right.is_a?(TBoolean)
+        case operator
+        when TokenType::Equal
+          return TBoolean.new(right.value == exec_get_truthyness(left, scope, context))
+        when TokenType::Not
+          return TBoolean.new(right.value != exec_get_truthyness(left, scope, context))
+        end
+      end
+
+      return TBoolean.new(false)
     end
 
     @[AlwaysInline]
