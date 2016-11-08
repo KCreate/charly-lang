@@ -279,7 +279,35 @@ module Charly
 
         return expression
       when IndexExpression
-        raise RunTimeError.new(node, context, "Index assignments are not implemented yet")
+
+        # Manually resolve the index expression
+        argument = identifier.argument
+        identifier = identifier.identifier
+
+        # Resolve the identifier
+        target = exec_expression(identifier, scope, context)
+
+        # Resolve the argument
+        argument = exec_expression(argument, scope, context)
+
+        # Typecheck left side
+        unless target.is_a? TArray
+          raise RunTimeError.new(identifier, context, "Expected array, got #{target.class}")
+        end
+
+        # Typecheck the argument
+        unless argument.is_a? TNumeric
+          raise RunTimeError.new(identifier, context, "Expected number, got #{target.class}")
+        end
+
+        # Out of bounds check
+        if argument.value < 0 || argument.value > target.value.size - 1
+          raise RunTimeError.new(identifier, context, "Index out of bounds. Size is #{target.value.size}, index is #{argument.value}")
+        end
+
+        # Write to the index
+        target.value[argument.value.to_i64] = expression
+        return expression
       end
 
       return TNull.new
