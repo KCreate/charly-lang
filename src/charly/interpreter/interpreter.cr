@@ -687,7 +687,6 @@ module Charly
       # Extract properties and methods
       properties = [] of IdentifierLiteral
       methods = [] of FunctionLiteral
-      internal_classes = [] of TClass
 
       class_scope = Scope.new(scope)
       node.block.each do |child|
@@ -949,9 +948,11 @@ module Charly
       elsif !identifier.is_a?(TObject)
         method = get_primitive_method(identifier, node.member.name, scope, context)
 
-        if method.is_a? TFunc
+        if method.is_a? BaseType
           return ({ identifier, method })
         end
+
+        method = get_primitive_method(TObject, node.member.name, scope, context)
       end
 
       return ({ identifier, TNull.new })
@@ -1003,24 +1004,30 @@ module Charly
 
     @[AlwaysInline]
     private def get_primitive_method(type : BaseType, methodname : String, scope, context)
+      get_primitive_method(type.class, methodname, scope, context)
+    end
+
+    @[AlwaysInline]
+    private def get_primitive_method(type, methodname : String, scope, context)
 
       # This is defined in CLASS_MAPPING
-      classname = CLASS_MAPPING[type.class]
+      classname = CLASS_MAPPING[type]
 
       # Check if such a class exists in the scope
       if scope.defined(classname)
-
-        # Check if this is a class
         entry = scope.get(classname)
-        if entry.is_a? TPrimitiveClass
+      elsif scope.defined("Object")
+        entry = scope.get("Object")
+      end
 
-          # Check if this class contains the given method
-          if entry.data.contains(methodname)
-            method = entry.data.get(methodname, Flag::IGNORE_PARENT)
+      if entry.is_a? TPrimitiveClass
 
-            if method.is_a? TFunc
-              return method
-            end
+        # Check if this class contains the given method
+        if entry.data.contains(methodname)
+          method = entry.data.get(methodname, Flag::IGNORE_PARENT)
+
+          if method.is_a? TFunc
+            return method
           end
         end
       end

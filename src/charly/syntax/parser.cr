@@ -817,10 +817,6 @@ module Charly
         parents = parse_identifier_list(TokenType::LeftCurly)
       end
 
-      if parents.size == 0 && identifier != "Object"
-        parents << IdentifierLiteral.new("Object").at(start_location)
-      end
-
       backup_return_allowed = @return_allowed
       backup_break_allowed = @break_allowed
       @return_allowed = false

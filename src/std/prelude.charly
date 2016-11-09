@@ -1,3 +1,6 @@
-class Object {
-
+primitive class Object {
+  func tap(callback) {
+    callback(self);
+    self
+  }
 }
