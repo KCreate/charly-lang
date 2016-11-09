@@ -1,3 +1,5 @@
+class __container_primitive {}
+
 primitive class Object {
   func tap(callback) {
     callback(self);

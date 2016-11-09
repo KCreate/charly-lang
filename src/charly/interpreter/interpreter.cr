@@ -166,6 +166,8 @@ module Charly
         return exec_class_literal(node, scope, context)
       when .is_a? PrimitiveClassLiteral
         return exec_primitive_class_literal(node, scope, context)
+      when .is_a? ContainerLiteral
+        return exec_container_literal(node, scope, context)
       when .is_a? CallExpression
         return exec_call_expression(node, scope, context)
       when .is_a? NANLiteral
@@ -942,6 +944,11 @@ module Charly
       # Resolve the left side
       identifier = exec_expression(node.identifier, scope, context)
 
+      # Check if the member name is allowed
+      if DISALLOWED_VARS.includes? node.member.name
+        raise RunTimeError.new(node.member, context, "#{node.member.name} is a reserved keyword")
+      end
+
       # Check if the value contains the key that's asked for
       if identifier.data.contains node.member.name
         return ({identifier, identifier.data.get(node.member.name, Flag::IGNORE_PARENT)})
@@ -1087,6 +1094,36 @@ module Charly
       end
 
       return last_result
+    end
+
+    @[AlwaysInline]
+    private def exec_container_literal(node : ContainerLiteral, scope, context)
+
+      # Check if the __container_primitive exists
+      unless scope.defined("__container_primitive")
+        raise RunTimeError.new(node, context, "Missing class: __container_primitive")
+      end
+
+      # Get the parent class
+      parent = scope.get("__container_primitive")
+      unless parent.is_a? TClass
+        raise RunTimeError.new(node, context, "Expected '__container_primitive' to be a class")
+      end
+
+      # Create the object
+      object = TObject.new(parent)
+      object_data = Scope.new(scope)
+      object.data = object_data
+
+      # Insert the self keyword
+      object_data.write("self", object, Flag::INIT | Flag::CONSTANT)
+
+      # Run the block inside the scope
+      exec_block(node.block, object_data, context)
+
+      # Remove the self keyword again
+      object_data.delete("self")
+      return object
     end
 
     @[AlwaysInline]
