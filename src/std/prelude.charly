@@ -12,3 +12,15 @@ primitive class Numeric {
     self + 1
   }
 }
+
+class Exception {
+  property message
+
+  func constructor(message) {
+    @message = message
+  }
+
+  func to_s() {
+    "test"
+  }
+}

@@ -38,6 +38,21 @@ module Charly
   private class BreakException < Exception
   end
 
+  # An exception as thrown by the user
+  private class UserException < Exception
+    property payload : BaseType
+    property trace : Array(Trace)
+    property origin : ASTNode
+    property context : Context
+
+    def initialize(@payload, @trace, @origin, @context)
+    end
+
+    def to_s(io)
+      io << RunTimeError.new(@origin, @context, "Uncaught: #{@payload}")
+    end
+  end
+
   # The interpreter takes a Program instance and executes the tree recursively.
   class Interpreter
     property top : Scope
@@ -203,6 +218,10 @@ module Charly
         return exec_member_expression(node, scope, context)
       when .is_a? IndexExpression
         return exec_index_expression(node, scope, context)
+      when .is_a? TryCatchStatement
+        return exec_try_catch_statement(node, scope, context)
+      when .is_a? ThrowStatement
+        return exec_throw_statement(node, scope, context)
       end
 
       # Catch unknown nodes
@@ -432,6 +451,27 @@ module Charly
       if left.is_a?(TString) && !right.is_a?(TString)
         case operator
         when TokenType::Plus
+
+          # Check if the right expression has a to_s method
+          if right.data.contains("to_s")
+            entry = right.data.get("to_s")
+
+            if entry.is_a? TFunc
+
+              # Create a fake call expression
+              callex = CallExpression.new(
+                MemberExpression.new(
+                  node.right,
+                  IdentifierLiteral.new("#{to_s}").at(node.right)
+                ).at(node.right),
+                ExpressionList.new([] of ASTNode).at(node.right)
+              ).at(node.right)
+
+              right_string = exec_function_call(entry, callex, right, scope, context)
+              return TString.new("#{left}#{right_string}")
+            end
+          end
+
           return TString.new("#{left}#{right}")
         when TokenType::Mult
 
@@ -445,7 +485,28 @@ module Charly
       if !left.is_a?(TString) && right.is_a?(TString)
         case operator
         when TokenType::Plus
-          return TString.new("#{left}" + "#{right}")
+
+          # Check if the right expression has a to_s method
+          if right.data.contains("to_s")
+            entry = right.data.get("to_s")
+
+            if entry.is_a? TFunc
+
+              # Create a fake call expression
+              callex = CallExpression.new(
+                MemberExpression.new(
+                  node.right,
+                  IdentifierLiteral.new("#{to_s}").at(node.right)
+                ).at(node.right),
+                ExpressionList.new([] of ASTNode).at(node.right)
+              ).at(node.right)
+
+              right_string = exec_function_call(entry, callex, right, scope, context)
+              return TString.new("#{left}#{right_string}")
+            end
+          end
+
+          return TString.new("#{left}#{right}")
         when TokenType::Mult
 
           # Check if the left side is a TNumeric
@@ -717,6 +778,9 @@ module Charly
 
     @[AlwaysInline]
     private def exec_primitive_class_literal(node : PrimitiveClassLiteral, scope, context)
+
+      # The scope in which we run
+      scope = Scope.new(scope)
 
       # Extract methods of the primitive class
       methods = [] of TFunc
@@ -1136,6 +1200,24 @@ module Charly
       else
         return true
       end
+    end
+
+    @[AlwaysInline]
+    private def exec_try_catch_statement(node : TryCatchStatement, scope, context)
+      scope = Scope.new(scope)
+
+      begin
+        return exec_block(node.try_block, scope, context)
+      rescue e : UserException
+        scope.write(node.exception_name.name, e.payload, Flag::INIT)
+        return exec_block(node.catch_block, scope, context)
+      end
+    end
+
+    @[AlwaysInline]
+    private def exec_throw_statement(node : ThrowStatement, scope, context)
+      expression = exec_expression(node.expression, scope, context)
+      raise UserException.new(expression, @trace.dup, node, context)
     end
   end
 end
