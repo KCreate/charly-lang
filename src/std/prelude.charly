@@ -4,3 +4,9 @@ primitive class Object {
     self
   }
 }
+
+primitive class Numeric {
+  func increment() {
+    self + 1
+  }
+}

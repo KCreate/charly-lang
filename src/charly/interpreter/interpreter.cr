@@ -1030,6 +1030,19 @@ module Charly
             return method
           end
         end
+
+        if scope.defined("Object")
+          entry = scope.get("Object")
+
+          # Check if this class contains the given method
+          if entry.data.contains(methodname)
+            method = entry.data.get(methodname, Flag::IGNORE_PARENT)
+
+            if method.is_a? TFunc
+              return method
+            end
+          end
+        end
       end
 
       return TNull.new
