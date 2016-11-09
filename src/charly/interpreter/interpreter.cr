@@ -889,6 +889,9 @@ module Charly
         function_scope.write("self", identifier, Flag::INIT | Flag::CONSTANT)
       end
 
+      # Insert the arguments
+      function_scope.write("arguments", TArray.new(arguments), Flag::INIT)
+
       # Execute the functions block inside the function_scope
       @trace << Trace.new("#{target.name}", node, scope, context)
       begin
