@@ -142,6 +142,9 @@ module Charly
     end
   end
 
+  # TODO: Allow return type to be BaseType instead of only TString
+  # This is currently a limitation of the language
+  # See: https://github.com/crystal-lang/crystal/issues/3532
   alias InternalFuncType = Proc(CallExpression, Context, Int32, Array(BaseType), TString)
 
   class TInternalFunc < BaseType

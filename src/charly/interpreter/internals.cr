@@ -7,7 +7,7 @@ module Charly::Internals
 
   # :nodoc:
   macro charly_api(name, *types)
-    private def {{name.id}}(call, context, argc : Int32, arguments : Array(BaseType))
+    private def __{{name.id}}(call, context, argc : Int32, arguments : Array(BaseType))
       name = {{name}}
       types = [{{
         *types.map do |field|
@@ -28,16 +28,18 @@ module Charly::Internals
         unless arg{{index}}.is_a?({{type.type}})
           raise RunTimeError.new(call.argumentlist[{{index}}], context, "#{{{name}}} expected argument #{{{index + 1}}} to be of type #{{{type.type}}}, got #{arguments[{{index}}].class}")
         end
+
+        {{type.var}} = arg{{index}}
       {% end %}
 
       {{yield}}
     end
 
-    METHODS[{{name}}] = ->{{name.id}}(CallExpression, Context, Int32, Array(BaseType))
+    METHODS[{{name}}] = ->__{{name.id}}(CallExpression, Context, Int32, Array(BaseType))
   end
 
-  charly_api "test", name : TString, age : TNumeric do
-    puts "this is executed"
-    return TString.new("lol")
+  charly_api "sleep", time : TNumeric do
+    sleep time.value
+    return TString.new("Slept for #{time} seconds")
   end
 end
