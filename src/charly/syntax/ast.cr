@@ -31,21 +31,11 @@ module Charly::AST
       at(node.location_start, node.location_end)
     end
 
-    def size
-      @children.size
-    end
-
-    # :nodoc:
-    def each
-      @children.each do |child|
-        yield child
-      end
-    end
-
-    # Append a node to this node as a child
-    def <<(node : ASTNode)
-      @children << node
-    end
+    delegate "<<", to: @children
+    delegate "[]", to: @children
+    delegate "[]=", to: @children
+    delegate "each", to: @children
+    delegate "size", to: @children
 
     # :nodoc:
     def to_s(io)

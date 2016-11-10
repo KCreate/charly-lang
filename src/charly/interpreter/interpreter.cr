@@ -879,6 +879,15 @@ module Charly
 
       if target.is_a? TFunc
         return exec_function_call(target, node, identifier, scope, context)
+      elsif target.is_a? TInternalFunc
+
+        # Resolve the arguments
+        arguments = [] of BaseType
+        node.argumentlist.each do |expression|
+          arguments << exec_expression(expression, scope, context)
+        end
+
+        return target.method.call(node, context, arguments.size, arguments)
       elsif target.is_a? TClass
         return exec_class_call(target, node, scope, context)
       elsif target.is_a? TPrimitiveClass
