@@ -142,6 +142,27 @@ module Charly
     end
   end
 
+  alias InternalFuncType = Proc(CallExpression, Context, Int32, Array(BaseType), TString)
+
+  class TInternalFunc < BaseType
+    property name : String
+    property method : InternalFuncType
+
+    def initialize(@name, @method)
+      super()
+    end
+
+    # :nodoc:
+    def value_to_s(io)
+      io << "Function"
+    end
+
+    # :nodoc:
+    def self.to_s(io)
+      io << "Function"
+    end
+  end
+
   class TClass < BaseType
     property name : String
     property properties : Array(IdentifierLiteral)

@@ -3,6 +3,7 @@ require "../syntax/parser.cr"
 require "./container.cr"
 require "./types.cr"
 require "./context.cr"
+require "./internals.cr"
 
 module Charly
   include AST
@@ -60,7 +61,8 @@ module Charly
 
     # A list of disallowed variable names
     DISALLOWED_VARS = [
-      "self"
+      "self",
+      "__internal__method"
     ]
 
     # The path at which the prelude is saved
@@ -825,10 +827,51 @@ module Charly
     @[AlwaysInline]
     private def exec_call_expression(node : CallExpression, scope, context)
 
-      # If the identifier is a MemberExpression
-      # we need the parts seperately
-      if (memberex = node.identifier).is_a? MemberExpression
-        identifier, target = exec_get_member_expression_pairs(memberex, scope, context)
+      # If the identifier is a IdentifierLiteral we check if it is "__internal__method"
+      # Similarly if the identifier is a member expression, we need that to resolve that seperately too
+      identifier = node.identifier
+      case identifier
+      when .is_a? MemberExpression
+        identifier, target = exec_get_member_expression_pairs(identifier, scope, context)
+      when .is_a?(IdentifierLiteral)
+        unless identifier.name == "__internal__method"
+          identifier = nil
+          target = exec_expression(node.identifier, scope, context)
+        else
+
+          # Resolve all arguments
+          arguments = [] of BaseType
+          node.argumentlist.each do |expression|
+            arguments << exec_expression(expression, scope, context)
+          end
+
+          # Check if at least 1 argument is given
+          unless arguments.size > 0
+            raise RunTimeError.new(node, context, "Calls to __internal__method require at least 1 argument that acts as the method name")
+          end
+
+          # Check that the first argument is a string
+          name = arguments[0]
+          unless name.is_a? TString
+            raise RunTimeError.new(node.argumentlist.children[0], context, "Calls to __internal__method require the first argument to be a string, got #{name.class}")
+          end
+
+          # Check if the method exists
+          unless Internals::METHODS.has_key? name.value
+            raise RunTimeError.new(node.argumentlist.children[0], context, "__internal__method doesn't know this method")
+          end
+
+          # Create the mapping between the methods
+          method = Internals::METHODS[name.value]
+
+          if method.is_a? InternalFuncType
+            return TInternalFunc.new(name.value, method)
+          end
+
+          raise RunTimeError.new(node, context, "Failed to extract internal function #{name.value}")
+        end
+      when .is_a? IndexExpression
+        identifier, target = exec_get_index_expression_pairs(identifier, scope, context)
       else
         identifier = nil
         target = exec_expression(node.identifier, scope, context)
