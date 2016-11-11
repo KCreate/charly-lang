@@ -5,8 +5,15 @@ module Charly::Internals
 
   METHODS = {} of String => InternalFuncType
 
-  # :nodoc:
-  macro charly_api(name, *types)
+  # Declare a new internal method called *name* with *types*
+  #
+  # ```
+  # charly_api "sleep", time : TNumeric do
+  #   sleep time.value
+  #   return TString.new("Slept for #{time} seconds")
+  # end
+  # ```
+  macro charly_api(name, *types, variadic = false)
     private def __{{name.id}}(call, context, argc : Int32, arguments : Array(BaseType))
       name = {{name}}
       types = [{{
@@ -16,7 +23,7 @@ module Charly::Internals
       }}] of BaseType.class
 
       # Argument count check
-      if argc < {{types.size}}
+      if argc < {{types.size}} && {{variadic}}
         raise RunTimeError.new(call.identifier, context, "#{{{name}}} expected #{types.size} arguments, got #{argc}")
       end
 
@@ -25,7 +32,7 @@ module Charly::Internals
 
         arg{{index}} = arguments[{{index}}]
 
-        unless arg{{index}}.is_a?({{type.type}})
+        unless arg{{index}}.is_a?({{type.type}}) || {{variadic}}
           raise RunTimeError.new(call.argumentlist[{{index}}], context, "#{{{name}}} expected argument #{{{index + 1}}} to be of type #{{{type.type}}}, got #{arguments[{{index}}].class}")
         end
 
@@ -37,9 +44,6 @@ module Charly::Internals
 
     METHODS[{{name}}] = ->__{{name.id}}(CallExpression, Context, Int32, Array(BaseType))
   end
-
-  charly_api "sleep", time : TNumeric do
-    sleep time.value
-    return TString.new("Slept for #{time} seconds")
-  end
 end
+
+require "./internals/**"
