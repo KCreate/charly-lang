@@ -1,1 +1,10 @@
 class __container_primitive {}
+
+const print = __internal__method("stdout_print");
+const length = __internal__method("length");
+
+primitive class Object {
+  func length() {
+    length(self);
+  }
+}

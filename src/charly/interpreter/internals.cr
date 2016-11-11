@@ -23,7 +23,7 @@ module Charly::Internals
       }}] of BaseType.class
 
       # Argument count check
-      if argc < {{types.size}} && {{variadic}}
+      if argc < {{types.size}}
         raise RunTimeError.new(call.identifier, context, "#{{{name}}} expected #{types.size} arguments, got #{argc}")
       end
 
@@ -32,7 +32,7 @@ module Charly::Internals
 
         arg{{index}} = arguments[{{index}}]
 
-        unless arg{{index}}.is_a?({{type.type}}) || {{variadic}}
+        if !arg{{index}}.is_a?({{type.type}})
           raise RunTimeError.new(call.argumentlist[{{index}}], context, "#{{{name}}} expected argument #{{{index + 1}}} to be of type #{{{type.type}}}, got #{arguments[{{index}}].class}")
         end
 
