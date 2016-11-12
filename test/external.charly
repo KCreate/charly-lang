@@ -1,1 +1,9 @@
-export = 25
+export = {
+  func foo(callback) {
+    callback()
+  }
+
+  func bar() {
+    lol
+  }
+}

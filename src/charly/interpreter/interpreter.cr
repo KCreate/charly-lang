@@ -109,13 +109,7 @@ module Charly
         # Check if the prelude exists
         if File.readable?(PRELUDE_PATH)
           program = Parser.create(File.open(PRELUDE_PATH), PRELUDE_PATH)
-
-          # Swap the parent container of *top* to the prelude
-          # TODO: is this a bug?
-          prelude_container = Scope.new
-          @top.parent = prelude_container
-
-          exec_program(program, prelude_container)
+          exec_program(program, @top)
         else
           raise IOException.new "Could not locate prelude file"
         end

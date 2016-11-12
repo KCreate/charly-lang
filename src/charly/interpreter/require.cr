@@ -75,7 +75,8 @@ module Charly::Require
       # Load the included file
       interpreter = Interpreter.new include_scope, true
       program = Parser.create(File.open(path), path)
-      return interpreter.exec_program program
+      interpreter.exec_program(program, include_scope)
+      return include_scope.get("export")
     end
 
     return TNull.new
