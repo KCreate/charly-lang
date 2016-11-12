@@ -1,6 +1,10 @@
 name: charly-lang
 version: 0.0.1
 
+dependencies:
+  terminal_table:
+    github: benoist/terminal_table.cr
+
 authors:
   - Leonard Schuetz <leni.schuetz@me.com>
 

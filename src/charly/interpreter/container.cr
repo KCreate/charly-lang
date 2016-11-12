@@ -1,5 +1,5 @@
 require "../exception.cr"
-require "../../table/table.cr"
+require "terminal_table"
 
 module Charly
   class ContainerReferenceError < Exception
@@ -229,22 +229,14 @@ module Charly
     # :nodoc:
     def to_s(io)
 
-      # Collect the data we need to print
-      data = [] of Array(String)
+      table = TerminalTable.new
+      table.headings = ["Key", "Value", "Flags"]
 
       each do |key, value, flags|
-        data << [
-          "#{key}",
-          "#{value}",
-          "#{flags}"
-        ]
+        table << ["#{key}", "#{value}", "#{flags}"]
       end
 
-      Table.present(["Name", "Value", "Flags"], data) do |result|
-        io << result
-      end
-
-      io
+      io << table.render
     end
   end
 end

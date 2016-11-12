@@ -17,14 +17,9 @@ module Charly
   end
 
   begin
-    # Parse the program
     program = Parser.create(File.open(filename), filename)
-
-    # Run the program
     interpreter = Interpreter.new
-
-    result = interpreter.exec_program program
-    puts interpreter.top
+    interpreter.exec_program program
   rescue e : UserException
     puts e
     exit 1
