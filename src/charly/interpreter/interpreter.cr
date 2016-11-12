@@ -933,7 +933,7 @@ module Charly
         end
 
         function_scope.write(arg.name, arguments[i], Flag::INIT)
-        i += 0
+        i += 1
       end
 
       # If an identifier is given, assign it to the self keyword
@@ -942,7 +942,9 @@ module Charly
       end
 
       # Insert the arguments
-      function_scope.write("arguments", TArray.new(arguments), Flag::INIT)
+      unless function_scope.contains("arguments")
+        function_scope.write("arguments", TArray.new(arguments), Flag::INIT)
+      end
 
       # Execute the functions block inside the function_scope
       @trace << Trace.new("#{target.name}", node, scope, context)
