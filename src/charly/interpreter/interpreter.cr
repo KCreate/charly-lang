@@ -229,7 +229,7 @@ module Charly
       raise RunTimeError.new(node, context, "Unexpected node #{node.class.name.split("::").last}")
     end
 
-    @[AlwaysInline]
+
     private def exec_initialisation(node : ASTNode, scope, context)
 
       # Check if this is a disallowed variable name
@@ -255,7 +255,7 @@ module Charly
       return expression
     end
 
-    @[AlwaysInline]
+
     private def exec_assignment(node : VariableAssignment, scope, context)
 
       # Resolve the expression
@@ -335,7 +335,7 @@ module Charly
       return TNull.new
     end
 
-    @[AlwaysInline]
+
     private def exec_unary_expression(node : UnaryExpression, scope, context)
 
       # Resolve the right side
@@ -379,7 +379,7 @@ module Charly
       return TNull.new
     end
 
-    @[AlwaysInline]
+
     private def exec_binary_expression(node : BinaryExpression, scope, context)
 
       # Resolve the left side
@@ -520,7 +520,7 @@ module Charly
       return TNumeric.new(Float64::NAN)
     end
 
-    @[AlwaysInline]
+
     private def exec_comparison_expression(node : ComparisonExpression, scope, context)
 
       # Resolve the left side
@@ -696,7 +696,7 @@ module Charly
       return TBoolean.new(false)
     end
 
-    @[AlwaysInline]
+
     private def exec_array_literal(node : ArrayLiteral, scope, context)
       content = [] of BaseType
 
@@ -707,7 +707,7 @@ module Charly
       return TArray.new(content)
     end
 
-    @[AlwaysInline]
+
     private def exec_function_literal(node : FunctionLiteral, scope, context)
       TFunc.new(
         node.name,
@@ -717,7 +717,7 @@ module Charly
       )
     end
 
-    @[AlwaysInline]
+
     private def exec_class_literal(node : ClassLiteral, scope, context)
 
       # Check if parent classes exist
@@ -777,7 +777,7 @@ module Charly
       }
     end
 
-    @[AlwaysInline]
+
     private def exec_primitive_class_literal(node : PrimitiveClassLiteral, scope, context)
 
       # The scope in which we run
@@ -823,7 +823,7 @@ module Charly
       return primclass
     end
 
-    @[AlwaysInline]
+
     private def exec_call_expression(node : CallExpression, scope, context)
 
       # If the identifier is a IdentifierLiteral we check if it is "__internal__method"
@@ -896,7 +896,7 @@ module Charly
       end
     end
 
-    @[AlwaysInline]
+
     private def exec_function_call(target : TFunc, node : CallExpression, identifier : BaseType?, scope, context)
 
       # The scope in which the function will run
@@ -957,7 +957,7 @@ module Charly
       return result
     end
 
-    @[AlwaysInline]
+
     private def exec_class_call(target : TClass, node : CallExpression, scope, context)
 
       # Initialize an empty object
@@ -1017,7 +1017,7 @@ module Charly
       return object
     end
 
-    @[AlwaysInline]
+
     private def get_class_props(target : TClass)
       properties = [] of String
       if target.parents.size > 0
@@ -1035,7 +1035,7 @@ module Charly
       properties
     end
 
-    @[AlwaysInline]
+
     private def get_class_methods(target : TClass, context)
       methods = [] of TFunc
       if target.parents.size > 0
@@ -1053,12 +1053,12 @@ module Charly
       methods
     end
 
-    @[AlwaysInline]
+
     private def exec_member_expression(node : MemberExpression, scope, context)
       return exec_get_member_expression_pairs(node, scope, context)[1]
     end
 
-    @[AlwaysInline]
+
     private def exec_get_member_expression_pairs(node : MemberExpression, scope, context)
 
       # Resolve the left side
@@ -1085,12 +1085,12 @@ module Charly
       return ({ identifier, TNull.new })
     end
 
-    @[AlwaysInline]
+
     private def exec_index_expression(node : IndexExpression, scope, context)
       return exec_get_index_expression_pairs(node, scope, context)[1]
     end
 
-    @[AlwaysInline]
+
     private def exec_get_index_expression_pairs(node : IndexExpression, scope, context)
 
       # Resolve the left side
@@ -1129,12 +1129,12 @@ module Charly
       end
     end
 
-    @[AlwaysInline]
+
     private def get_primitive_method(type : BaseType, methodname : String, scope, context)
       get_primitive_method(type.class, methodname, scope, context)
     end
 
-    @[AlwaysInline]
+
     private def get_primitive_method(type, methodname : String, scope, context)
 
       # This is defined in CLASS_MAPPING
@@ -1175,7 +1175,7 @@ module Charly
       return TNull.new
     end
 
-    @[AlwaysInline]
+
     private def exec_if_statement(node : IfStatement, scope, context)
 
       scope = Scope.new(scope)
@@ -1198,7 +1198,7 @@ module Charly
       end
     end
 
-    @[AlwaysInline]
+
     private def exec_while_statement(node : WhileStatement, scope, context)
 
       scope = Scope.new(scope)
@@ -1216,7 +1216,7 @@ module Charly
       return last_result
     end
 
-    @[AlwaysInline]
+
     private def exec_container_literal(node : ContainerLiteral, scope, context)
 
       # Check if the __container_primitive exists
@@ -1246,7 +1246,7 @@ module Charly
       return object
     end
 
-    @[AlwaysInline]
+
     private def exec_get_truthyness(value : BaseType, scope, context)
       case value
       when .is_a? TBoolean
@@ -1258,7 +1258,7 @@ module Charly
       end
     end
 
-    @[AlwaysInline]
+
     private def exec_try_catch_statement(node : TryCatchStatement, scope, context)
       scope = Scope.new(scope)
 
@@ -1270,7 +1270,7 @@ module Charly
       end
     end
 
-    @[AlwaysInline]
+
     private def exec_throw_statement(node : ThrowStatement, scope, context)
       expression = exec_expression(node.expression, scope, context)
       raise UserException.new(expression, @trace.dup, node, context)
