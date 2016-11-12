@@ -887,7 +887,7 @@ module Charly
           arguments << exec_expression(expression, scope, context)
         end
 
-        return target.method.call(node, context, arguments.size, arguments)
+        return target.method.call(node, scope, context, arguments.size, arguments)
       elsif target.is_a? TClass
         return exec_class_call(target, node, scope, context)
       elsif target.is_a? TPrimitiveClass
