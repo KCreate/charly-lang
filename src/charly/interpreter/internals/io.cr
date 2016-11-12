@@ -30,4 +30,9 @@ module Charly::Internals
     exit(code.value.to_i)
     return TNull.new
   end
+
+  # Returns the current stack rendered as a string
+  charly_api "stackdump" do
+    return TString.new(scope.to_s)
+  end
 end
