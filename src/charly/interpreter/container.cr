@@ -51,14 +51,14 @@ module Charly
     end
 
     def each
-      dump_values.each do |key, value, flags|
-        yield ({key, value, flags})
+      dump_values.each do |depth, key, value, flags|
+        yield ({depth, key, value, flags})
       end
     end
 
     # :nodoc:
     def dump_values(parents : Bool = true)
-      collection = [] of Tuple(String, V, Flag)
+      collection = [] of Tuple(Int32, String, V, Flag)
 
       # Add all parent values first
       if parents
@@ -69,7 +69,7 @@ module Charly
 
       # Add the values of this stack
       @values.each do |key, value|
-        collection << {key, value.value, value.flags}
+        collection << {depth, key, value.value, value.flags}
       end
 
       return collection
@@ -230,10 +230,12 @@ module Charly
     def to_s(io)
 
       table = TerminalTable.new
-      table.headings = ["Key", "Value", "Flags"]
+      table.headings = ["CID", "Key", "Value", "Flags"]
 
-      each do |key, value, flags|
-        table << ["#{key}", "#{value}", "#{flags}"]
+      each do |depth, key, value, flags|
+        if depth > 0
+          table << ["#{depth}", "#{key}", "#{value}", "#{flags}"]
+        end
       end
 
       io << table.render
