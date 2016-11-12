@@ -145,17 +145,17 @@ module Charly
   # This is a quick and dirty workaround
   # This is currently a limitation of the language
   # See: https://github.com/crystal-lang/crystal/issues/3532
-  alias InternalFuncType =  Proc(CallExpression, Context, Int32, Array(BaseType), TArray) |
-                            Proc(CallExpression, Context, Int32, Array(BaseType), TBoolean) |
-                            Proc(CallExpression, Context, Int32, Array(BaseType), TClass) |
-                            Proc(CallExpression, Context, Int32, Array(BaseType), TFunc) |
-                            Proc(CallExpression, Context, Int32, Array(BaseType), TInternalFunc) |
-                            Proc(CallExpression, Context, Int32, Array(BaseType), TNull) |
-                            Proc(CallExpression, Context, Int32, Array(BaseType), TNumeric) |
-                            Proc(CallExpression, Context, Int32, Array(BaseType), TObject) |
-                            Proc(CallExpression, Context, Int32, Array(BaseType), TPrimitiveClass) |
-                            Proc(CallExpression, Context, Int32, Array(BaseType), TString)
-                            Proc(CallExpression, Context, Int32, Array(BaseType), BaseType)
+  alias InternalFuncType =  Proc(CallExpression, Scope, Context, Int32, Array(BaseType), TArray) |
+                            Proc(CallExpression, Scope, Context, Int32, Array(BaseType), TBoolean) |
+                            Proc(CallExpression, Scope, Context, Int32, Array(BaseType), TClass) |
+                            Proc(CallExpression, Scope, Context, Int32, Array(BaseType), TFunc) |
+                            Proc(CallExpression, Scope, Context, Int32, Array(BaseType), TInternalFunc) |
+                            Proc(CallExpression, Scope, Context, Int32, Array(BaseType), TNull) |
+                            Proc(CallExpression, Scope, Context, Int32, Array(BaseType), TNumeric) |
+                            Proc(CallExpression, Scope, Context, Int32, Array(BaseType), TObject) |
+                            Proc(CallExpression, Scope, Context, Int32, Array(BaseType), TPrimitiveClass) |
+                            Proc(CallExpression, Scope, Context, Int32, Array(BaseType), TString)
+                            Proc(CallExpression, Scope, Context, Int32, Array(BaseType), BaseType)
 
   class TInternalFunc < BaseType
     property name : String
