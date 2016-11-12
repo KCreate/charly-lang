@@ -1,4 +1,6 @@
 class __container_primitive {}
+const require = __internal__method("require");
+require.resolve = __internal__method("require_resolve");
 
 let print = __internal__method("stdout_print");
 let length = __internal__method("length");
