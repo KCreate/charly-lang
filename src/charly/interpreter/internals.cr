@@ -42,7 +42,9 @@ module Charly::Internals
       {{yield}}
     end
 
-    METHODS[{{name}}] = ->__{{name.id}}(CallExpression, Scope, Context, Int32, Array(BaseType))
+    METHODS[{{name}}] = ->(call : CallExpression, scope : Scope, context : Context, argc : Int32, arguments : Array(BaseType)){
+      __{{name.id}}(call, scope, context, argc, arguments).as(BaseType)
+    }
   end
 end
 
