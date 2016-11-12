@@ -14,14 +14,13 @@ module Charly
   private struct Trace
     property name : String
     property node : ASTNode
-    property top : Scope
-    property context : Context
 
-    def initialize(@name, @node, @top, @context)
+    def initialize(@name, @node)
     end
 
     def to_s(io)
-      io << "at #{@name} (#{@context.program.path}:"
+      filename = File.basename(@node.location_start.filename)
+      io << "at #{@name} (#{filename}:"
       io << @node.location_start.to_s.split(":").last(3).join(":")
       io << ")"
     end
@@ -947,7 +946,7 @@ module Charly
       end
 
       # Execute the functions block inside the function_scope
-      @trace << Trace.new("#{target.name}", node, scope, context)
+      @trace << Trace.new("#{target.name || "anonymous"}", node)
       begin
         result = exec_block(target.block, function_scope, context)
       rescue e : ReturnException
@@ -1010,7 +1009,7 @@ module Charly
         ).at(node.location_start, node.location_end)
 
         # Execute the constructor function inside the object_scope
-        @trace << Trace.new("#{target.name}:constructor", node, scope, context)
+        @trace << Trace.new("#{target.name}:constructor", node)
         exec_function_call(constructor, callex, object, object_scope, context)
         @trace.pop
       end
