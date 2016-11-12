@@ -23,4 +23,11 @@ module Charly::Internals
   charly_api "gets", prepend : TString, history : TBoolean do
     return TString.new(Readline.readline(prepend.value, history.value) || "")
   end
+
+  # Exit the program
+  # *code* is used as the exit code
+  charly_api "exit", code : TNumeric do
+    exit(code.value.to_i)
+    return TNull.new
+  end
 end

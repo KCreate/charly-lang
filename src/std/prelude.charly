@@ -1,10 +1,17 @@
 class __container_primitive {}
 
-const print = __internal__method("stdout_print");
-const length = __internal__method("length");
+let print = __internal__method("stdout_print");
+let length = __internal__method("length");
+let exit = __internal__method("exit");
+let typeof = __internal__method("typeof");
+let to_numeric = __internal__method("to_numeric");
 
 primitive class Object {
   func length() {
     length(self);
+  }
+
+  func to_n() {
+    to_numeric(self);
   }
 }

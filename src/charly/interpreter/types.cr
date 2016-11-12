@@ -155,6 +155,7 @@ module Charly
                             Proc(CallExpression, Context, Int32, Array(BaseType), TObject) |
                             Proc(CallExpression, Context, Int32, Array(BaseType), TPrimitiveClass) |
                             Proc(CallExpression, Context, Int32, Array(BaseType), TString)
+                            Proc(CallExpression, Context, Int32, Array(BaseType), BaseType)
 
   class TInternalFunc < BaseType
     property name : String
