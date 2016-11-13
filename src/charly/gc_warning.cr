@@ -5,9 +5,5 @@ lib LibGC
 end
 
 LibGC.set_warn_proc ->(msg, word) {
-
-  # Ignore the message in production builds
-  {% unless flag?(:release) %}
-    puts String.new(msg)
-  {% end %}
+  # Ignore the message
 }
