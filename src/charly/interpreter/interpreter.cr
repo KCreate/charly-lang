@@ -123,7 +123,7 @@ module Charly
       end
     end
 
-    # Create a new interpreter with an empty stack as it's top
+    # Create a new interpreter with an empty scope as it's top
     def self.new
       self.new(Scope.new)
     end

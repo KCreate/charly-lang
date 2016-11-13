@@ -31,7 +31,7 @@ module Charly::Internals
     return TNull.new
   end
 
-  # Returns the current stack rendered as a string
+  # Returns the current scope rendered as a string
   charly_api "stackdump" do
     return TString.new(scope.to_s)
   end

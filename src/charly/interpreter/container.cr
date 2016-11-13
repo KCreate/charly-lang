@@ -67,7 +67,7 @@ module Charly
         end
       end
 
-      # Add the values of this stack
+      # Add the values of this container
       @values.each do |key, value|
         collection << {depth, key, value.value, value.flags}
       end
@@ -77,7 +77,7 @@ module Charly
 
     # Writes to the container
     # Unless IGNORE_PARENT was passed as a flag,
-    # this will try to write to all parent stacks if the key
+    # this will try to write to all parent containers if the key
     # is not found in this container
     #
     # Throws a ReferenceError in the following cases
@@ -163,7 +163,7 @@ module Charly
       get(key, flags)
     end
 
-    # Deletes a value from the stack
+    # Deletes a value from the container
     # Returns the value of the key
     #
     # Throws if the key was not found
@@ -233,9 +233,7 @@ module Charly
       table.headings = ["CID", "Key", "Value", "Flags"]
 
       each do |depth, key, value, flags|
-        if depth > 0
-          table << ["#{depth}", "#{key}", "#{value}", "#{flags}"]
-        end
+        table << ["#{depth}", "#{key}", "#{value}", "#{flags}"]
       end
 
       io << table.render
