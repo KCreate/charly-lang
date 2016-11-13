@@ -56,7 +56,9 @@ module Charly
     # Parses a program and resets the @file_buffer afterwards
     def parse
       tree = parse_program
-      Program.new(@filename, tree, @reader.finish.buffer.to_s)
+      program = Program.new(@filename, tree)
+      @reader.clear
+      program
     end
 
     # Advance to the next token, skipping any tokens we don't care about

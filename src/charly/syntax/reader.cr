@@ -62,6 +62,15 @@ module Charly
 
       self
     end
+
+    # Close File handles or clear the MemoryIO
+    def clear
+      if (source = @source).is_a? File
+        source.close
+      else
+        source.clear
+      end
+    end
   end
 
   # Same as `Reader` but keeps a window to the buffer
