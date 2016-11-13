@@ -1,15 +1,14 @@
-let __run = __internal__method("__run")
-
 # Require
 const require_no_prelude = __internal__method("require_no_prelude")
 const require = __internal__method("require")
 require.resolve = __internal__method("require_resolve")
 
 # Primitives
-__run("./primitives/object.charly")
-__run("./primitives/array.charly")
-__run("./primitives/string.charly")
-__run("./primitives/numeric.charly")
+const Object = require("./primitives/object.charly")
+const Array = require("./primitives/array.charly")
+const String = require("./primitives/string.charly")
+const Numeric = require("./primitives/numeric.charly")
+const Function = require("./primitives/function.charly")
 
 # IO related stuff
 const io = require("./io.charly")
