@@ -1,4 +1,7 @@
-primitive class Array {
+const array_insert = __internal__method("array_insert")
+const array_delete = __internal__method("array_delete")
+
+export = primitive class Array {
 
   # Calls the callback with each element and the index
   func each(callback) {
@@ -8,5 +11,48 @@ primitive class Array {
       i += 1
     }
     self
+  }
+
+  # Calls the callback with each element and the index
+  # The return value is an array of return values from the callback
+  func map(callback) {
+    let new = []
+    self.each(func(e, i) {
+      new.push(callback(e, i))
+    })
+    new
+  }
+
+  # Append an item to this array
+  func push(item) {
+    array_insert(self, item, self.length())
+    self
+  }
+
+  # Inserts *item* at *index*
+  func insert(item, index) {
+    array_insert(self, item, index)
+    self
+  }
+
+  # Deletes the item at *index*
+  func delete(index) {
+    array_delete(self, index)
+    self
+  }
+
+  # Returns the string representation of this array
+  func to_s() {
+    let io = "["
+    let amount = self.length()
+    self.each(func(e, i) {
+      io += e.to_s()
+
+      if i ! amount - 1 {
+        io += ", "
+      }
+    })
+    io += "]"
+    io
   }
 }

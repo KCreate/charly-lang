@@ -1,9 +1,16 @@
-primitive class Object {
+const length = __internal__method("length")
+const _colorize = __internal__method("colorize")
+
+export = primitive class Object {
   func length() {
-    __internal__method("length")(self)
+    length(self)
   }
 
   func to_s() {
     "" + self;
+  }
+
+  func colorize(code) {
+    _colorize(self.to_s(), code)
   }
 }
