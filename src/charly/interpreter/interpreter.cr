@@ -1071,14 +1071,8 @@ module Charly
       # Check if the value contains the key that's asked for
       if identifier.data.contains node.member.name
         return ({identifier, identifier.data.get(node.member.name, Flag::IGNORE_PARENT)})
-      elsif !identifier.is_a?(TObject)
+      else
         method = get_primitive_method(identifier, node.member.name, scope, context)
-
-        if method.is_a? BaseType
-          return ({ identifier, method })
-        end
-
-        method = get_primitive_method(TObject, node.member.name, scope, context)
 
         if method.is_a? BaseType
           return ({ identifier, method })
@@ -1134,7 +1128,7 @@ module Charly
       get_primitive_method(type.class, methodname, scope, context)
     end
 
-    private def get_primitive_method(type, methodname : String, scope, context)
+    private def get_primitive_method(type, methodname, scope, context)
 
       # This is defined in CLASS_MAPPING
       classname = CLASS_MAPPING[type]

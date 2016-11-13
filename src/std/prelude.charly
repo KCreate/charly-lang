@@ -16,3 +16,11 @@ const io = require("./io.charly")
 const print = io.stdout.print
 const write = io.stdout.write
 const exit = io.exit
+
+class Exception {
+  property message
+
+  func constructor(message) {
+    @message = message
+  }
+}

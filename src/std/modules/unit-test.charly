@@ -113,7 +113,7 @@ export = class UnitTest {
     let total_time = io.time_ms() - start_time
 
     # Extract the data
-    suites.each(func(suite, s_index) {
+    @suites.each(func(suite, s_index) {
 
       suites_run += 1
       suite.tests.each(func(test, t_index) {
@@ -136,7 +136,8 @@ export = class UnitTest {
       print("Some test-suites have failed!".colorize(31))
 
       # Show all failed assertions in a nice graph
-      failed.each(func(suite) {
+      print(@failed)
+      @failed().each(func(suite) {
 
         print("- " + suite.title.colorize(33))
         suite.failed.each(func(test) {

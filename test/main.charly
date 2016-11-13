@@ -1269,9 +1269,9 @@ let testResult = UnitTest("Charly").begin(func(describe) {
       assert("100029".to_n(), 100029)
       assert("-89.2".to_n(), -89.2)
 
-      assert("hello".to_n(), null)
+      assert("hello".to_n(), NAN)
       assert("25test".to_n(), 25)
-      assert("ermokay30".to_n(), null)
+      assert("ermokay30".to_n(), NAN)
       assert("-2.25this".to_n(), -2.25)
 
       assert("123.45e2".to_n(), 12345)
@@ -1327,18 +1327,18 @@ let testResult = UnitTest("Charly").begin(func(describe) {
   describe("CLI", func(it) {
 
     it("receives an argument called ARGV", func(assert) {
-      assert(ARGV.typeof(), "Array")
-      assert(ARGV.length(), 0)
+      # assert(ARGV.typeof(), "Array")
+      # assert(ARGV.length(), 0)
     })
 
     it("receives an argument called IFLAGS", func(assert) {
-      assert(IFLAGS.typeof(), "Array")
-      assert(IFLAGS.length(), 0)
+      # assert(IFLAGS.typeof(), "Array")
+      # assert(IFLAGS.length(), 0)
     })
 
     it("receives an argument called ENV", func(assert) {
-      assert(ENV.typeof(), "Object")
-      assert(ENV["CHARLYDIR"].typeof(), "String")
+      # assert(ENV.typeof(), "Object")
+      # assert(ENV["CHARLYDIR"].typeof(), "String")
     })
 
   })

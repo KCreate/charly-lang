@@ -1,3 +1,5 @@
+const math = __internal__method("math");
+
 export = {
 
   # Constants
@@ -6,28 +8,28 @@ export = {
   const LOG2 = 0.69314718055994529
   const LOG10 = 2.3025850929940459
 
-  const cos = __internal__method("math", "cos");
-  const cosh = __internal__method("math", "cosh");
-  const acos = __internal__method("math", "acos");
-  const acosh = __internal__method("math", "acosh");
+  func cos(value) { math("cos", value) }
+  func cosh(value) { math("cosh", value) }
+  func acos(value) { math("acos", value) }
+  func acosh(value) { math("acosh", value) }
 
-  const sin = __internal__method("math", "sin");
-  const sinh = __internal__method("math", "sinh");
-  const asin = __internal__method("math", "asin");
-  const asinh = __internal__method("math", "asinh");
+  func sin(value) { math("sin", value) }
+  func sinh(value) { math("sinh", value) }
+  func asin(value) { math("asin", value) }
+  func asinh(value) { math("asinh", value) }
 
-  const tan = __internal__method("math", "tan");
-  const tanh = __internal__method("math", "tanh");
-  const atan = __internal__method("math", "atan");
-  const atanh = __internal__method("math", "atanh");
+  func tan(value) { math("tan", value) }
+  func tanh(value) { math("tanh", value) }
+  func atan(value) { math("atan", value) }
+  func atanh(value) { math("atanh", value) }
 
-  const cbrt = __internal__method("math", "cbrt");
-  const sqrt = __internal__method("math", "sqrt");
+  func cbrt(value) { math("cbrt", value) }
+  func sqrt(value) { math("sqrt", value) }
 
-  const ceil = __internal__method("math", "ceil");
-  const floor = __internal__method("math", "floor");
+  func ceil(value) { math("ceil", value) }
+  func floor(value) { math("floor", value) }
 
-  const log = __internal__method("math", "log");
+  func log(value) { math("log", value) }
 
-  const rand = __internal__method("math", "rand");
+  func rand() { math("rand", 0) }
 }

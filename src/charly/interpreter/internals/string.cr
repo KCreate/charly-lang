@@ -9,7 +9,7 @@ module Charly::Internals
 
   # Convert a string to a numeric
   charly_api "to_numeric", value : TString do
-    num = value.value.gsub("_", "").to_f64(strict: false)
+    num = value.value.gsub("_", "").to_f64?(strict: false)
 
     if num.is_a? Float64
       return TNumeric.new(num)

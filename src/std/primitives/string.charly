@@ -1,5 +1,6 @@
 const _trim = __internal__method("trim");
 const _ord = __internal__method("ord");
+const to_numeric = __internal__method("to_numeric");
 
 export = primitive class String {
 
@@ -131,5 +132,10 @@ export = primitive class String {
       }
     })
     found_index
+  }
+
+  # Return the numeric representation of this string
+  func to_n() {
+    to_numeric(self)
   }
 }

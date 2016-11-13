@@ -18,4 +18,56 @@ export = primitive class Object {
   func typeof() {
     typeof(self)
   }
+
+  # Pipes self into *other*
+  # Other has to be a function
+  func call(other) {
+    if (other.typeof() == "Function") {
+      other(self)
+    }
+  }
+
+  # Passes self to the callback
+  # Returns self
+  func tap(callback) {
+    callback(self)
+    self
+  }
+
+  func pipe() {
+    const pipes = arguments
+
+    if pipes.typeof() ! "Array" {
+      raise Exception("pipe expected argument to be of type Array, got: " + pipes.typeof())
+    }
+
+    pipes.each(func(pipe) {
+      if pipe.typeof() ! "Function" {
+        raise Exception("pipe expected an array of Functions, got: " + pipe.typeof())
+      }
+
+      pipe(self)
+    })
+
+    self
+  }
+
+  func transform() {
+    const pipes = arguments
+
+    if pipes.typeof() ! "Array" {
+      raise Exception("transform expected argument to be of type Array, got: " + pipes.typeof())
+    }
+
+    let result = self
+    pipes.each(func(pipe) {
+      if pipe.typeof() ! "Function" {
+        raise Exception("transform expected an array of Functions, got: " + pipe.typeof())
+      }
+
+      result = pipe(result)
+    })
+
+    result
+  }
 }
