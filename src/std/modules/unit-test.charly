@@ -4,6 +4,7 @@ class Test {
 
   func constructor(title) {
     @title = title
+    @assertions = []
   }
 
   func add(real, expect) {
@@ -30,6 +31,7 @@ class Suite {
 
   func constructor(title) {
     @title = title
+    @tests = []
   }
 
   func add(test) {
@@ -53,6 +55,7 @@ export = class UnitTest {
 
   func constructor(title) {
     @title = title
+    @suites = []
   }
 
   func failed() {
@@ -68,10 +71,11 @@ export = class UnitTest {
   func begin(callback) {
 
     # Get the current time for statistics later on
-    const start_time = time_ms()
+    const start_time = io.time_ms()
 
     # Run all tests
     callback(func describe(description, callback) {
+      print(description, callback)
       const current_suite = Suite(description)
 
       print(("Suite: " + description).colorize(33))
@@ -80,7 +84,7 @@ export = class UnitTest {
 
         write(("it " + description + " ").colorize(37))
         callback(func assert(real, expect) {
-          current_test.add_assertion(real, expect)
+          current_test.add(real, expect)
           null
         })
 
@@ -90,7 +94,7 @@ export = class UnitTest {
           write("Failed".colorize(31))
         }
         print("")
-        current_suite.add_test(current_test)
+        current_suite.add(current_test)
         null
       })
       print("")
@@ -111,7 +115,7 @@ export = class UnitTest {
     let suites_run = 0
     let tests_run = 0
     let assertions_run = 0
-    let total_time = time_ms() - start_time
+    let total_time = io.time_ms() - start_time
 
     # Extract the data
     suites.each(func(suite, s_index) {
