@@ -1,5 +1,6 @@
 const length = __internal__method("length")
 const _colorize = __internal__method("colorize")
+const typeof = __internal__method("typeof")
 
 export = primitive class Object {
   func length() {
@@ -12,5 +13,9 @@ export = primitive class Object {
 
   func colorize(code) {
     _colorize(self.to_s(), code)
+  }
+
+  func type() {
+    typeof(self)
   }
 }
