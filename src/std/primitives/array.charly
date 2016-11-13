@@ -1,5 +1,6 @@
 const array_insert = __internal__method("array_insert")
 const array_delete = __internal__method("array_delete")
+const array_of_size = __internal__method("array_of_size")
 
 export = primitive class Array {
 
@@ -54,5 +55,10 @@ export = primitive class Array {
     })
     io += "]"
     io
+  }
+
+  # Return a new array of a given size
+  func of_size(size) {
+    array_of_size(size)
   }
 }
