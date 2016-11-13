@@ -1,5 +1,6 @@
 require "./charly/syntax/parser.cr"
 require "./charly/interpreter/interpreter.cr"
+require "./charly/gc_warning.cr"
 
 module Charly
 
