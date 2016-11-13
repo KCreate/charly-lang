@@ -103,6 +103,11 @@ module Charly
     def initialize(@top : Scope, load_prelude = true)
       @trace = [] of Trace
 
+      # Insert *export* if not already set
+      unless @top.contains "export"
+        @top.write("export", TObject.new, Flag::INIT)
+      end
+
       # Load the prelude if *load_prelude* is set to true
       if load_prelude
 
@@ -964,6 +969,7 @@ module Charly
       object = TObject.new(target)
       object_scope = Scope.new(target.parent_scope)
       object.data = object_scope
+      object_scope.write("type", target, Flag::INIT | Flag::CONSTANT)
 
       # The properties the method needs
       properties = get_class_props(target)
@@ -1219,19 +1225,8 @@ module Charly
 
     private def exec_container_literal(node : ContainerLiteral, scope, context)
 
-      # Check if the __container_primitive exists
-      unless scope.defined("__container_primitive")
-        raise RunTimeError.new(node, context, "Missing class: __container_primitive")
-      end
-
-      # Get the parent class
-      parent = scope.get("__container_primitive")
-      unless parent.is_a? TClass
-        raise RunTimeError.new(node, context, "Expected '__container_primitive' to be a class")
-      end
-
       # Create the object
-      object = TObject.new(parent)
+      object = TObject.new
       object_data = Scope.new(scope)
       object.data = object_data
 

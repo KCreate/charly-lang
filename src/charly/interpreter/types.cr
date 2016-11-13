@@ -209,15 +209,19 @@ module Charly
   end
 
   class TObject < BaseType
-    property type : TClass
+    property type : TClass?
 
-    def initialize(@type)
+    def initialize(@type = nil)
       super()
     end
 
     # :nodoc:
     def value_to_s(io)
-      io << "Object:#{@type.name}"
+      if (type = @type).is_a? TClass
+        io << "OBject:#{type.name}"
+      else
+        io << "Object:Container"
+      end
       display_data(@data, io)
     end
 

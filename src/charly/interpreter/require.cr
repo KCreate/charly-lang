@@ -70,7 +70,7 @@ module Charly::Require
 
       # The scope in which the included file will run
       include_scope = Scope.new
-      include_scope.write("export", TNull.new, Flag::INIT)
+      include_scope.write("export", TObject.new, Flag::INIT)
 
       # Load the included file
       interpreter = Interpreter.new include_scope, true
