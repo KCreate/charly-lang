@@ -9,6 +9,7 @@ module Charly
   # The base for all exceptions in charly
   class BaseException < Exception
     def to_s(io)
+      io << "\n"
       meta(io)
       io << "#{@message}".colorize(:red)
     end
