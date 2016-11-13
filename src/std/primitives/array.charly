@@ -1,0 +1,12 @@
+primitive class Array {
+
+  # Calls the callback with each element and the index
+  func each(callback) {
+    let i = 0
+    while i < self.length() {
+      callback(self[i], i)
+      i += 1
+    }
+    self
+  }
+}

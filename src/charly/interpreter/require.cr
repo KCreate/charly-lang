@@ -15,12 +15,10 @@ module Charly::Require
   @@cache = {} of String => BaseType
 
   # A list of core modules the interpreter provides
-  CORE_MODULES = [
-    "io"
-  ] of String
+  CORE_MODULES = [] of String
 
   # Loads *filename* and returns the value of the export variable
-  def load(filename, cwd, load_prelude = true)
+  def load(filename, cwd, prelude)
     path = resolve(filename, cwd)
 
     # Check the cache for an entry
@@ -29,7 +27,7 @@ module Charly::Require
     end
 
     # Try to load as a file
-    could_include_as_file = load_as_file(path, load_prelude)
+    could_include_as_file = load_as_file(path, prelude)
 
     if could_include_as_file
       @@cache[path] = could_include_as_file
@@ -65,17 +63,17 @@ module Charly::Require
   end
 
   # Loads *path*
-  private def load_as_file(path, load_prelude = true)
+  private def load_as_file(path, prelude)
 
     # Check if the path is accessable
     if File.exists?(path) && File.readable?(path)
 
       # The scope in which the included file will run
-      include_scope = Scope.new
+      include_scope = Scope.new(prelude)
       include_scope.write("export", TObject.new, Flag::INIT)
 
       # Load the included file
-      interpreter = Interpreter.new include_scope, load_prelude
+      interpreter = Interpreter.new include_scope, prelude
       program = Parser.create(File.open(path), path)
       interpreter.exec_program(program, include_scope)
       return include_scope.get("export")

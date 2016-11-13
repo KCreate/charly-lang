@@ -1,0 +1,9 @@
+primitive class Object {
+  func length() {
+    __internal__method("length")(self)
+  }
+
+  func to_s() {
+    "" + self;
+  }
+}

@@ -8,6 +8,9 @@ require "./internals.cr"
 module Charly
   include AST
 
+  # The path at which the prelude is located
+  PRELUDE_PATH = File.real_path(ENV["CHARLYDIR"] + "/src/std/prelude.charly")
+
   alias Scope = Container(BaseType)
 
   # Single trace entry for callstacks
@@ -56,6 +59,7 @@ module Charly
   # The interpreter takes a Program instance and executes the tree recursively.
   class Interpreter
     property top : Scope
+    property prelude : Scope
     property trace : Array(Trace) # The leftmost value is the main trace entry
 
     # A list of disallowed variable names
@@ -63,9 +67,6 @@ module Charly
       "self",
       "__internal__method"
     ]
-
-    # The path at which the prelude is saved
-    PRELUDE_PATH = File.real_path(ENV["CHARLYDIR"] + "/src/std/prelude.charly")
 
     # Mapping between types and their class names
     CLASS_MAPPING = {
@@ -102,30 +103,21 @@ module Charly
 
     # Creates a new Interpreter inside *top*
     # Setting *load_prelude* to false will prevent loading the prelude file
-    def initialize(@top : Scope, load_prelude = true)
+    def initialize(@top : Scope, @prelude)
       @trace = [] of Trace
 
       # Insert *export* if not already set
       unless @top.contains "export"
         @top.write("export", TObject.new, Flag::INIT)
       end
-
-      # Load the prelude if *load_prelude* is set to true
-      if load_prelude
-
-        # Check if the prelude exists
-        if File.readable?(PRELUDE_PATH)
-          program = Parser.create(File.open(PRELUDE_PATH), PRELUDE_PATH)
-          exec_program(program, @top)
-        else
-          raise IOException.new "Could not locate prelude file"
-        end
-      end
     end
 
     # Create a new interpreter with an empty scope as it's top
     def self.new
-      self.new(Scope.new)
+      prelude = Scope.new
+      user = Scope.new(prelude)
+
+      self.new(user, prelude)
     end
 
     # :nodoc:
@@ -251,6 +243,13 @@ module Charly
 
       # Resolve the expression
       expression = exec_expression(node.expression, scope, context)
+
+      # If the expression is a TFunc and it doesn't have a name yet, give it a name
+      if expression.is_a? TFunc
+        unless expression.name.is_a? String
+          expression.name = node.identifier.name
+        end
+      end
 
       # Check if we have to assign a constant or not
       if node.is_a? VariableInitialisation

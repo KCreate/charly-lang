@@ -24,7 +24,7 @@ module Charly
       if values.size > 0
         io << ":("
         i = 0
-        values.each do |key, value, flags|
+        values.each do |_, key|
           io << "#{key}"
 
           unless i == values.size - 1
@@ -145,7 +145,7 @@ module Charly
   # This is a quick and dirty workaround
   # This is currently a limitation of the language
   # See: https://github.com/crystal-lang/crystal/issues/3532
-  alias InternalFuncType =  Proc(CallExpression, Scope, Context, Int32, Array(BaseType), BaseType)
+  alias InternalFuncType =  Proc(CallExpression, Interpreter, Scope, Context, Int32, Array(BaseType), BaseType)
 
   class TInternalFunc < BaseType
     property name : String
