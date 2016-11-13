@@ -76,7 +76,7 @@ module Charly
         error_message = "Unexpected end of file"
       end
 
-      raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, @filename, error_message)
+      raise SyntaxError.new(@token.location, error_message)
     end
 
     # :nodoc:
@@ -84,7 +84,7 @@ module Charly
     private def unallowed_token
       error_message = "You are not allowed to use #{@token.value} at this location"
 
-      raise SyntaxError.new(@token.location, @reader.finish.buffer.to_s, @filename, error_message)
+      raise SyntaxError.new(@token.location, error_message)
     end
 
     # :nodoc:
@@ -399,7 +399,7 @@ module Charly
           value = parse_func_literal
 
           unless value.name.is_a? String
-            raise SyntaxError.new(value, @reader.finish.buffer.to_s, @filename, "Missing function name")
+            raise SyntaxError.new(value, "Missing function name")
           end
 
           if_token TokenType::Semicolon do

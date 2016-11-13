@@ -30,15 +30,30 @@ module Charly
     property source : String
     property filename : String
 
-    def initialize(@location_start, @location_end, @source, @filename, @message)
+    def initialize(@location_start, @location_end, @message)
+      path = @location_start.filename
+
+      if path.starts_with? Dir.current
+        @filename = File.join(".", path.gsub(Dir.current, ""))
+      else
+        @filename = path
+      end
+
+      # Load the file at the path of @location_start
+
+      if File.exists?(path) && File.readable?(path)
+        @source = File.read(path)
+      else
+        @source = ""
+      end
     end
 
-    def self.new(location_start : Location, source : String, filename : String, message : String)
-      self.new(location_start, location_start, source, filename, message)
+    def self.new(location_start : Location, message : String)
+      self.new(location_start, location_start, message)
     end
 
-    def self.new(node : ASTNode, source : String, filename : String, message : String)
-      self.new(node.location_start, node.location_end, source, filename, message)
+    def self.new(node : ASTNode, message : String)
+      self.new(node.location_start, node.location_end, message)
     end
 
     def self.new(node : ASTNode, context : Context, message : String)
@@ -48,7 +63,7 @@ module Charly
         message = "#{entry.colorize(:green)}\n#{message}"
       end
 
-      self.new(node.location_start, node.location_end, context.program.source, context.program.path, message)
+      self.new(node.location_start, node.location_end, message)
     end
 
     private def meta(io)

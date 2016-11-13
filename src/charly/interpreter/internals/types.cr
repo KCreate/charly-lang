@@ -43,7 +43,7 @@ module Charly::Internals
 
     # Check if there is at least 1 char
     unless value.size > 0
-      raise RunTimeError.new(call.argumentlist[0], context, "Expected string to contain at least 1 character")
+      raise RunTimeError.new(call.argumentlist[0], "Expected string to contain at least 1 character")
     end
 
     result = TArray.new([] of BaseType)

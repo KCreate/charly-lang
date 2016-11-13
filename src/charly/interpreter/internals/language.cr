@@ -8,7 +8,7 @@ module Charly::Internals
       cwd = File.dirname(call.location_start.filename)
       return Require.load(filename.value, cwd)
     rescue e : Require::FileNotFoundException
-      raise RunTimeError.new(call, context, "Can't load file #{filename}")
+      raise RunTimeError.new(call, "Can't load file #{filename}")
     end
   end
 

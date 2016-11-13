@@ -625,7 +625,7 @@ module Charly
           loc.pos = initial_pos
           loc.length = (@reader.pos - initial_pos).to_i32
 
-          raise SyntaxError.new(loc, @reader.finish.buffer.to_s, @filename, "Unclosed string")
+          raise SyntaxError.new(loc, "Unclosed string")
         end
       end
 
@@ -699,7 +699,7 @@ module Charly
       loc.length = 1
 
       char = current_char
-      raise SyntaxError.new(loc, @reader.finish.buffer.to_s, @filename, "Unexpected '#{char}'")
+      raise SyntaxError.new(loc, "Unexpected '#{char}'")
     end
   end
 end
