@@ -5,14 +5,6 @@ let testResult = UnitTest("Charly").begin(func(describe) {
 
   describe("Including external files", func(it) {
 
-    it("includes a file", func(assert) {
-      assert(include("./external.charly").num, 25)
-      assert(include("./external.charly").num, 25)
-
-      assert(include("./external.charly").increment(0), 1)
-      assert(include("./external.charly").increment(0), 1)
-    })
-
     it("requires a file", func(assert) {
       assert(require("./external.charly").num, 25)
       assert(require("./external.charly").num, 25)
@@ -32,17 +24,9 @@ let testResult = UnitTest("Charly").begin(func(describe) {
 
       assert(require("./external.charly") == external, true)
       assert(require("./external.charly").num, 50)
-      assert(include("./external.charly").num, 25)
 
       # Reset for further tests
       external.num = 25
-    })
-
-    it("includes core modules", func(assert) {
-      let io = include("io")
-      assert(io.stdout.print.type(), "Function")
-      assert(io.stderr.write.type(), "Function")
-      assert(io.stdin.getc.type(), "Function")
     })
 
   })
@@ -139,12 +123,6 @@ let testResult = UnitTest("Charly").begin(func(describe) {
       assert(2**4, 16)
       assert(50**1, 50)
       assert(50**0, 1)
-    })
-
-    it("sleeps for a given time", func(assert) {
-      let start = time_ms()
-      sleep(1.seconds())
-      assert((time_ms() - start).close_to(1000, 10), true)
     })
 
     it("does AND assignments", func(assert) {
@@ -435,7 +413,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
     it("maps over an array", func(assert) {
       let nums = [1, 2, 3, 4]
 
-      nums.map(func(n) {
+      nums = nums.map(func(n) {
         n**2
       })
 
@@ -883,7 +861,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
         let val = "in box"
 
         func foo() {
-          got = self.val
+          got = @val
         }
       }
 
@@ -899,7 +877,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
 
         func foo() {
           func bar() {
-            got = self.val
+            got = @val
           }
 
           bar()
@@ -922,7 +900,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
 
         func bar() {
           foo(func() {
-            got = self.val
+            got = @val
           })
         }
       }
@@ -939,7 +917,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
       }
 
       box.foo = func() {
-        got = self.val
+        got = @val
       }
 
       let got = null
@@ -956,7 +934,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
           let val = "inner box"
 
           func bar() {
-            got = self.val
+            got = @val
           }
         }
       }
@@ -979,7 +957,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
       let got = null
 
       box.foo.bar = func bar() {
-        got = self.val
+        got = @val
       }
 
       box.foo.bar()
@@ -1037,12 +1015,12 @@ let testResult = UnitTest("Charly").begin(func(describe) {
 
     it("creates a new class", func(assert) {
       class Person {
-        let name
-        let age
+        property name
+        property age
 
         func constructor(name, age) {
-          self.name = name
-          self.age = age
+          @name = name
+          @age = age
         }
       }
 
@@ -1064,9 +1042,9 @@ let testResult = UnitTest("Charly").begin(func(describe) {
 
     it("calls functions inside classes", func(assert) {
       class Box {
-        let value
+        property value
         func set(value) {
-          self.value = value
+          @value = value
         }
       }
 
@@ -1092,49 +1070,6 @@ let testResult = UnitTest("Charly").begin(func(describe) {
       myBox.changed = true
 
       assert(changed, false)
-    })
-
-    it("can access self inside class blocks", func(assert) {
-      class Box {
-        self.name = "test"
-      }
-
-      let myBox = Box()
-      assert(myBox.name, "test")
-    })
-
-    it("unpacks other objects", func(assert) {
-      const greetable = {
-        func getName() {
-          self.name
-        }
-      }
-
-      class Person {
-        unpack(greetable, self)
-
-        let name
-
-        func constructor(name) {
-          self.name = name
-        }
-      }
-
-      const leonard = Person("leonard")
-      assert(leonard.getName(), "leonard")
-
-    })
-
-    it("creates anonymous classes", func(assert) {
-      let leonard = class {
-        let name
-
-        func constructor(name) {
-          self.name = name
-        }
-      }("Leonard")
-
-      assert(leonard.name, "Leonard")
     })
 
   })
@@ -1188,40 +1123,6 @@ let testResult = UnitTest("Charly").begin(func(describe) {
       assert(myBox.do_stuff(), "it works!")
     })
 
-    it("has a reference to the correct object", func(assert) {
-      class Box {
-        class SubBox {
-          let name = "test"
-
-          func doStuff() {
-            self.name = "changed as well"
-          }
-        }
-
-        func doStuff() {
-          self.name = "changed"
-        }
-
-        let name = "hello world"
-        let mybox = SubBox()
-      }
-
-      let myBox = Box()
-
-      assert(myBox.name, "hello world")
-      assert(myBox.mybox.name, "test")
-
-      myBox.doStuff()
-
-      assert(myBox.name, "changed")
-      assert(myBox.mybox.name, "test")
-
-      myBox.mybox.doStuff()
-
-      assert(myBox.name, "changed")
-      assert(myBox.mybox.name, "changed as well")
-    })
-
     it("anonymous functions's self is sourced from the stack ", func(assert) {
       let val = 0
 
@@ -1238,7 +1139,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
 
         func call() {
           box1.callback(func() {
-            self.val = 200
+            @val = 200
           })
         }
       }
@@ -1247,69 +1148,6 @@ let testResult = UnitTest("Charly").begin(func(describe) {
       assert(val, 0)
       assert(box1.val, 1)
       assert(box2.val, 200)
-    })
-
-    it("can specify the __member method", func(assert) {
-      class Box {
-        func __member(index) {
-          "received: " + index
-        }
-      }
-
-      let myBox = Box()
-      assert(myBox[0], "received: 0")
-      assert(myBox[200], "received: 200")
-      assert(myBox[-200], "received: -200")
-      assert(myBox["test"], "received: test")
-      assert(myBox[[1, 2]], "received: [1, 2]")
-    })
-
-    it("calls the __member method with the correct self identifier", func(assert) {
-      class Box {
-        func __member(index) {
-          self
-        }
-      }
-
-      let myBox = Box()
-      assert(myBox[0] == myBox, true)
-      assert(myBox[200] == myBox, true)
-      assert(myBox[-200] == myBox, true)
-      assert(myBox["test"] == myBox, true)
-      assert(myBox[[1, 2]] == myBox, true)
-    })
-
-    it("can specifiy the __member_write method", func(assert) {
-      class Box {
-        func __member_write(index, value) {
-          "received: " + index.to_s() + " and " + value
-        }
-      }
-
-      let myBox = Box()
-
-      assert(myBox[0] = 1, "received: 0 and 1")
-      assert(myBox[200] = 20, "received: 200 and 20")
-      assert(myBox[-200] = 500, "received: -200 and 500")
-      assert(myBox["test"] = "hello", "received: test and hello")
-      assert(myBox["test", 2] = "hello", "received: test and 2")
-      assert(myBox[[1, 2]] = false, "received: [1, 2] and false")
-    })
-
-    it("calls the __member_write method with the correct self identifier", func(assert) {
-      class Box {
-        func __member_write(index, value) {
-          self
-        }
-      }
-
-      let myBox = Box()
-
-      assert((myBox[0] = 1) == myBox, true)
-      assert((myBox[200] = 20) == myBox, true)
-      assert((myBox[-200] = 500) == myBox, true)
-      assert((myBox["test"] = "hello") == myBox, true)
-      assert((myBox[[1, 2]] = false) == myBox, true)
     })
 
     it("redirects arithmetic operators", func(assert) {
@@ -1379,38 +1217,12 @@ let testResult = UnitTest("Charly").begin(func(describe) {
 
       Box.do2 = func() {
         val = 120
-        self.val = 90
+        @val = 90
       }
       Box.do2()
 
       assert(val, 120)
       assert(Box.val, 90)
-    })
-
-    it("reads and writes via index expressions", func(assert) {
-      let Box = {
-        let name = "leonard"
-      }
-
-      assert(Box["name"], "leonard")
-
-      Box["age"] = 16
-
-      assert(Box["age"], 16)
-    })
-
-    it("adds functions via index expressions", func(assert) {
-      let Box = {
-        let name = "test"
-      }
-
-      Box["change_name"] = func(name) {
-        self.name = name
-      }
-
-      Box.change_name("leonard")
-
-      assert(Box["name"], "leonard")
     })
 
   })
@@ -1444,7 +1256,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
 
   describe("Misc. standard library functions", func(it) {
 
-    it("returns the type()() of a variable", func(assert) {
+    it("returns the type() of a variable", func(assert) {
       assert(false.type(), "Boolean")
       assert(true.type(), "Boolean")
       assert("test".type(), "String")
