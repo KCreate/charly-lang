@@ -1024,7 +1024,7 @@ module Charly
 
         # Execute the constructor function inside the object_scope
         @trace << Trace.new("#{target.name}:constructor", node)
-        exec_function_call(constructor, callex, object, object_scope, context)
+        exec_function_call(constructor, callex, object, scope, context)
         @trace.pop
       end
 
