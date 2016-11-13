@@ -1,0 +1,33 @@
+export = {
+
+  # Constants
+  const PI = 3.14159265358979323846
+  const E = 2.7182818284590451
+  const LOG2 = 0.69314718055994529
+  const LOG10 = 2.3025850929940459
+
+  const cos = __internal__method("cos");
+  const cosh = __internal__method("cosh");
+  const acos = __internal__method("acos");
+  const acosh = __internal__method("acosh");
+
+  const sin = __internal__method("sin");
+  const sinh = __internal__method("sinh");
+  const asin = __internal__method("asin");
+  const asinh = __internal__method("asinh");
+
+  const tan = __internal__method("tan");
+  const tanh = __internal__method("tanh");
+  const atan = __internal__method("atan");
+  const atanh = __internal__method("atanh");
+
+  const cbrt = __internal__method("cbrt");
+  const sqrt = __internal__method("sqrt");
+
+  const ceil = __internal__method("ceil");
+  const floor = __internal__method("floor");
+
+  const log = __internal__method("log");
+
+  const rand = __internal__method("rand");
+}

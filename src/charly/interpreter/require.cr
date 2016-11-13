@@ -16,7 +16,8 @@ module Charly::Require
 
   # A list of core modules the interpreter provides
   CORE_MODULES = [
-    "unit-test"
+    "unit-test",
+    "math"
   ] of String
 
   # Loads *filename* and returns the value of the export variable
