@@ -70,11 +70,13 @@ module Charly
     # Mapping between types and their class names
     CLASS_MAPPING = {
       TClass => "Class",
+      TPrimitiveClass => "Class",
       TNumeric => "Numeric",
       TString => "String",
       TBoolean => "Boolean",
       TArray => "Array",
       TFunc => "Function",
+      TInternalFunc => "Function",
       TNull => "Null"
     }
 
@@ -434,12 +436,12 @@ module Charly
           return TNumeric.new(left.value * right.value)
         when TokenType::Divd
           if left.value == 0 || right.value == 0
-            return TNull.new
+            return TNumeric.new(Float64::NAN)
           end
           return TNumeric.new(left.value / right.value)
         when TokenType::Mod
           if right.value == 0
-            return TNull.new
+            return TNumeric.new(Float64::NAN)
           end
           return TNumeric.new(left.value.to_i64 % right.value.to_i64)
         when TokenType::Pow
