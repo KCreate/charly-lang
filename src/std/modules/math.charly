@@ -6,28 +6,28 @@ export = {
   const LOG2 = 0.69314718055994529
   const LOG10 = 2.3025850929940459
 
-  const cos = __internal__method("cos");
-  const cosh = __internal__method("cosh");
-  const acos = __internal__method("acos");
-  const acosh = __internal__method("acosh");
+  const cos = __internal__method("math", "cos");
+  const cosh = __internal__method("math", "cosh");
+  const acos = __internal__method("math", "acos");
+  const acosh = __internal__method("math", "acosh");
 
-  const sin = __internal__method("sin");
-  const sinh = __internal__method("sinh");
-  const asin = __internal__method("asin");
-  const asinh = __internal__method("asinh");
+  const sin = __internal__method("math", "sin");
+  const sinh = __internal__method("math", "sinh");
+  const asin = __internal__method("math", "asin");
+  const asinh = __internal__method("math", "asinh");
 
-  const tan = __internal__method("tan");
-  const tanh = __internal__method("tanh");
-  const atan = __internal__method("atan");
-  const atanh = __internal__method("atanh");
+  const tan = __internal__method("math", "tan");
+  const tanh = __internal__method("math", "tanh");
+  const atan = __internal__method("math", "atan");
+  const atanh = __internal__method("math", "atanh");
 
-  const cbrt = __internal__method("cbrt");
-  const sqrt = __internal__method("sqrt");
+  const cbrt = __internal__method("math", "cbrt");
+  const sqrt = __internal__method("math", "sqrt");
 
-  const ceil = __internal__method("ceil");
-  const floor = __internal__method("floor");
+  const ceil = __internal__method("math", "ceil");
+  const floor = __internal__method("math", "floor");
 
-  const log = __internal__method("log");
+  const log = __internal__method("math", "log");
 
-  const rand = __internal__method("rand");
+  const rand = __internal__method("math", "rand");
 }
