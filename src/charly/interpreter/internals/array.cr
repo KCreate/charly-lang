@@ -9,8 +9,17 @@ module Charly::Internals
     array_size = array.value.size
     index = index.value.to_i64
 
-    # Insert at the given location
-    array.value.insert(index, item)
+    # If the index is smaller than 0, we shift to the beginning
+    # If the index is bigger than the size of the array
+    # we append to the end
+    if index <= 0
+      array.value.unshift(item)
+    elsif index >= array.value.size
+      array.value << item
+    else
+      array.value.insert(index, item)
+    end
+
     return array
   end
 

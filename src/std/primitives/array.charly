@@ -48,9 +48,15 @@ export = primitive class Array {
     })
   }
 
-  # Append an item to this array
+  # Append an item to the end of this array
   func push(item) {
     array_insert(self, item, @length())
+    self
+  }
+
+  # Append an item to the beginning of this array
+  func unshift(item) {
+    array_insert(self, item, 0)
     self
   }
 
@@ -84,5 +90,101 @@ export = primitive class Array {
   # Return a new array of a given size
   func of_size(size) {
     array_of_size(size)
+  }
+
+  # Return the first element of this array
+  func first() {
+    self[0]
+  }
+
+  # Return the last element of this array
+  func last() {
+    self[@length() - 1]
+  }
+
+  # Return a reversed version of this array
+  func reverse() {
+    let new = []
+    @each(func(e) {
+      new.unshift(e)
+    })
+    new
+  }
+
+  # Returns a recursively flattened version of this array
+  func flatten() {
+    let new = []
+
+    @each(func(e) {
+      if (e.typeof() == "Array") {
+        e.flatten().each(func(e) {
+          new.push(e)
+        })
+      } else {
+        new.push(e)
+      }
+    })
+
+    new
+  }
+
+  # Returns the index of *element* if found
+  # Returns -1 of not found
+  func index_of(element) {
+    let index = -1
+    let i = 0
+
+    let length = self.length()
+    let found = false
+
+    while (i < length) {
+      if (!found) {
+        if ((self[i].typeof() == element.typeof()) && (self[i] == element)) {
+          index = i
+          found = true
+          i = length
+        }
+      }
+      i += 1
+    }
+
+    index
+  }
+
+  # Join the elements of the array together
+  func join(separator) {
+    let string = ""
+    let count = @length()
+
+    @each(func(e, index) {
+      string += e.to_s()
+
+      # Unless were at the last element, append the separator
+      if (index < count - 1) {
+        string += separator.to_s()
+      }
+    })
+
+    string
+  }
+
+  func range(start, end) {
+
+    # Switch params if start is bigger
+    if start > end {
+      let tmp = end
+      end = start
+      start = tmp
+    }
+
+    # Create the new array
+    const new = []
+    const length = @length()
+    start.upto(end, func(n) {
+      if ((n >= -1) && n < length) {
+        new.push(self[n])
+      }
+    })
+    new
   }
 }

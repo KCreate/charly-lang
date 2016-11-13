@@ -336,16 +336,16 @@ let testResult = UnitTest("Charly").begin(func(describe) {
       let d
 
       d = a || b
-      assert(d.type(), "Numeric")
+      assert(d.typeof(), "Numeric")
 
       d = b || c
-      assert(d.type(), "Boolean")
+      assert(d.typeof(), "Boolean")
 
       d = b || a
-      assert(d.type(), "Numeric")
+      assert(d.typeof(), "Numeric")
 
       d = c || b
-      assert(d.type(), "Null")
+      assert(d.typeof(), "Null")
     })
 
   })
@@ -782,7 +782,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
     it("creates the __argument variable", func(assert) {
       let args_received
       func call_me() {
-        args_received = __arguments
+        args_received = arguments
       }
       call_me("hello", "world", "this", "should", "work")
 
@@ -1033,13 +1033,6 @@ let testResult = UnitTest("Charly").begin(func(describe) {
       assert(peter.age, 20)
     })
 
-    it("creates a new class via foo.new", func(assert) {
-      class Box {}
-
-      let myBox = Box.new()
-      assert(myBox.type(), "Object")
-    })
-
     it("calls functions inside classes", func(assert) {
       class Box {
         property value
@@ -1257,16 +1250,16 @@ let testResult = UnitTest("Charly").begin(func(describe) {
   describe("Misc. standard library functions", func(it) {
 
     it("returns the type() of a variable", func(assert) {
-      assert(false.type(), "Boolean")
-      assert(true.type(), "Boolean")
-      assert("test".type(), "String")
-      assert(25.type(), "Numeric")
-      assert(25.5.type(), "Numeric")
-      assert([1, 2, 3].type(), "Array")
-      assert((class Test {}).type(), "Class")
-      assert((func() {}).type(), "Function")
-      assert({}.type(), "Object")
-      assert(null.type(), "Null")
+      assert(false.typeof(), "Boolean")
+      assert(true.typeof(), "Boolean")
+      assert("test".typeof(), "String")
+      assert(25.typeof(), "Numeric")
+      assert(25.5.typeof(), "Numeric")
+      assert([1, 2, 3].typeof(), "Array")
+      assert((class Test {}).typeof(), "Class")
+      assert((func() {}).typeof(), "Function")
+      assert({}.typeof(), "Object")
+      assert(null.typeof(), "Null")
     })
 
     it("casts string to numeric", func(assert) {
@@ -1334,18 +1327,18 @@ let testResult = UnitTest("Charly").begin(func(describe) {
   describe("CLI", func(it) {
 
     it("receives an argument called ARGV", func(assert) {
-      assert(ARGV.type(), "Array")
+      assert(ARGV.typeof(), "Array")
       assert(ARGV.length(), 0)
     })
 
     it("receives an argument called IFLAGS", func(assert) {
-      assert(IFLAGS.type(), "Array")
+      assert(IFLAGS.typeof(), "Array")
       assert(IFLAGS.length(), 0)
     })
 
     it("receives an argument called ENV", func(assert) {
-      assert(ENV.type(), "Object")
-      assert(ENV["CHARLYDIR"].type(), "String")
+      assert(ENV.typeof(), "Object")
+      assert(ENV["CHARLYDIR"].typeof(), "String")
     })
 
   })
@@ -1471,7 +1464,7 @@ let testResult = UnitTest("Charly").begin(func(describe) {
         throw 2
       } catch (e) {
         assert(e, 2)
-        assert(e.type(), "Numeric")
+        assert(e.typeof(), "Numeric")
       }
     })
 

@@ -15,7 +15,7 @@ export = primitive class Object {
     _colorize(self.to_s(), code)
   }
 
-  func type() {
+  func typeof() {
     typeof(self)
   }
 }

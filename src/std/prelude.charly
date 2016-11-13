@@ -5,6 +5,7 @@ require.resolve = __internal__method("require_resolve")
 
 # Primitives
 const Object = require("./primitives/object.charly")
+const Class = require("./primitives/class.charly")
 const Array = require("./primitives/array.charly")
 const String = require("./primitives/string.charly")
 const Numeric = require("./primitives/numeric.charly")
