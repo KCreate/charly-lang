@@ -105,11 +105,6 @@ module Charly
     # Setting *load_prelude* to false will prevent loading the prelude file
     def initialize(@top : Scope, @prelude)
       @trace = [] of Trace
-
-      # Insert *export* if not already set
-      unless @top.contains "export"
-        @top.write("export", TObject.new, Flag::INIT)
-      end
     end
 
     # Create a new interpreter with an empty scope as it's top
@@ -130,6 +125,12 @@ module Charly
 
     # Executes *program* inside *scope*
     def exec_program(program : Program, scope : Scope = @top)
+
+      # Insert *export* if not already set
+      unless scope.contains "export"
+        scope.write("export", TObject.new, Flag::INIT)
+      end
+
       context = Context.new(program, @trace)
       exec_block(program.tree, scope, context)
     end
