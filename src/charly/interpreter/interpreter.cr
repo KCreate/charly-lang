@@ -101,6 +101,12 @@ module Charly
       TokenType::Not => "__not"
     }
 
+    # Mapping between unary operators and function names you use to override them
+    UNARY_OPERATOR_MAPPING = {
+      TokenType::Minus => "__uminus",
+      TokenType::Not => "__unot"
+    }
+
     # Creates a new Interpreter inside *top*
     # Setting *load_prelude* to false will prevent loading the prelude file
     def initialize(@top : Scope, @prelude)
@@ -207,13 +213,13 @@ module Charly
           return TBoolean.new(false)
         end
       when .is_a? Or
-        left = exec_get_truthyness(exec_expression(node.left, scope, context), scope, context)
+        left_value = exec_expression(node.left, scope, context)
+        left = exec_get_truthyness(left_value, scope, context)
 
         if left
-          return TBoolean.new(true)
+          return left_value
         else
-          right = exec_get_truthyness(exec_expression(node.right, scope, context), scope, context)
-          return TBoolean.new(right)
+          return exec_expression(node.right, scope, context)
         end
       when .is_a? MemberExpression
         return exec_member_expression(node, scope, context)
@@ -349,7 +355,7 @@ module Charly
       operator = node.operator
       right = exec_expression(node.right, scope, context)
 
-      override_method_name = OPERATOR_MAPPING[operator]
+      override_method_name = UNARY_OPERATOR_MAPPING[operator]
 
       # Check if the data of the value contains this method
       # If it doesn't check if the primitive class has an entry for it
