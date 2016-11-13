@@ -70,6 +70,7 @@ module Charly
 
     # Mapping between types and their class names
     CLASS_MAPPING = {
+      TObject => "Object",
       TClass => "Class",
       TPrimitiveClass => "Class",
       TNumeric => "Numeric",
@@ -1094,6 +1095,10 @@ module Charly
         end
 
         method = get_primitive_method(TObject, node.member.name, scope, context)
+
+        if method.is_a? BaseType
+          return ({ identifier, method })
+        end
       end
 
       return ({ identifier, TNull.new })
