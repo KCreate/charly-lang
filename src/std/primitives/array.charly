@@ -7,7 +7,7 @@ export = primitive class Array {
   # Calls the callback with each element and the index
   func each(callback) {
     let i = 0
-    while i < self.length() {
+    while i < @length() {
       callback(self[i], i)
       i += 1
     }
@@ -18,15 +18,39 @@ export = primitive class Array {
   # The return value is an array of return values from the callback
   func map(callback) {
     let new = []
-    self.each(func(e, i) {
+    @each(func(e, i) {
       new.push(callback(e, i))
     })
     new
   }
 
+  # Returns a new array whichs contains all
+  # elements for which the passed block returned a truthy value
+  func filter(callback) {
+    let new = []
+    @each(func(e, i) {
+      if (callback(e, i)) {
+        new.push(e)
+      }
+    })
+    new
+  }
+
+  # Returns true if this array is empty
+  func empty() {
+    @length() == 0
+  }
+
+  # Returns an array where all children are turned into strings
+  func all_to_s() {
+    @map(func(e) {
+      e.to_s()
+    })
+  }
+
   # Append an item to this array
   func push(item) {
-    array_insert(self, item, self.length())
+    array_insert(self, item, @length())
     self
   }
 
@@ -45,8 +69,8 @@ export = primitive class Array {
   # Returns the string representation of this array
   func to_s() {
     let io = "["
-    let amount = self.length()
-    self.each(func(e, i) {
+    let amount = @length()
+    @each(func(e, i) {
       io += e.to_s()
 
       if i ! amount - 1 {

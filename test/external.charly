@@ -1,7 +1,5 @@
 export = {
-  func foo(callback) {
-    callback()
-  }
+  let num = 25
 
   func bar() {
     lol

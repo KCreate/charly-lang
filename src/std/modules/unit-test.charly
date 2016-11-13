@@ -16,7 +16,7 @@ class Test {
 
   func failed() {
     @assertions.filter(func(assertion) {
-      assertion[2]
+      !assertion[2]
     })
   }
 
@@ -75,7 +75,6 @@ export = class UnitTest {
 
     # Run all tests
     callback(func describe(description, callback) {
-      print(description, callback)
       const current_suite = Suite(description)
 
       print(("Suite: " + description).colorize(33))
@@ -100,11 +99,7 @@ export = class UnitTest {
       print("")
 
       # Add the current_suite to the suites array
-      suites.push(current_suite)
-
-      if (!current_suite.passed()) {
-        failed_suites.push(current_suite)
-      }
+      @suites.push(current_suite)
 
       null
     })
@@ -141,13 +136,13 @@ export = class UnitTest {
       print("Some test-suites have failed!".colorize(31))
 
       # Show all failed assertions in a nice graph
-      failed_suites.each(func(suite) {
+      failed.each(func(suite) {
 
         print("- " + suite.title.colorize(33))
-        suite.failed_tests.each(func(test) {
+        suite.failed.each(func(test) {
 
           print("  - " + test.title.colorize(37))
-          test.failed_assertions.each(func(assertion) {
+          test.failed.each(func(assertion) {
             print("      " + (assertion[0] + 1) + ": " + ("Expected: " + assertion[1][1] + ", got: >" + assertion[1][0] + "<").colorize(31))
           })
         })
