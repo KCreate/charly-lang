@@ -15,7 +15,9 @@ module Charly::Require
   @@cache = {} of String => BaseType
 
   # A list of core modules the interpreter provides
-  CORE_MODULES = [] of String
+  CORE_MODULES = [
+    "unit-test"
+  ] of String
 
   # Loads *filename* and returns the value of the export variable
   def load(filename, cwd, prelude)
