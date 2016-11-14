@@ -584,7 +584,11 @@ module Charly
         when TokenType::LessEqual
           return TBoolean.new(left.value <= right.value)
         when TokenType::Equal
-          return TBoolean.new(left.value == right.value)
+          if left.value.nan? && right.value.nan?
+            return TBoolean.new(true)
+          else
+            return TBoolean.new(left.value == right.value)
+          end
         when TokenType::Not
           return TBoolean.new(left.value != right.value)
         end

@@ -103,7 +103,7 @@ let testResult = TestCase.begin(func(describe) {
     })
 
     it("divides numbers", func(assert) {
-      assert(5 / 0, null)
+      assert(5 / 0, NAN)
       assert(5 / -2, -2.5)
       assert(10 / 4, 2.5)
       assert(100 / 8, 12.5)
@@ -112,7 +112,7 @@ let testResult = TestCase.begin(func(describe) {
 
     it("modulus operator", func(assert) {
       assert(6 % 3, 0)
-      assert(0 % 0, null)
+      assert(0 % 0, NAN)
       assert(177 % 34, 7)
       assert(700 % 200, 100)
       assert(20 % 3, 2)

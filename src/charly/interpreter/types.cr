@@ -52,7 +52,11 @@ module Charly
       if @value.nan?
         io << "NAN"
       else
-        io << @value
+        if @value % 1 == 0
+          io << @value.to_i64
+        else
+          io << @value
+        end
       end
     end
 
