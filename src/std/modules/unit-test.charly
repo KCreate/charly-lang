@@ -15,12 +15,12 @@ class Test {
   }
 
   func failed() {
-    @assertions.filter(func(assertion) {
-      !assertion[2]
-    }).map(func(assertion, i) {
+    @assertions.map(func(assertion, i) {
       [
         i, assertion
       ]
+    }).filter(func(assertion) {
+      !assertion[1][2]
     })
   }
 
@@ -149,7 +149,7 @@ export = class UnitTest {
 
           print("  - " + test.title.colorize(37))
           test.failed().each(func(assertion) {
-            print("      " + (assertion[0] + 1) + ": " + ("Expected: " + assertion[1][0] + ", got: >" + assertion[1][1] + "<").colorize(31))
+            print("      " + (assertion[0] + 1) + ": " + ("Expected: " + assertion[1][1] + ", got: >" + assertion[1][0] + "<").colorize(31))
           })
         })
       })

@@ -126,7 +126,7 @@ module Charly
     end
 
     def self.name(io)
-      io << "Array"
+      io << "Object"
     end
   end
 
