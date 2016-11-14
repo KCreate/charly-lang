@@ -71,7 +71,7 @@ export = primitive class Array {
   }
 
   # Inserts *item* at *index*
-  func insert(item, index) {
+  func insert(index, item) {
     array_insert(self, item, index)
     self
   }
@@ -231,12 +231,12 @@ export = primitive class Array {
   # Compare an array to something else
   func __equal(other) {
 
-    if (other.typeof() ! @typeof()) {
-      return false
-    }
-
     if (other.typeof() == "Boolean") {
       return other
+    }
+
+    if (other.typeof() ! @typeof()) {
+      return false
     }
 
     # Check the length

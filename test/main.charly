@@ -168,17 +168,17 @@ let testResult = TestCase.begin(func(describe) {
       assert(true == false, false)
       assert(true == true, true)
 
-      assert(0 == false, true)
+      assert(0 == false, false)
       assert(1 == true, true)
       assert(-1 == true, true)
-      assert("" == true, false)
-      assert("test" == true, false)
-      assert([] == true, false)
-      assert([1, 2] == true, false)
+      assert("" == true, true)
+      assert("test" == true, true)
+      assert([] == true, true)
+      assert([1, 2] == true, true)
       assert(null == false, true)
-      assert({ let name = "leonard" } == true, false)
-      assert(func() {} == true, false)
-      assert(class Test {} == true, false)
+      assert({ let name = "leonard" } == true, true)
+      assert(func() {} == true, true)
+      assert(class Test {} == true, true)
     })
 
     it("compares strings", func(assert) {
@@ -310,9 +310,9 @@ let testResult = TestCase.begin(func(describe) {
     it("not operator inverts a value", func(assert) {
       assert(!false, true)
       assert(!true, false)
-      assert(!0, true)
+      assert(!0, false)
       assert(!25, false)
-      assert(!"test", true)
+      assert(!"test", false)
     })
 
     it("does AND comparison", func(assert) {
@@ -468,6 +468,7 @@ let testResult = TestCase.begin(func(describe) {
       nums.insert(4, 7)
 
       assert(nums.length(), 7)
+      print(nums)
       assert(nums == [5, 3, 4, 1, 7, 2, 6], true)
     })
 
@@ -1169,7 +1170,7 @@ let testResult = TestCase.begin(func(describe) {
         func __lessequal(element) { "lessequal" }
         func __greaterequal(element) { "greaterequal" }
         func __equal(element) { "equal" }
-        func __notequal(element) { "notequal" }
+        func __not(element) { "notequal" }
       }
 
       assert(myBox < 1, "less")
