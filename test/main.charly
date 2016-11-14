@@ -468,7 +468,6 @@ let testResult = TestCase.begin(func(describe) {
       nums.insert(4, 7)
 
       assert(nums.length(), 7)
-      print(nums)
       assert(nums == [5, 3, 4, 1, 7, 2, 6], true)
     })
 
