@@ -809,7 +809,7 @@ module Charly
         advance
       end
 
-      if_token TokenType::Less do
+      if_token TokenType::Keyword, "extends" do
         advance
 
         if @token.type == TokenType::LeftCurly

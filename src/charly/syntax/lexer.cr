@@ -251,6 +251,33 @@ module Charly
           else
             consume_ident
           end
+        when 'x'
+          case read_char
+          when 't'
+            case read_char
+            when 'e'
+              case read_char
+              when 'n'
+                case read_char
+                when 'd'
+                  case read_char
+                  when 's'
+                    check_ident_or_keyword(TokenType::Keyword)
+                  else
+                    consume_ident
+                  end
+                else
+                  consume_ident
+                end
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
         else
           consume_ident
         end
