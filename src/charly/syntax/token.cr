@@ -59,7 +59,7 @@ module Charly
     Unknown
   end
 
-  struct Token
+  class Token
     property type : TokenType
     property value : String
     property raw : String

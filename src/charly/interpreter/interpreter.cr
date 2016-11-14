@@ -14,7 +14,7 @@ module Charly
   alias Scope = Container(BaseType)
 
   # Single trace entry for callstacks
-  private struct Trace
+  private class Trace
     property name : String
     property node : ASTNode
 
@@ -302,13 +302,17 @@ module Charly
         identifier = identifier.identifier
 
         # Resolve the identifier
-        identifier = exec_expression(identifier, scope, context)
+        _identifier = exec_expression(identifier, scope, context)
 
         # Write to the data field of the value
-        if identifier.data.contains(member.name)
-          identifier.data.write(member.name, expression, Flag::None)
+        if _identifier.is_a?(DataType)
+          if _identifier.data.contains(member.name)
+            _identifier.data.write(member.name, expression, Flag::None)
+          else
+            _identifier.data.write(member.name, expression, Flag::INIT)
+          end
         else
-          identifier.data.write(member.name, expression, Flag::INIT)
+          raise RunTimeError.new(identifier, context, "Can't write to non-object")
         end
 
         return expression
@@ -358,7 +362,7 @@ module Charly
       # Check if the data of the value contains this method
       # If it doesn't check if the primitive class has an entry for it
       method = nil
-      if right.data.contains override_method_name
+      if right.is_a?(DataType) && right.data.contains override_method_name
         method = right.data.get(override_method_name, Flag::IGNORE_PARENT)
       else
         method = get_primitive_method(right, override_method_name, scope, context)
@@ -401,7 +405,7 @@ module Charly
       # Check if the data of the value contains this method
       # If it doesn't check if the primitive class has an entry for it
       method = nil
-      if left.data.contains override_method_name
+      if left.is_a?(DataType) && left.data.contains override_method_name
         method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
       else
         method = get_primitive_method(left, override_method_name, scope, context)
@@ -464,7 +468,7 @@ module Charly
         when TokenType::Plus
 
           # Check if the right expression has a to_s method
-          if right.data.contains("to_s")
+          if right.is_a?(DataType) && right.data.contains("to_s")
             entry = right.data.get("to_s")
 
             if entry.is_a? TFunc
@@ -498,7 +502,7 @@ module Charly
         when TokenType::Plus
 
           # Check if the right expression has a to_s method
-          if right.data.contains("to_s")
+          if right.is_a?(DataType) && right.data.contains("to_s")
             entry = right.data.get("to_s")
 
             if entry.is_a? TFunc
@@ -541,7 +545,7 @@ module Charly
       # Check if the data of the value contains this method
       # If it doesn't check if the primitive class has an entry for it
       method = nil
-      if left.data.contains override_method_name
+      if left.is_a?(DataType) && left.data.contains override_method_name
         method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
       else
         method = get_primitive_method(left, override_method_name, scope, context)
@@ -890,7 +894,10 @@ module Charly
           arguments << exec_expression(expression, scope, context)
         end
 
-        return target.method.call(node, self, scope, context, arguments.size, arguments)
+        start = Time.now.epoch_ms
+        result = target.method.call(node, self, scope, context, arguments.size, arguments)
+
+        return result
       elsif target.is_a? TClass
         return exec_class_call(target, node, scope, context)
       elsif target.is_a? TPrimitiveClass
@@ -1069,7 +1076,7 @@ module Charly
       end
 
       # Check if the value contains the key that's asked for
-      if identifier.data.contains node.member.name
+      if identifier.is_a?(DataType) && identifier.data.contains node.member.name
         return ({identifier, identifier.data.get(node.member.name, Flag::IGNORE_PARENT)})
       else
         method = get_primitive_method(identifier, node.member.name, scope, context)
@@ -1155,7 +1162,7 @@ module Charly
           entry = scope.get("Object")
 
           # Check if this class contains the given method
-          if entry.data.contains(methodname)
+          if entry.is_a?(DataType) && entry.data.contains(methodname)
             method = entry.data.get(methodname, Flag::IGNORE_PARENT)
 
             if method.is_a? TFunc

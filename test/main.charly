@@ -1,7 +1,8 @@
 let UnitTest = require("unit-test")
 let Math = require("math")
 
-let testResult = UnitTest("Charly").begin(func(describe) {
+let TestCase = UnitTest("Charly")
+let testResult = TestCase.begin(func(describe) {
 
   describe("Including external files", func(it) {
 
@@ -1507,4 +1508,4 @@ let testResult = UnitTest("Charly").begin(func(describe) {
 
 })
 
-exit(testResult)
+# exit(testResult)

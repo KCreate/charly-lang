@@ -24,12 +24,22 @@ module Charly
     interpreter = Interpreter.new(user_scope, prelude_scope)
 
     # Parse and run the prelude
+    start = Time.now.epoch_ms
     prelude = Parser.create(File.open(PRELUDE_PATH), PRELUDE_PATH)
+    puts "Prelude parse took: #{Time.now.epoch_ms - start}"
+
+    start = Time.now.epoch_ms
     interpreter.exec_program prelude, prelude_scope
+    puts "Prelude exec took: #{Time.now.epoch_ms - start}"
 
     # Parse and run the user file
+    start = Time.now.epoch_ms
     program = Parser.create(File.open(filename), filename)
+    puts "Userfile parse took: #{Time.now.epoch_ms - start}"
+
+    start = Time.now.epoch_ms
     interpreter.exec_program program, user_scope
+    puts "Userfile exec: #{Time.now.epoch_ms - start}"
   rescue e : UserException
     puts e
     exit 1

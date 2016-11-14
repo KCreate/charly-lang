@@ -17,6 +17,10 @@ class Test {
   func failed() {
     @assertions.filter(func(assertion) {
       !assertion[2]
+    }).map(func(assertion, i) {
+      [
+        i, assertion
+      ]
     })
   }
 
@@ -40,7 +44,7 @@ class Suite {
 
   func failed() {
     @tests.filter(func(test) {
-      test.passed()
+      !test.passed()
     })
   }
 
@@ -60,7 +64,7 @@ export = class UnitTest {
 
   func failed() {
     @suites.filter(func(suite) {
-      suite.passed()
+      !suite.passed()
     })
   }
 
@@ -78,25 +82,27 @@ export = class UnitTest {
       const current_suite = Suite(description)
 
       print(("Suite: " + description).colorize(33))
+      const start = io.time_ms()
       callback(func it(description, callback) {
         const current_test = Test(description)
 
         write(("it " + description + " ").colorize(37))
+        const start = io.time_ms()
         callback(func assert(real, expect) {
           current_test.add(real, expect)
           null
         })
 
         if (current_test.passed()) {
-          write("Passed".colorize(32))
+          write("Passed".colorize(32) + " " + (io.time_ms() - start) + "ms")
         } else {
-          write("Failed".colorize(31))
+          write("Failed".colorize(31) + " " + (io.time_ms() - start) + "ms")
         }
         print("")
         current_suite.add(current_test)
         null
       })
-      print("")
+      print("Took: " + (io.time_ms() - start))
 
       # Add the current_suite to the suites array
       @suites.push(current_suite)
@@ -136,15 +142,14 @@ export = class UnitTest {
       print("Some test-suites have failed!".colorize(31))
 
       # Show all failed assertions in a nice graph
-      print(@failed)
       @failed().each(func(suite) {
 
         print("- " + suite.title.colorize(33))
-        suite.failed.each(func(test) {
+        suite.failed().each(func(test) {
 
           print("  - " + test.title.colorize(37))
-          test.failed.each(func(assertion) {
-            print("      " + (assertion[0] + 1) + ": " + ("Expected: " + assertion[1][1] + ", got: >" + assertion[1][0] + "<").colorize(31))
+          test.failed().each(func(assertion) {
+            print("      " + (assertion[0] + 1) + ": " + ("Expected: " + assertion[1][0] + ", got: >" + assertion[1][1] + "<").colorize(31))
           })
         })
       })

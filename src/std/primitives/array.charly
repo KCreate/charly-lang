@@ -1,13 +1,15 @@
 const array_insert = __internal__method("array_insert")
 const array_delete = __internal__method("array_delete")
 const array_of_size = __internal__method("array_of_size")
+const _length = __internal__method("length")
 
 export = primitive class Array {
 
   # Calls the callback with each element and the index
   func each(callback) {
     let i = 0
-    while i < @length() {
+    let size = _length(self)
+    while i < size {
       callback(self[i], i)
       i += 1
     }
@@ -17,10 +19,13 @@ export = primitive class Array {
   # Calls the callback with each element and the index
   # The return value is an array of return values from the callback
   func map(callback) {
+    let i = 0
+    let size = _length(self)
     let new = []
-    @each(func(e, i) {
-      new.push(callback(e, i))
-    })
+    while i < size {
+      new.push(callback(self[i], i))
+      i += 1
+    }
     new
   }
 
@@ -28,17 +33,22 @@ export = primitive class Array {
   # elements for which the passed block returned a truthy value
   func filter(callback) {
     let new = []
-    @each(func(e, i) {
-      if (callback(e, i)) {
-        new.push(e)
+    let i = 0
+    let size = _length(self)
+    let result
+    while i < size {
+      result = callback(self[i], i)
+      if result {
+        new.push(self[i])
       }
-    })
+      i += 1
+    }
     new
   }
 
   # Returns true if this array is empty
   func empty() {
-    @length() == 0
+    _length(self) == 0
   }
 
   # Returns an array where all children are turned into strings
@@ -50,7 +60,7 @@ export = primitive class Array {
 
   # Append an item to the end of this array
   func push(item) {
-    array_insert(self, item, @length())
+    array_insert(self, item, _length(self))
     self
   }
 
@@ -75,7 +85,7 @@ export = primitive class Array {
   # Returns the string representation of this array
   func to_s() {
     let io = "["
-    let amount = @length()
+    let amount = _length(self)
     @each(func(e, i) {
       io += e.to_s()
 
@@ -99,7 +109,7 @@ export = primitive class Array {
 
   # Return the last element of this array
   func last() {
-    self[@length() - 1]
+    self[_length(self) - 1]
   }
 
   # Return a reversed version of this array
@@ -134,7 +144,7 @@ export = primitive class Array {
     let index = -1
     let i = 0
 
-    let length = self.length()
+    let length = @length()
     let found = false
 
     while (i < length) {
@@ -154,7 +164,7 @@ export = primitive class Array {
   # Join the elements of the array together
   func join(separator) {
     let string = ""
-    let count = @length()
+    let count = _length(self)
 
     @each(func(e, index) {
       string += e.to_s()
@@ -179,12 +189,68 @@ export = primitive class Array {
 
     # Create the new array
     const new = []
-    const length = @length()
+    const length = _length(self)
     start.upto(end, func(n) {
       if ((n >= -1) && n < length) {
         new.push(self[n])
       }
     })
     new
+  }
+
+  # Return a new array by concatening self and element
+  # If element is an array, they will be merged
+  func __plus(element) {
+    if (element.typeof() ! "Array") {
+
+      # Create a new array containing @length + 1 items
+      let new_array = Array.of_size(@length() + 1, null)
+      @each(func(v, i) {
+        new_array[i] = v
+      })
+      new_array[new_array.length() - 1] = element
+      new_array
+    } else {
+
+      # Create an array with the size of the two arrays combined
+      let new_array = Array.of_size(@length() + element.length(), null)
+
+      # Copy the values
+      @each(func(v, i) {
+        new_array[i] = v
+      })
+
+      element.each(func(v, i) {
+        new_array[i + @length()] = v
+      })
+
+      new_array
+    }
+  }
+
+  # Compare an array to something else
+  func __equal(other) {
+
+    if (other.typeof() ! @typeof()) {
+      return false
+    }
+
+    if (other.typeof() == "Boolean") {
+      return other
+    }
+
+    # Check the length
+    if (other.length() ! @length()) {
+      return false
+    }
+
+    # Iterate over the contents
+    let equal = true
+    other.each(func(e, i) {
+      if (equal) {
+        equal = e == self[i]
+      }
+    })
+    equal
   }
 }

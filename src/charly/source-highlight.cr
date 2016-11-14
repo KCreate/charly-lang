@@ -4,7 +4,7 @@ require "./syntax/location.cr"
 module Charly
 
   # Highlight a part of a file
-  struct SourceHighlight
+  class SourceHighlight
     LOOKBACK_ROW = 5
     LOOKFORWARD_ROW = 2
 

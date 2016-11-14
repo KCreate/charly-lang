@@ -3,170 +3,131 @@ require "../syntax/ast.cr"
 
 module Charly
 
-  # `BaseType` is the common class all types in charly depend on
+  # The basetype of all types in charly
   abstract class BaseType
-    property data : Scope
+    abstract def name(io) : String
 
-    def initialize
-      @data = Scope.new
-    end
-
-    # :nodoc:
     def to_s(io)
-      value_to_s(io)
+      name(io)
     end
 
-    abstract def value_to_s(io)
+    def self.to_s(io)
+      self.name(io)
+    end
 
-    # :nodoc:
-    private def display_data(data : Scope, io)
-      values = data.dump_values(false)
-      if values.size > 0
-        io << ":("
-        i = 0
-        values.each do |_, key|
-          io << "#{key}"
-
-          unless i == values.size - 1
-            io << ", "
-          end
-
-          i += 1
-        end
-        io << ")"
-      end
+    def self.name(io)
+      io << "BaseType"
     end
   end
 
-  # `TNumeric` is a 64 bit floating point number
-  class TNumeric < BaseType
-    property value : Float64
+  # The basetype of all types in charly that have their own data scope
+  # Objects, Classes, Functions, etc.
+  abstract class DataType < BaseType
+    property data : Scope
 
-    def initialize(value)
+    def initialize
       super()
-      @value = value.to_f64
+      @data = Scope.new
+    end
+  end
+
+  # The basetype of all types in charly that don't have their own data scope
+  # Numeric, String, Boolean, Array
+  abstract class PrimitiveType(T) < BaseType
+    property value : T
+
+    def initialize(@value : T)
+      super()
+    end
+  end
+
+  # Numeric
+  class TNumeric < PrimitiveType(Float64)
+
+    def self.new(value : Number)
+      self.new(value.to_f64)
     end
 
-    # :nodoc:
-    def value_to_s(io)
+    def name(io)
       if @value.nan?
         io << "NAN"
-        return
-      end
-
-      if value % 1 == 0
-        io << value.to_i64
       else
-        io << value
+        io << @value
       end
     end
 
-    # :nodoc:
-    def self.to_s(io)
+    def self.name(io)
       io << "Numeric"
     end
   end
 
-  class TString < BaseType
-    property value : String
-
-    def initialize(@value)
-      super()
-    end
-
-    # :nodoc:
-    def value_to_s(io)
+  # Strings
+  class TString < PrimitiveType(String)
+    def name(io)
       io << @value
     end
 
-    # :nodoc:
-    def self.to_s(io)
+    def self.name(io)
       io << "String"
     end
   end
 
-  class TBoolean < BaseType
-    property value : Bool
-
-    def initialize(@value)
-      super()
+  # Booleans
+  class TBoolean < PrimitiveType(Bool)
+    def name(io)
+      io << @value ? "true" : "false"
     end
 
-    # :nodoc:
-    def value_to_s(io)
-      io << @value
-    end
-
-    # :nodoc:
-    def self.to_s(io)
+    def self.name(io)
       io << "Boolean"
     end
   end
 
-  class TArray < BaseType
-    property value : Array(BaseType)
-
-    def initialize(@value)
-      super()
-    end
-
-    # :nodoc:
-    def value_to_s(io)
+  # An array of BaseTypes
+  class TArray < PrimitiveType(Array(BaseType))
+    def name(io)
       io << "Array:#{@value.size}"
     end
 
-    # :nodoc:
-    def self.to_s(io)
+    def self.name(io)
       io << "Array"
     end
   end
 
-  class TFunc < BaseType
-    property name : String?
-    property argumentlist : IdentifierList
-    property block : Block
-    property parent_scope : Scope
-
-    def initialize(@name, @argumentlist, @block, @parent_scope)
-      super()
+  # The null type
+  class TNull < BaseType
+    def name(io)
+      io << "null"
     end
 
-    # :nodoc:
-    def value_to_s(io)
-      io << "Function:#{@argumentlist.children.size}"
-    end
-
-    # :nodoc:
-    def self.to_s(io)
-      io << "Function"
+    def self.name(io)
+      io << "Null"
     end
   end
 
-  # This is a quick and dirty workaround
-  # This is currently a limitation of the language
-  # See: https://github.com/crystal-lang/crystal/issues/3532
-  alias InternalFuncType =  Proc(CallExpression, Interpreter, Scope, Context, Int32, Array(BaseType), BaseType)
+  # An object
+  class TObject < DataType
+    property type : TClass?
 
-  class TInternalFunc < BaseType
-    property name : String
-    property method : InternalFuncType
-
-    def initialize(@name, @method)
+    def initialize(@type = nil)
       super()
     end
 
-    # :nodoc:
-    def value_to_s(io)
-      io << "Function"
+    def name(io)
+      if (type = @type).is_a? TClass
+        io << "Object:#{type.name}"
+      else
+        io << "Object:Container"
+      end
     end
 
-    # :nodoc:
-    def self.to_s(io)
-      io << "Function"
+    def self.name(io)
+      io << "Array"
     end
   end
 
-  class TClass < BaseType
+  # A class
+  class TClass < DataType
     property name : String
     property properties : Array(IdentifierLiteral)
     property methods : Array(FunctionLiteral)
@@ -177,18 +138,17 @@ module Charly
       super()
     end
 
-    # :nodoc:
-    def value_to_s(io)
-      io << "Class:#{@parents.size}:#{@name}"
+    def name(io)
+      io << "Class:#{@parents.size}"
     end
 
-    # :nodoc:
-    def self.to_s(io)
+    def self.name(io)
       io << "Class"
     end
   end
 
-  class TPrimitiveClass < BaseType
+  # A primitive type
+  class TPrimitiveClass < DataType
     property name : String
     property parent_scope : Scope
 
@@ -196,54 +156,56 @@ module Charly
       super()
     end
 
-    # :nodoc:
-    def value_to_s(io)
+    def name(io)
       io << "PrimitiveClass:#{@name}"
-      display_data(@data, io)
     end
 
-    # :nodoc:
-    def self.to_s(io)
+    def self.name(io)
       io << "PrimitiveClass"
     end
   end
 
-  class TObject < BaseType
-    property type : TClass?
+  # A regular function
+  class TFunc < DataType
+    property name : String?
+    property argumentlist : IdentifierList
+    property block : Block
+    property parent_scope : Scope
 
-    def initialize(@type = nil)
+    def initialize(@name, @argumentlist, @block, @parent_scope)
       super()
     end
 
-    # :nodoc:
-    def value_to_s(io)
-      if (type = @type).is_a? TClass
-        io << "OBject:#{type.name}"
-      else
-        io << "Object:Container"
-      end
-      display_data(@data, io)
+    def name(io)
+      io << "Function:#{@argumentlist.size}"
     end
 
-    # :nodoc:
-    def self.to_s(io)
-      io << "Object"
+    def self.name(io)
+      io << "Function"
     end
   end
 
-  class TNull < BaseType
-    def initialize
+  # This is a quick and dirty workaround
+  # This is currently a limitation of the language
+  # See: https://github.com/crystal-lang/crystal/issues/3532
+  alias InternalFuncType =  Proc(CallExpression, Interpreter, Scope, Context, Int32, Array(BaseType), BaseType)
+
+  # A bound internal method
+  class TInternalFunc < DataType
+    property name : String
+    property method : InternalFuncType
+
+    def initialize(@name, @method)
       super()
     end
 
-    # :nodoc:
-    def value_to_s(io)
-      io << "null"
+    def name(io)
+      io << "Function"
     end
 
-    # :nodoc:
-    def self.to_s(io)
-      io << "Null"
+    def self.name(io)
+      io << "Function"
     end
   end
+
 end

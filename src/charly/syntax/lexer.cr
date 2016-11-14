@@ -637,13 +637,46 @@ module Charly
     def consume_string(initial_row, initial_column, initial_pos)
 
       @token.type = TokenType::String
+      io = MemoryIO.new
 
       loop do
         case char = read_char
         when '\\'
+          case char = read_char
+          when 'b'
+            io << "\u{8}"
+          when 'n'
+            io << "\n"
+          when 'r'
+            io << "\r"
+          when 't'
+            io << "\t"
+          when 'v'
+            io << "\v"
+          when 'f'
+            io << "\f"
+          when 'e'
+            io << "\e"
+          when '\n'
+            io << "\n"
+          when '"'
+            io << "\""
+          when '\0'
+
+            # Create a location for the presenter to show
+            loc = Location.new
+            loc.filename = @filename
+            loc.row = initial_row
+            loc.column = initial_column
+            loc.pos = initial_pos
+            loc.length = (@reader.pos - initial_pos).to_i32
+
+            raise SyntaxError.new(loc, "Unclosed string")
+          end
         when '"'
           break
         when '\0'
+
           # Create a location for the presenter to show
           loc = Location.new
           loc.filename = @filename
@@ -653,10 +686,13 @@ module Charly
           loc.length = (@reader.pos - initial_pos).to_i32
 
           raise SyntaxError.new(loc, "Unclosed string")
+        else
+          io << char
         end
       end
 
-      @token.value = @reader.frame.to_s[1..-2]
+      @token.value = io.to_s
+      io.clear
       read_char
     end
 
