@@ -14,7 +14,7 @@ module Charly::Internals
     # we append to the end
     if index <= 0
       array.value.unshift(item)
-    elsif index >= array.value.size
+    elsif index >= array_size
       array.value << item
     else
       array.value.insert(index, item)
