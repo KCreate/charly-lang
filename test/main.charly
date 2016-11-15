@@ -1339,7 +1339,7 @@ let testResult = TestCase.begin(func(describe) {
 
     it("receives an argument called ENV", func(assert) {
       assert(ENV.typeof(), "Object")
-      assert(ENV["CHARLYDIR"].typeof(), "String")
+      assert(ENV.CHARLYDIR.typeof(), "String")
     })
 
   })
