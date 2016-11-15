@@ -115,13 +115,6 @@ module Charly::AST
 
   ast_node Empty
   ast_node Block
-  ast_node Statement
-  ast_node Debug,
-    token : TokenType do
-      def info
-        "#{@token}"
-      end
-    end
 
   ast_node IfStatement,
     test : ASTNode,
@@ -132,7 +125,6 @@ module Charly::AST
     test : ASTNode,
     consequent : Block
 
-  ast_node Group
   ast_node Expression
 
   ast_node UnaryExpression,
