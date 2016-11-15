@@ -69,6 +69,12 @@ module Charly::AST
     def info
       ""
     end
+
+    # Returns true if this node can be safely skipped when encountered
+    # inside a block
+    def skipable
+      false
+    end
   end
 
   # Helper macro to describe ASTNodes in a nice and clean way
@@ -134,6 +140,10 @@ module Charly::AST
       def info
         "#{@operator}"
       end
+
+      def skipable
+        @right.skipable
+      end
     end
 
   ast_node BinaryExpression,
@@ -143,6 +153,10 @@ module Charly::AST
 
       def info
         "#{@operator}"
+      end
+
+      def skipable
+        @left.skipable && @right.skipable
       end
     end
 
@@ -154,15 +168,27 @@ module Charly::AST
       def info
         "#{@operator}"
       end
+
+      def skipable
+        @left.skipable && @right.skipable
+      end
     end
 
   ast_node And,
     left : ASTNode,
-    right : ASTNode
+    right : ASTNode do
+      def skipable
+        @left.skipable && @right.skipable
+      end
+    end
 
   ast_node Or,
     left : ASTNode,
-    right : ASTNode
+    right : ASTNode do
+      def skipable
+        @left.skipable && @right.skipable
+      end
+    end
 
   ast_node VariableInitialisation,
     identifier : IdentifierLiteral,
@@ -182,11 +208,19 @@ module Charly::AST
 
   ast_node MemberExpression,
     identifier : ASTNode,
-    member : IdentifierLiteral
+    member : IdentifierLiteral do
+      def skipable
+        @identifier.skipable
+      end
+    end
 
   ast_node IndexExpression,
     identifier : ASTNode,
-    argument : ASTNode
+    argument : ASTNode do
+      def skipable
+        @identifier.skipable && @argument.skipable
+      end
+    end
 
   ast_node ExpressionList
   ast_node IdentifierList
@@ -204,8 +238,18 @@ module Charly::AST
     exception_name : IdentifierLiteral,
     catch_block : Block
 
-  ast_node NullLiteral
-  ast_node NANLiteral
+  ast_node NullLiteral do
+    def skipable
+      true
+    end
+  end
+
+  ast_node NANLiteral do
+    def skipable
+      true
+    end
+  end
+
   ast_node IdentifierLiteral,
     name : String do
       def initialize(@name : String)
@@ -214,6 +258,10 @@ module Charly::AST
 
       def info
         "#{@name}"
+      end
+
+      def skipable
+        true
       end
     end
 
@@ -226,6 +274,10 @@ module Charly::AST
       def info
         "#{@value}"
       end
+
+      def skipable
+        true
+      end
     end
 
   ast_node NumericLiteral,
@@ -236,6 +288,10 @@ module Charly::AST
 
       def info
         "#{@value}"
+      end
+
+      def skipable
+        true
       end
     end
 
@@ -259,9 +315,24 @@ module Charly::AST
       def info
         "#{@value}"
       end
+
+      def skipable
+        true
+      end
     end
 
-  ast_node ArrayLiteral
+  ast_node ArrayLiteral do
+    def skipable
+      can_skip = true
+      @children.each do |child|
+        unless child.skipable
+          can_skip = false
+          break
+        end
+      end
+      can_skip
+    end
+  end
 
   ast_node FunctionLiteral,
     name : String?,

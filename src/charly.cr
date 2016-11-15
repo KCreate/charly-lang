@@ -39,7 +39,7 @@ module Charly
 
     start = Time.now.epoch_ms
     interpreter.exec_program program, user_scope
-    puts "Userfile exec: #{Time.now.epoch_ms - start}"
+    puts "Userfile exec took: #{Time.now.epoch_ms - start}"
   rescue e : UserException
     puts e
     exit 1

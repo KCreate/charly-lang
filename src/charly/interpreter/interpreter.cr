@@ -108,28 +108,6 @@ module Charly
       TokenType::Not => "__unot"
     }
 
-    # A list of ASTNodes we can safely skip when being written freely in a block
-    #
-    # Example
-    # ```
-    # 2               # skipable
-    # "test"          # skipable
-    # foo()           # non-skipable
-    # foo.name        # skipable
-    # foo().name      # non-skipable
-    # person + name   # non-skipable (possible operator overloading)
-    # ```
-    BLOCK_BLIND_SKIPABLE_NODES = [
-      IdentifierLiteral,
-      NumericLiteral,
-      StringLiteral,
-      BooleanLiteral,
-      NullLiteral,
-      NANLiteral,
-      And,
-      Or
-    ]
-
     # Creates a new Interpreter inside *top*
     # Setting *load_prelude* to false will prevent loading the prelude file
     def initialize(@top : Scope, @prelude)
@@ -170,13 +148,9 @@ module Charly
       i = 0
       last_result = TNull.new
       block.each do |statement|
-        if i == size - 1
-          last_result = exec_expression(statement, scope, context)
-          i += 1
-          next
-        end
 
-        if !BLOCK_BLIND_SKIPABLE_NODES.includes?(statement.class)
+        # Check if we can safely skip the node
+        if !statement.skipable || i == size - 1
           last_result = exec_expression(statement, scope, context)
         end
 
