@@ -1088,11 +1088,21 @@ module Charly
         raise RunTimeError.new(node.member, context, "#{node.member.name} is a reserved keyword")
       end
 
+      return exec_get_member_expression_pairs_via_name(identifier, node.member.name, scope, context)
+    end
+
+    private def exec_get_member_expression_pairs_via_name(identifier : BaseType, member : String, scope, context)
+
+      # Check if the member name is allowed
+      if DISALLOWED_VARS.includes? member
+        raise Exception.new("#{member} is not allowed as a member name. This error message doesn't have a location associated with it because of the way it is imlpemented internally")
+      end
+
       # Check if the value contains the key that's asked for
-      if identifier.is_a?(DataType) && identifier.data.contains node.member.name
-        return ({identifier, identifier.data.get(node.member.name, Flag::IGNORE_PARENT)})
+      if identifier.is_a?(DataType) && identifier.data.contains member
+        return ({identifier, identifier.data.get(member, Flag::IGNORE_PARENT)})
       else
-        method = get_primitive_method(identifier, node.member.name, scope, context)
+        method = get_primitive_method(identifier, member, scope, context)
 
         if method.is_a? BaseType
           return ({ identifier, method })
@@ -1114,14 +1124,14 @@ module Charly
       # Resolve the argument
       argument = exec_expression(node.argument, scope, context)
 
-      # Check that the first argument is a numeric
-      unless argument.is_a? TNumeric
-        raise RunTimeError.new(node.argument, context, "Invalid type. Expected number")
-      end
-
       # Check if the left side is an array or a string
       case identifier
       when .is_a? TArray
+
+        # Check that the first argument is a numeric
+        unless argument.is_a? TNumeric
+          raise RunTimeError.new(node.argument, context, "Expected numeric, got #{argument.class}")
+        end
 
         # Check for out-of-bounds errors
         argument = argument.value.to_i64
@@ -1132,6 +1142,11 @@ module Charly
         return ({ identifier, identifier.value[argument] })
       when .is_a? TString
 
+        # Check that the first argument is a numeric
+        unless argument.is_a? TNumeric
+          raise RunTimeError.new(node.argument, context, "Expected numeric, got #{argument.class}")
+        end
+
         # Check for out-of-bounds errors
         argument = argument.value.to_i64
         if argument > identifier.value.size - 1 || argument < 0
@@ -1139,6 +1154,14 @@ module Charly
         end
 
         return ({ identifier, TString.new(identifier.value[argument].to_s) })
+      when .is_a? TObject
+
+        # Check that the first argument is a string
+        unless argument.is_a? TString
+          raise RunTimeError.new(node.argument, context, "Expected string, got #{argument.class}")
+        end
+
+        return exec_get_member_expression_pairs_via_name(identifier, argument.value, scope, context)
       else
         raise RunTimeError.new(node, context, "Expected left side to be an array or string. Got: #{identifier.class}")
       end
