@@ -80,27 +80,20 @@ module Charly
     prelude_scope.write("ENV", env_object, Flag::INIT | Flag::CONSTANT)
 
     # Parse and run the prelude
-    start = Time.now.epoch_ms
     prelude = Parser.create(File.open(PRELUDE_PATH), PRELUDE_PATH)
-    puts "Prelude parse took: #{Time.now.epoch_ms - start}"
-
-    start = Time.now.epoch_ms
-    interpreter.exec_program prelude, prelude_scope
-    puts "Prelude exec took: #{Time.now.epoch_ms - start}"
+    unless flags.includes? "lint"
+      interpreter.exec_program prelude, prelude_scope
+    end
 
     # Parse and run the user file
-    start = Time.now.epoch_ms
     program = Parser.create(File.open(filename), filename, print_tokens: flags.includes? "tokens")
-
     if flags.includes? "ast"
       puts program.tree
     end
 
-    puts "Userfile parse took: #{Time.now.epoch_ms - start}"
-
-    start = Time.now.epoch_ms
-    interpreter.exec_program program, user_scope
-    puts "Userfile exec took: #{Time.now.epoch_ms - start}"
+    unless flags.includes? "lint"
+      interpreter.exec_program program, user_scope
+    end
   rescue e : UserException
     puts e
     exit 1
