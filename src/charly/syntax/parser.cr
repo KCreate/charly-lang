@@ -71,8 +71,17 @@ module Charly
 
     # :nodoc:
     @[AlwaysInline]
-    private def unexpected_token
-      error_message = "Unexpected #{@token.type}"
+    private def unexpected_token(expected : TokenType? = nil, value : String? = nil)
+
+      if expected && value
+        error_message = "Expected #{value}, got #{@token.type}"
+      elsif value
+        error_message = "Expected #{value}, got #{@token.type}"
+      elsif expected
+        error_message = "Expected #{expected}, got #{@token.type}"
+      else
+        error_message = "Unexpected #{@token.type}"
+      end
 
       if @token.type == TokenType::EOF
         error_message = "Unexpected end of file"
@@ -93,7 +102,7 @@ module Charly
     @[AlwaysInline]
     private def assert_token(type : TokenType)
       unless @token.type == type
-        unexpected_token
+        unexpected_token type
       end
 
       yield
@@ -103,7 +112,7 @@ module Charly
     @[AlwaysInline]
     private def assert_token(type : TokenType, value : String)
       unless @token.type == type && @token.value == value
-        unexpected_token
+        unexpected_token type, value
       end
 
       yield
@@ -113,7 +122,7 @@ module Charly
     @[AlwaysInline]
     private def expect(type : TokenType)
       unless @token.type == type
-        unexpected_token
+        unexpected_token type
       end
 
       advance
@@ -123,7 +132,7 @@ module Charly
     @[AlwaysInline]
     private def expect(type : TokenType, value : String)
       unless @token.type == type && @token.value == value
-        unexpected_token
+        unexpected_token type, value
       end
 
       advance
@@ -375,7 +384,7 @@ module Charly
         return expression
       end
 
-      unexpected_token
+      unexpected_token value: "Statement"
     end
 
     private def parse_class_statement
@@ -412,7 +421,7 @@ module Charly
         end
       end
 
-      unexpected_token
+      unexpected_token TokenType::Keyword, "property"
     end
 
     private def parse_primitive_class_statement
@@ -434,7 +443,7 @@ module Charly
         end
       end
 
-      unexpected_token
+      unexpected_token TokenType::Keyword, "func"
     end
 
     private def parse_if_statement
@@ -458,12 +467,8 @@ module Charly
 
         case @token.type
         when TokenType::Keyword
-          case @token.value
-          when "if"
-            alternate = parse_if_statement
-          else
-            unexpected_token
-          end
+          expect TokenType::Keyword, "if"
+          alternate = parse_if_statement
         else
           alternate = parse_block
         end
@@ -698,10 +703,10 @@ module Charly
             class_literal.block
           ).at(start_location, class_literal.location_end)
         else
-          unexpected_token
+          unexpected_token TokenType::Keyword, "func"
         end
       else
-        unexpected_token
+        unexpected_token value: "Expression"
       end
 
       return node
@@ -813,7 +818,7 @@ module Charly
         advance
 
         if @token.type == TokenType::LeftCurly
-          unexpected_token
+          unexpected_token TokenType::Identifier
         end
 
         parents = parse_identifier_list(TokenType::LeftCurly)

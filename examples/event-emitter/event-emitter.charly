@@ -1,18 +1,19 @@
 class Event {
-  let name
-  let handlers = []
+  property name
+  property handlers
 
   func constructor(name) {
-    self.name = name
+    @name = name
+    @handlers = []
   }
 
   func register(function) {
-    handlers.push(function)
+    @handlers.push(function)
     self
   }
 
   func fire(data) {
-    handlers.each(func(handler) {
+    @handlers.each(func(handler) {
       handler(data)
     })
     self
@@ -20,20 +21,24 @@ class Event {
 }
 
 class EventEmitter {
-  let events = {}
+  property events
+
+  func constructor() {
+    @events = {}
+  }
 
   func add_event(name) {
-    events[name] = Event(name)
+    @events[name] = Event(name)
     self
   }
 
   func add_handler(name, function) {
-    events[name].register(function)
+    @events[name].register(function)
     self
   }
 
   func fire_event(name, data) {
-    events[name].fire(data)
+    @events[name].fire(data)
     self
   }
 }
