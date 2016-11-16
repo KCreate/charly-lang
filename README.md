@@ -41,14 +41,8 @@ let Box = {
 }
 
 Box.name # mybox
-Box["name"] # mybox
 Box.name = "yourbox"
 Box.name # yourbox
-Box["name"] # yourbox
-
-Box.age # null
-Box["age"] = 16
-Box.age # 16
 ```
 
 __Declaring a function__
@@ -243,14 +237,14 @@ Every file, function, class, object etc. gets it's own stack layer. A stack laye
 
 When you execute a file, let's say *foo.charly*, the layer structure looks like this:
 ```
--------------   
+-------------
 | Top Layer |  Contains values like ARGV, IFLAGS and ENV
 -------------
       ^
       |
 --------------------  Contains bindings to stdout, stderr, stdin
 | Standard Prelude |  and various other functions
---------------------  
+--------------------
         ^   ^
         |   |
         |   |   -------------- Contains the functions that are callable on primitive types

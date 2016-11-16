@@ -138,4 +138,17 @@ export = primitive class String {
   func to_n() {
     to_numeric(self)
   }
+
+  # Prompts self via gets and return the input
+  func prompt() {
+    io.stdin.gets(self, true)
+  }
+
+  func promptn() {
+    io.stdin.gets(self, true).to_n()
+  }
+
+  func promptc() {
+    io.stdin.getc
+  }
 }
