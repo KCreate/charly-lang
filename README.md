@@ -118,12 +118,12 @@ print(array[1]) # => 2
 __Classes & Objects__
 ```charly
 class Person {
-  let name
-  let age
+  property name
+  property age
 
   func constructor(name, age) {
-    self.name = name
-    self.age = age
+    @name = name
+    @age = age
   }
 }
 
@@ -146,18 +146,6 @@ test;
 lol;
 2 * 2;
 test();
-```
-
-You can use semicolons after If and while statements:
-
-```charly
-if (true) {
-  # code
-};
-
-while (true) {
-  # code
-};
 ```
 
 The parens around If and while statements are also optional:
@@ -237,19 +225,11 @@ Every file, function, class, object etc. gets it's own stack layer. A stack laye
 
 When you execute a file, let's say *foo.charly*, the layer structure looks like this:
 ```
--------------
-| Top Layer |  Contains values like ARGV, IFLAGS and ENV
--------------
-      ^
-      |
 --------------------  Contains bindings to stdout, stderr, stdin
-| Standard Prelude |  and various other functions
---------------------
-        ^   ^
-        |   |
-        |   |   -------------- Contains the functions that are callable on primitive types
-        |   \---| Primitives | See the upper paragraph *Everything is an object*
-        |       -------------- for a better explanation of what this is
+| Standard Prelude |  and various other functions and primitive classes
+--------------------  such as String, Numeric, Object
+        ^
+        |
         |
 --------------------------
 | User file (foo.charly) | Contains all values declared within your program
@@ -294,7 +274,7 @@ let Box = {
   let value = 10
 
   func foo(new) {
-    self.value = new
+    @value = new
   }
 }
 
@@ -330,15 +310,15 @@ This currently only works on objects. If you try to extract a method like *each*
 When the interpreter finds a syntax error, it will be nicely presented to you via the following format:
 
 ```
-SyntaxError in debug.charly
-Unexpected token: Identifier
-40.
-41. const buffer = files[i].content
-42. const size = buffer.length()
-43. const offset = size - position
-44.
-45. if (offset < 25 thisfails) {
-    ~~~~~~~~~~~~~~~~^
+test/debug.charly
+      1. const buffer = files[i].content
+      2. const size = buffer.length()
+      3. const offset = size - position
+      4.
+->    5. if (offset < 25 thisfails) {
+      6.
+at debug.charly:5:17:9
+Unexpected Identifier
 ```
 
 The offending piece will be highlighted red. If your terminal doesn't support colors, an arrow also points to the offensive part.
@@ -356,16 +336,15 @@ You will be prompted for your admin password (used to copy to `/usr/bin`).
 # CLI options
 ```
 $ charly -h
-Usage: charly filename [options] [arguments]
+Usage: charly [filename] [flags] [arguments]
     -f FLAG, --flag FLAG             Set a flag
     -h, --help                       Print this help message
-    -v, --version                    Print the version number
+    -v, --version                    Prints the version number
 
 Flags:
     ast                              Display the AST of the userfile
     tokens                           Display tokens of the userfile
-    noexec                           Disable execution
-    stackdump                        Dump the userfile stack at the end of execution
+    lint                             Don't execute after parsing (linting)
 ```
 
 # Contributors
