@@ -32,18 +32,18 @@ module Charly
     property break_allowed : Bool
 
     # Create a Program from *source* called *filename*
-    def self.create(source : IO, filename : String)
-      parser = Parser.new(source, filename)
+    def self.create(source : IO, filename : String, print_tokens : Bool = false)
+      parser = Parser.new(source, filename, print_tokens)
       return parser.parse
     end
 
     # Creates a program from *source* located inside the virtual directory *basedirectory*
-    def self.create(source : String, basedirectory : String)
+    def self.create(source : String, basedirectory : String, print_tokens : Bool = false)
       self.create(MemoryIO.new(source), basedirectory + "/VM-#{Time.now.epoch}")
     end
 
     # Creates a program from *source* called *filename*
-    def initialize(source : IO, @filename : String)
+    def initialize(source : IO, @filename : String, print_tokens : Bool = false)
       super
 
       # We immediately consume the first token

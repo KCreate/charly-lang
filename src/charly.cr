@@ -90,7 +90,12 @@ module Charly
 
     # Parse and run the user file
     start = Time.now.epoch_ms
-    program = Parser.create(File.open(filename), filename)
+    program = Parser.create(File.open(filename), filename, print_tokens: flags.includes? "tokens")
+
+    if flags.includes? "ast"
+      puts program.tree
+    end
+
     puts "Userfile parse took: #{Time.now.epoch_ms - start}"
 
     start = Time.now.epoch_ms

@@ -11,7 +11,18 @@ module Charly
 
     def to_s(io)
       io << "#{File.basename(@filename)}:"
+      loc_to_s(io)
+    end
+
+    def loc_to_s(io)
       io << "#{@row + 1}:#{@column + 1}:#{@length}"
+    end
+
+    # :nodoc:
+    def loc_to_s
+      io = MemoryIO.new
+      loc_to_s(io)
+      io.to_s
     end
   end
 end

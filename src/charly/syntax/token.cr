@@ -71,7 +71,7 @@ module Charly
     end
 
     def to_s(io)
-      io << "#{@location.ljust(9, ' ')}"
+      io << "#{@location.loc_to_s.ljust(9, ' ')}"
       io << " │ "
 
       io << "#{@type.to_s.ljust(12, ' ')}"
