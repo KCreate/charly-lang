@@ -355,9 +355,9 @@ module Charly
         # Write to the index
         target.value[argument.value.to_i64] = expression
         return expression
+      else
+        raise RunTimeError.new(identifier, context, "Invalid left-hand-side of assignment")
       end
-
-      return TNull.new
     end
 
     private def exec_unary_expression(node : UnaryExpression, scope, context)
