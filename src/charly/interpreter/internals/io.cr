@@ -69,4 +69,14 @@ module Charly::Internals
     sleep amount.value / 1000
     return TNull.new
   end
+
+  # Evaluate a string
+  charly_api "eval", source : TString, context : TObject do
+
+    # Parse the program
+    program = Parser.create(source.value, "--virtual--file--")
+    prelude = interpreter.prelude
+    interpreter = Interpreter.new context.data, prelude
+    return interpreter.exec_program(program, context.data)
+  end
 end

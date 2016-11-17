@@ -52,4 +52,7 @@ export = {
 
   # Get the current timestamp in miliseconds
   const time_ms = __internal__method("time_ms");
+
+  # Eval
+  const eval = __internal__method("eval");
 }

@@ -45,12 +45,11 @@ module Charly
         char = '\0'
       end
 
-      if source.size == 0
-        char
-      else
+      unless source.size == 0
         source.pos -= 1
-        char
       end
+
+      char
     end
 
     # Reads the whole source until an EOF is found
@@ -67,8 +66,6 @@ module Charly
     def clear
       if (source = @source).is_a? File
         source.close
-      else
-        source.clear
       end
     end
   end
