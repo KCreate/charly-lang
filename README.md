@@ -323,6 +323,48 @@ Unexpected Identifier
 
 The offending piece will be highlighted red. If your terminal doesn't support colors, an arrow also points to the offensive part.
 
+# Native crystal extensions
+Charly currently has rudimentary support for native extensions written in crystal. The way this works is via crystal files that are compiled directly into the interpreter.
+
+You can add your own files like this:
+
+- Create a file called `myfile.cr` inside `src/charly/interpreter/internals`
+
+- Insert the following code:
+
+```crystal
+require "../**"
+
+module Charly::Internals
+
+end
+```
+
+- Define your methods like this:
+
+```crystal
+require "../**"
+
+module Charly::Internals
+
+  charly_api "mymethod", myarg : TString do
+    return TString.new("You said: " + myarg.value)
+  end
+
+end
+```
+
+- Link against the method inside your charly program like this:
+
+```charly
+const mymethod = __internal__method("mymethod")
+
+# will print "You said: Hello World"
+print(mymethod("Hello World"))
+```
+
+- Finished!
+
 # OS Support
 I'm developing on macOS 10.12 so it should work without any problems on that.
 The [CI Build](https://travis-ci.com/KCreate/charly-lang) runs on Ubuntu 12.04.5 LTS.
