@@ -5,6 +5,11 @@ const _length = __internal__method("length")
 
 export = primitive class Array {
 
+  # Return a copy of this array
+  func copy() {
+    @map(func(e) { e })
+  }
+
   # Calls the callback with each element and the index
   func each(callback) {
     let i = 0
@@ -252,5 +257,32 @@ export = primitive class Array {
       }
     })
     equal
+  }
+
+  # Sort an array
+  func sort(sort_function) {
+    let sorted = @copy()
+
+    let left
+    let right
+
+    @length().times(func(i) {
+      (@length() - 1).times(func(y) {
+
+        left = sorted[i]
+        right = sorted[y]
+
+        if (sort_function(left, right)) {
+          const tmp = left
+          sorted[i] = right
+          sorted[y] = left
+        }
+
+      })
+    })
+
+    puts sorted
+
+    sorted
   }
 }

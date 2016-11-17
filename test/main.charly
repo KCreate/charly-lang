@@ -570,6 +570,16 @@ let testResult = TestCase.begin(func(describe) {
       assert([].range(0, 1), [])
     })
 
+    it("sorts numbers", func(assert) {
+      const nums = [900, 20, -29, -100]
+      const sorted = nums.sort(func(left, right) {
+        left < right
+      })
+
+      print(sorted)
+      assert(sorted, [-100, -29, 20, 900])
+    })
+
   })
 
   describe("Numerics", func(it) {
@@ -1217,6 +1227,16 @@ let testResult = TestCase.begin(func(describe) {
 
       assert(val, 120)
       assert(Box.val, 90)
+    })
+
+    it("assigns via index expressions", func(assert) {
+      let Box = {
+        let name = "test"
+      }
+
+      Box["name"] = "it works"
+
+      assert(Box["name"], "it works")
     })
 
   })
