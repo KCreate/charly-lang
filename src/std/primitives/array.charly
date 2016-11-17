@@ -103,8 +103,8 @@ export = primitive class Array {
   }
 
   # Return a new array of a given size
-  func of_size(size) {
-    array_of_size(size)
+  func of_size(size, value) {
+    array_of_size(size, value)
   }
 
   # Return the first element of this array

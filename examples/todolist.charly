@@ -1,39 +1,47 @@
-class TodoList {
-  class Todo {
-    let title
-    let complete = false
+class Todo {
+  property title
+  property complete
 
-    func constructor(title) {
-      self.title = title
-    }
-
-    func toggle() {
-      self.complete = !self.complete
-    }
+  func constructor(title) {
+    @title = title
+    @complete = false
   }
 
-  let todos = []
+  func toggle() {
+    @complete = !@complete
+    self
+  }
+}
+
+class TodoList {
+  property todos
+
+  func constructor() {
+    @todos = []
+  }
 
   func add(title) {
-    todos.push(Todo(title))
+    @todos.push(Todo(title))
+    self
   }
 
   func remove(id) {
-    todos.delete(id)
+    @todos.delete(id)
+    self
   }
 
   func toggle(id) {
-    const todo = todos[id]
+    const todo = @todos[id]
     if (todo ! null) {
       todo.toggle()
     }
+    self
   }
 }
 
 const myList = TodoList()
 
 # input loop
-
 let done = false
 let input
 while (!done) {

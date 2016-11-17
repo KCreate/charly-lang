@@ -66,7 +66,7 @@ module Charly::Internals
 
   # Sleep for *amount* seconds
   charly_api "sleep", amount : TNumeric do
-    sleep amount.value
+    sleep amount.value / 1000
     return TNull.new
   end
 end

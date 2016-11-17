@@ -1,25 +1,27 @@
 class Progress {
-  let pos = 0
-  let max = 100
-  let width = 50
+  property pos
+  property max
+  property width
 
   func constructor(width) {
-    self.width = width
+    @pos = 0
+    @max = 100
+    @width = width
   }
 
   func tick() {
-    pos += 1
-    self.print()
+    @pos += 1
+    @print()
   }
 
   func print() {
-    self.reset()
-    let amount = pos / max * width
+    @reset()
+    let amount = @pos / @max * @width
     write("#" * amount, "\r")
   }
 
   func reset() {
-    write(" " * width, "\r")
+    write(" " * @width, "\r")
   }
 }
 
@@ -44,7 +46,7 @@ while (mi < messages.length()) {
   progressView.pos = 0
   while (i < 100) {
     progressView.tick()
-    sleep(200 / (i + 1 + mi))
+    io.sleep(200 / (i + 1 + mi))
     i += 1
   }
   mi += 1

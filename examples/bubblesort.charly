@@ -7,7 +7,7 @@ amount.times(func() {
 })
 
 numbers = numbers.sort(func(left, right) {
-  left > right
+  left < right
 })
 
 print(numbers)

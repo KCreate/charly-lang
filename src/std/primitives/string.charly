@@ -149,6 +149,6 @@ export = primitive class String {
   }
 
   func promptc() {
-    io.stdin.getc
+    io.stdin.getc()
   }
 }
