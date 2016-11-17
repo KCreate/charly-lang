@@ -337,24 +337,37 @@ module Charly
         # Resolve the argument
         argument = exec_expression(argument, scope, context)
 
-        # Typecheck left side
-        unless target.is_a? TArray
-          raise RunTimeError.new(identifier, context, "Expected array, got #{target.class}")
-        end
+        case target
+        when .is_a? TArray
 
-        # Typecheck the argument
-        unless argument.is_a? TNumeric
-          raise RunTimeError.new(identifier, context, "Expected number, got #{target.class}")
-        end
+          # Typecheck the argument
+          unless argument.is_a? TNumeric
+            raise RunTimeError.new(identifier, context, "Expected number, got #{target.class}")
+          end
 
-        # Out of bounds check
-        if argument.value < 0 || argument.value > target.value.size - 1
-          raise RunTimeError.new(identifier, context, "Index out of bounds. Size is #{target.value.size}, index is #{argument.value}")
-        end
+          # Out of bounds check
+          if argument.value < 0 || argument.value > target.value.size - 1
+            raise RunTimeError.new(identifier, context, "Index out of bounds. Size is #{target.value.size}, index is #{argument.value}")
+          end
 
-        # Write to the index
-        target.value[argument.value.to_i64] = expression
-        return expression
+          # Write to the index
+          target.value[argument.value.to_i64] = expression
+          return expression
+        when .is_a? TObject
+
+          # Typecheck the argument
+          unless argument.is_a? TString
+            raise RunTimeError.new(identifier, context, "Expected string, got #{target.class}")
+          end
+
+          if target.data.contains(argument.value)
+            target.data.write(argument.value, expression, Flag::None)
+          else
+            target.data.write(argument.value, expression, Flag::INIT)
+          end
+        else
+          raise RunTimeError.new(identifier, context, "Expected array or object, got #{target.class}")
+        end
       else
         raise RunTimeError.new(identifier, context, "Invalid left-hand-side of assignment")
       end
