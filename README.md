@@ -288,6 +288,8 @@ foo(50)
 # Outer *value* is still 10, Box.value is now 50
 ```
 
+Instead of writing `self.value` you can write `@value`. It is 100% the same.
+
 If you directly call method, the interpreter will set *self* to whatever value it was in the scope where the function was defined in. That's the reason why Box.value was set to 50. It behaves kind of like [Arrow functions in JavaScript](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Functions/Arrow_functions). This means you can _"extract"_ functions and they keep working the way you expect them to.
 
 Example:
