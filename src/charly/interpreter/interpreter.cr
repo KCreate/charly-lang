@@ -1300,6 +1300,9 @@ module Charly
       rescue e : UserException
         scope.write(node.exception_name.name, e.payload, Flag::INIT)
         return exec_block(node.catch_block, scope, context)
+      rescue e : RunTimeError | SyntaxError
+        scope.write(node.exception_name.name, TString.new(e.message || "Uncaught exception"), Flag::INIT)
+        return exec_block(node.catch_block, scope, context)
       end
     end
 

@@ -45,11 +45,12 @@ module Charly
         char = '\0'
       end
 
-      unless source.size == 0
+      if source.size == 0
+        char
+      else
         source.pos -= 1
+        char
       end
-
-      char
     end
 
     # Reads the whole source until an EOF is found

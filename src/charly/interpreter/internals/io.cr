@@ -75,6 +75,9 @@ module Charly::Internals
 
     # Parse the program
     program = Parser.create(source.value, "--virtual--file--")
+
+    puts program.tree
+
     prelude = interpreter.prelude
     interpreter = Interpreter.new context.data, prelude
     return interpreter.exec_program(program, context.data)
