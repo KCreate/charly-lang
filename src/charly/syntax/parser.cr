@@ -467,8 +467,9 @@ module Charly
 
         case @token.type
         when TokenType::Keyword
-          expect TokenType::Keyword, "if"
-          alternate = parse_if_statement
+          assert_token TokenType::Keyword, "if" do
+            alternate = parse_if_statement
+          end
         else
           alternate = parse_block
         end
