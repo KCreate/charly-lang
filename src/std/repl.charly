@@ -8,7 +8,6 @@ let input
 while ((input = "> ".prompt()) ! ".exit") {
 
   try {
-    print(input, input.length())
     context.$ = io.eval(input, context)
   } catch(e) {
     print(e)

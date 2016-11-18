@@ -746,6 +746,7 @@ module Charly
     # Checks if the current buffer is a keyword of an identifier
     def check_ident_or_keyword(symbol)
       if ident_part(peek_char)
+        read_char
         consume_ident
       else
         read_char

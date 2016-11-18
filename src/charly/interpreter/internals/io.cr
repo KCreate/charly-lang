@@ -74,9 +74,9 @@ module Charly::Internals
   charly_api "eval", source : TString, context : TObject do
 
     # Parse the program
-    program = Parser.create(source.value, "--virtual--file--")
-
-    puts program.tree
+    # We have to append a whitespace because wtf
+    # This is most likely an issue with the MemoryIO type not being able to pass the end border
+    program = Parser.create("#{source.value} ", "--virtual--file--")
 
     prelude = interpreter.prelude
     interpreter = Interpreter.new context.data, prelude
