@@ -143,18 +143,9 @@ module Charly
     end
 
     private def exec_block(block : Block, scope, context)
-
-      size = block.size
-      i = 0
       last_result = TNull.new
       block.each do |statement|
-
-        # Check if we can safely skip the node
-        if !statement.skipable || i == size - 1
-          last_result = exec_expression(statement, scope, context)
-        end
-
-        i += 1
+        last_result = exec_expression(statement, scope, context)
       end
       last_result
     end
