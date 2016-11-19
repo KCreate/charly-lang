@@ -10,6 +10,8 @@ const Array = require("./primitives/array.charly")
 const String = require("./primitives/string.charly")
 const Numeric = require("./primitives/numeric.charly")
 const Function = require("./primitives/function.charly")
+const Boolean = require("./primitives/boolean.charly")
+const Null = require("./primitives/null.charly")
 
 # IO related stuff
 const io = require("./io.charly")

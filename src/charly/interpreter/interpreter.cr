@@ -377,7 +377,7 @@ module Charly
       method = nil
       if right.is_a?(DataType) && right.data.contains override_method_name
         method = right.data.get(override_method_name, Flag::IGNORE_PARENT)
-      else
+      elsif right.is_a? TArray
         method = get_primitive_method(right, override_method_name, scope, context)
       end
 
@@ -420,7 +420,7 @@ module Charly
       method = nil
       if left.is_a?(DataType) && left.data.contains override_method_name
         method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
-      else
+      elsif left.is_a? TArray
         method = get_primitive_method(left, override_method_name, scope, context)
       end
 
@@ -560,7 +560,7 @@ module Charly
       method = nil
       if left.is_a?(DataType) && left.data.contains override_method_name
         method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
-      else
+      elsif left.is_a? TArray
         method = get_primitive_method(left, override_method_name, scope, context)
       end
 
@@ -1179,35 +1179,23 @@ module Charly
 
       # This is defined in CLASS_MAPPING
       classname = CLASS_MAPPING[type]
-
-      # Check if such a class exists in the scope
-      if scope.defined(classname)
-        entry = scope.get(classname)
-      elsif scope.defined("Object")
-        entry = scope.get("Object")
-      end
+      entry = scope.get(classname)
 
       if entry.is_a? TPrimitiveClass
 
         # Check if this class contains the given method
         if entry.data.contains(methodname)
+          return entry.data.get(methodname, Flag::IGNORE_PARENT)
+        end
+
+        entry = scope.get("Object")
+
+        # Check if this class contains the given method
+        if entry.is_a?(DataType) && entry.data.contains(methodname)
           method = entry.data.get(methodname, Flag::IGNORE_PARENT)
 
           if method.is_a? TFunc
             return method
-          end
-        end
-
-        if scope.defined("Object")
-          entry = scope.get("Object")
-
-          # Check if this class contains the given method
-          if entry.is_a?(DataType) && entry.data.contains(methodname)
-            method = entry.data.get(methodname, Flag::IGNORE_PARENT)
-
-            if method.is_a? TFunc
-              return method
-            end
           end
         end
       end
