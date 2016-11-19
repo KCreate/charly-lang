@@ -281,8 +281,6 @@ export = primitive class Array {
       })
     })
 
-    puts sorted
-
     sorted
   }
 }
