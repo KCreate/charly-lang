@@ -3,6 +3,12 @@ require "./charly/interpreter/interpreter.cr"
 require "./charly/gc_warning.cr"
 require "option_parser"
 
+# :nodoc:
+def missing_file(filename)
+  puts "Cannot load file: #{filename}"
+  exit 1
+end
+
 module Charly
 
   arguments = [] of String
@@ -21,6 +27,11 @@ module Charly
   unless ENV.has_key? "CHARLYDIR"
     puts "$CHARLYDIR is not configured!"
     exit 1
+  end
+
+  # Chack that the prelude exists
+  unless File.exists?(PRELUDE_PATH) && File.readable?(PRELUDE_PATH)
+    missing_file(PRELUDE_PATH)
   end
 
   OptionParser.parse! do |opts|
@@ -51,6 +62,11 @@ module Charly
         filename = ENV["CHARLYDIR"] + "/src/std/repl.charly"
       end
     end
+  end
+
+  # Check that the userfile exists
+  unless File.exists?(filename) && File.readable?(filename)
+    missing_file(filename)
   end
 
   begin
