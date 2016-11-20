@@ -245,7 +245,7 @@ print("hello world")[1, 2, 3]
 
 This won't work as the return value of `print` is `null` and an index expression can only contain a single value.
 
-What you really wan't is the following:
+What you really want is the following:
 ```javascript
 print("hello world");
 [1, 2, 3]
