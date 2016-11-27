@@ -87,7 +87,8 @@ module Charly
       TArray => "Array",
       TFunc => "Function",
       TInternalFunc => "Function",
-      TNull => "Null"
+      TNull => "Null",
+      TReference => "Reference"
     }
 
     # Mapping between operators and function names you use to override them
