@@ -215,7 +215,7 @@ module Charly
 
   class TReference < PrimitiveType(Entry(BaseType))
     def name(io)
-      io << @value.value
+      io << "Reference:#{@value.value.class}"
     end
 
     def self.name(io)
