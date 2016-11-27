@@ -49,6 +49,7 @@ module Charly
     Point
     Comment
     AtSign
+    AndSign
     RightArrow
     LeftArrow
 

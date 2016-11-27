@@ -668,7 +668,7 @@ module Charly
         else
           unexpected_token TokenType::Keyword, "func"
         end
-      when TokenType::Mult
+      when TokenType::AndSign
         start_location = @token.location
         advance
 
