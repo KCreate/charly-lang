@@ -213,4 +213,14 @@ module Charly
     end
   end
 
+  class TReference < PrimitiveType(Entry(BaseType))
+    def name(io)
+      io << @value.value
+    end
+
+    def self.name(io)
+      io << "Reference"
+    end
+  end
+
 end
