@@ -188,6 +188,22 @@ module Charly
         end
 
         return scope.get(node.name)
+      when .is_a? ReferenceIdentifier
+
+        # Check if the identifier exists
+        unless scope.defined node.identifier.name
+          raise RunTimeError.new(node, context, "#{node.identifier.name} is not defined")
+        end
+
+        # Retrieve the reference from the container
+        reference = scope.get_reference(node.identifier.name, Flag::None)
+
+        # If the value is already a reference, dereference it
+        if (value = reference.value).is_a? TReference
+          return value.value.value
+        end
+
+        return TReference.new(reference)
       when .is_a? NumericLiteral
         return TNumeric.new(node.value.to_f64)
       when .is_a? StringLiteral
@@ -374,6 +390,25 @@ module Charly
         else
           raise RunTimeError.new(identifier, context, "Expected array or object, got #{target.class}")
         end
+      when ReferenceIdentifier
+
+        # Check that the variable exists
+        unless scope.defined identifier.identifier.name
+          raise RunTimeError.new(identifier, context, "#{identifier.identifier.name} is not defined")
+        end
+
+        # Get the reference from the scope
+        reference = scope.get(identifier.identifier.name, Flag::None)
+
+        # Make sure it's a reference
+        unless reference.is_a? TReference
+          raise RunTimeError.new(identifier.identifier, context, "#{identifier.identifier.name} is not a reference")
+        end
+
+        # Write to the reference
+        reference.value.value = expression
+
+        return expression
       else
         raise RunTimeError.new(identifier, context, "Invalid left-hand-side of assignment")
       end
