@@ -30,6 +30,10 @@ module Charly
     def ===(other : V)
       @value == other
     end
+
+    def to_s(io)
+      io << "<Entry(#{@value.class}):#{@value}"
+    end
   end
 
   # A `Container` is a Hash with a reference to another hash
