@@ -5,6 +5,14 @@ const instanceof = __internal__method("instanceof")
 const _object_keys = __internal__method("_object_keys")
 
 export = primitive class Object {
+
+  # Returns a reference to self
+  #
+  # If self is already a reference, this will dereference it
+  func reference() {
+    &self
+  }
+
   func length() {
     length(self)
   }
