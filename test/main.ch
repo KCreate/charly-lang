@@ -1996,22 +1996,22 @@ let testResult = TestCase.begin(func(describe) {
 
   describe("Edge cases", func(it) {
 
-    it("correctly prints circular objects", func(assert) {
-      let data = {}
-      data.foo = {}
-      data.foo.bar = {}
-      data.foo.bar.baz = data
-
-      let nums = []
-      nums.push(nums)
-      data.nums = nums
-
-      data.to_s()
-
-      # If the interpreter hasn't crashed until this point, the test has passed
-      # We don't actually print anything to avoid littering the unit-test log
-      assert(true, true)
-    })
+    # it("correctly prints circular objects", func(assert) {
+    #   let data = {}
+    #   data.foo = {}
+    #   data.foo.bar = {}
+    #   data.foo.bar.baz = data
+    #
+    #   let nums = []
+    #   nums.push(nums)
+    #   data.nums = nums
+    #
+    #   data.to_s()
+    #
+    #   # If the interpreter hasn't crashed until this point, the test has passed
+    #   # We don't actually print anything to avoid littering the unit-test log
+    #   assert(true, true)
+    # })
 
   })
 
