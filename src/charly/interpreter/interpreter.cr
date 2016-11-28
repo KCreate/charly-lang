@@ -783,6 +783,15 @@ module Charly
         end
       end
 
+      if left.is_a?(TReference) && right.is_a?(TReference)
+        case operator
+        when TokenType::Equal
+          return TBoolean.new(left.value == right.value)
+        when TokenType::Not
+          return TBoolean.new(left.value != right.value)
+        end
+      end
+
       return TBoolean.new(false)
     end
 
