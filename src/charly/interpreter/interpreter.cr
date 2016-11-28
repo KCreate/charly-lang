@@ -950,9 +950,15 @@ module Charly
 
       # Setup the primitive class and scope
       method_scope = Scope.new(scope)
+
+      # Create the object wrapper for the method scope
+      method_object = TObject.new
+      method_object.data = method_scope
+
       primclass = TPrimitiveClass.new(node.name, method_scope, scope)
-      primclass.data.write("name", TString.new(node.name), Flag::INIT | Flag::CONSTANT)
       primclass.data = primscope
+      primclass.data.replace("name", TString.new(node.name), Flag::INIT | Flag::CONSTANT)
+      primclass.data.replace("methods", method_object, Flag::INIT | Flag::CONSTANT)
 
       # Reverse to use correct precedence
       methods.reverse!
