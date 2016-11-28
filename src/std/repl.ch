@@ -1,5 +1,6 @@
 const context = {
   let $
+  let echo = true
   const context = self
 }
 
@@ -13,21 +14,24 @@ while ((input = "> ".prompt()) ! ".exit") {
     context.$ = e
   }
 
-  # Different coloring based on their types
-  if (context.$.typeof() == "String") {
-    print(context.$.colorize(32))
-  } else if (
-    (context.$.typeof() == "Numeric") ||
-    (context.$.typeof() == "Boolean") ||
-    (context.$.typeof() == "Object") ||
-    (context.$.typeof() == "Class") ||
-    (context.$.typeof() == "Function") ||
-    (context.$.typeof() == "PrimitiveClass")) {
-    print(context.$.colorize(33))
-  } else if (context.$.typeof() == "Null") {
-    print(context.$.colorize(30))
-  } else {
-    print(context.$)
+  if context.echo {
+
+    # Different coloring based on their types
+    if (context.$.typeof() == "String") {
+      print(context.$.colorize(32))
+    } else if (
+      (context.$.typeof() == "Numeric") ||
+      (context.$.typeof() == "Boolean") ||
+      (context.$.typeof() == "Object") ||
+      (context.$.typeof() == "Class") ||
+      (context.$.typeof() == "Function") ||
+      (context.$.typeof() == "PrimitiveClass")) {
+      print(context.$.colorize(33))
+    } else if (context.$.typeof() == "Null") {
+      print(context.$.colorize(30))
+    } else {
+      print(context.$)
+    }
   }
 }
 
