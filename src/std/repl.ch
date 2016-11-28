@@ -21,6 +21,7 @@ while ((input = "> ".prompt()) ! ".exit") {
     (context.$.typeof() == "Boolean") ||
     (context.$.typeof() == "Object") ||
     (context.$.typeof() == "Class") ||
+    (context.$.typeof() == "Function") ||
     (context.$.typeof() == "PrimitiveClass")) {
     print(context.$.colorize(33))
   } else if (context.$.typeof() == "Null") {
