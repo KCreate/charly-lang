@@ -48,7 +48,7 @@ Floats are created using the `.` character.
 
 A Numeric will silently overflow if you pass the lower or upper limit of `Float64`. The following REPL session elaborates this:
 
-![../images/overflow.png](Numeric literal overflowing)
+![Numeric literal overflowing](images/overflow.png)
 
 Operations such as `1 / 0` will result in the `NAN` value.
 
