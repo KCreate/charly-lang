@@ -222,6 +222,23 @@ const myCat = Cat("Charly")
 myCat.speak()
 ```
 
+# References
+
+You can pass single variables by reference. Below is an example:
+
+```javascript
+let string = "hello "
+let reference = &string
+
+string += "world"
+
+reference # hello world
+
+&reference += " whats up?"
+
+string # hello world whats up?
+```
+
 # Extending primitive types
 
 Below is a REPL session that shows how to extend primitive types.
