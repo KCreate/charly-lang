@@ -405,6 +405,11 @@ module Charly
           raise RunTimeError.new(identifier.identifier, context, "#{identifier.identifier.name} is not a reference")
         end
 
+        # Check if it's a constant
+        if reference.value.is_constant
+          raise RunTimeError.new(identifier.identifier, context, "#{identifier.identifier.name} is a constant")
+        end
+
         # Write to the reference
         reference.value.value = expression
 
