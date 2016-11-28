@@ -1843,6 +1843,39 @@ let testResult = TestCase.begin(func(describe) {
       assert(string, 25)
     })
 
+    it("references closured variables from functions", func(assert) {
+
+      func counter() {
+        let value = 0
+        &value
+      }
+
+      # get the reference
+      let value = counter()
+
+      &value += 10
+      &value += 10
+
+      assert(value.value(), 20)
+    })
+
+    it("references variables from deleted closures", func(assert) {
+      func counter() {
+        let value = 0
+        &value
+      }
+
+      # get the reference
+      let value = counter()
+
+      counter = null
+
+      &value += 10
+      &value += 10
+
+      assert(value.value(), 20)
+    })
+
     it("puts references into objects", func(assert) {
       let string = "test"
       let container = {
@@ -1888,6 +1921,34 @@ let testResult = TestCase.begin(func(describe) {
       r2 = &n1
 
       assert(r1 == r2, true)
+    })
+
+    it("keeps a reference to a moved variable", func(assert) {
+      let num = 25
+      let container = {}
+
+      let ref = &num
+
+      container.num = num
+
+      &ref = 30
+
+      assert(container.num, 30)
+    })
+
+    it("can't overwrite a constant referenced value", func(assert) {
+      const num = 25
+      let ref = &num
+
+      # We have to catch since this should throw
+      try {
+        &ref = 30
+      } catch(e) {
+        assert(true, true)
+        return
+      }
+
+      assert(false, true)
     })
 
   })
