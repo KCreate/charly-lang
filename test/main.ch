@@ -1936,7 +1936,6 @@ let testResult = TestCase.begin(func(describe) {
       }
 
       assert(false, true)
-
     })
 
   })

@@ -23,7 +23,12 @@ export = primitive class Object {
 
       let child_render = ""
       Object.keys(self).each(->(key, index, size) {
-        child_render += key + ": " + self[key].to_s()
+
+        if self[key] == self {
+          child_render += key + ": " + "(circular)"
+        } else {
+          child_render += key + ": " + self[key].to_s()
+        }
 
         if index < size - 1 {
           child_render += "\n"
