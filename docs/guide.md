@@ -336,6 +336,42 @@ Foo.foo = "hello world"
 Bar.foo # "test"
 ```
 
+## `self` reference
+
+`@test` will be rewritten to `self.test` by the parser automatically.
+
+The `self` reference always points to the object a method was called on.
+
+```javascript
+let myBox = {
+  let name;
+
+  func foo() {
+    @name
+  }
+}
+
+myBox.name = "box"
+myBox.foo() # "box"
+```
+
+If you directly call a method (`foo()`), `self` is set to whatever it what in the context where the method is defined. Think of it like Arrow Funtions in JavaScript.
+
+```javascript
+let Box = {
+  let name = "box"
+
+  func foo() {
+    return func() {
+      print(self.name)
+    }
+  }
+}
+
+let method = Box.foo()
+method() # "box"
+```
+
 ## Assignments
 
 Assignment is done with the `=` character.
@@ -355,10 +391,168 @@ self.instance = 2
 
 All control expressions inside charly behave as if they were regular expressions. You can't place them anywhere but they do return a value.
 
+### Truthy and falsey values
+
+A _truthy_ value is a value that is considered true for an `if` and `while` guard. A _falsey_ value is a value that is considered false in those places.
+
+The only falsey values are `false` and `null`. Any other value is _truthy_.
+
 ### if statements
 
-The parenthesis around the test
+The parenthesis around the test expression are optional
 
 ```javascript
+if (2 < 5) {
+  print("Mathematics still works!")
+} else {
+  print("Something's off...")
+}
+
+if 2 + 2 == 9 - 7 {
+  print("Mathematics still works!")
+} else {
+  print("Somethings's off...")
+}
+```
+
+### while statements
+
+The parenthesis around the test expression are optional
+
+```javascript
+while true {
+  print("and another one")
+}
+
+let i = 0
+while i < 100 {
+  print(i)
+  i += 1
+}
+```
+
+For simple loops that repeat for a fixed amount of time, you are encouraged to use the `Numeric#times` method.
+
+```javascript
+5.times(->(i){
+  print(i)
+})
+```
+
+You can break inside a while statement.
+
+```javascript
+let i = 0
+while true {
+
+  if i >= 100 {
+    break
+  }
+
+  print(i)
+
+  i += 1
+}
+```
+
+## Types and methods
+
+The next sections will assume you know what object oriented programming is, as well as the concepts of classes and methods.
+
+### Everything is an object
+
+Everything in Charly is an object. Not every type can have an internal state however. Only `Object`, `Class`, `PrimitiveClass` and `Array` can have an internal state.
+
+When you write `5`, the interpreter actually treats it as a primitive. There are no funny castings or object instantiations (inside charly). All values inside charly are boxed in heap memory. When you write `5.times`, the interpreter searches for a primitive class called `Numeric` and checks if it contains a method called `times`.
+
+This allows the interpreter to reuse the same object for all primitives of the same type.
+
+This principle applies to all language primitives. The primitive class `Array` for example, specified a method called `push` which inserts an element into the array.
+
+### Method arguments
+
+If a method expects to be called with 2 arguments, you have to pass two. If you pass 1 it throws an exception.
+
+```javascript
+func foo(a, b, c) {
+
+}
+
+foo(1, 2, 3) # okay
+foo(1, 2, 3, 4) # also okay
+foo(1, 2) # 
+```
+
+### Operators
+
+You can override any operator inside an object. Just define a method with the corresponding name.
+
+```javascript
+class Vector2 {
+  property x
+  property y
+
+  func constructor(x, y) {
+    @x = x
+    @y = y
+  }
+
+  func __plus(other) {
+    Vector2.new(@x + other.x, @y + other.y)
+  }
+}
+
+v1 = Vector2(1, 2)
+v2 = Vector2(3, 4)
+v1 + v2 # Vector2(@x=4, @y=6)
+```
+
+Overrideable operators are:
+
+- `+` = `__plus`
+- `-` = `__minus`
+- `*` = `__mult`
+- `/` = `__divd`
+- `%` = `__mod`
+- `**` = `__pow`
+
+- `!` = `__unot`
+- `-` = `__uminus`
+
+- `<` = `__less`
+- `>` = `__greater`
+- `<=` = `__lessequal`
+- `>=` = `__greaterequal`
+- `==` = `__equal`
+- `!` = `__not`
+
+## Exceptions
+
+You can throw exceptions from anywhere in the program. Everything is throwable.
+
+```javascript
+func foo(arg) {
+  if arg < 10 {
+    throw Exception("arg is smaller than 10")
+  }
+}
+
+foo(5)
+```
+
+This will show up in the console as:
 
 ```
+test/debug.ch
+      1. func foo(arg) {
+      2.   if arg < 10 {
+->    3.     throw Exception("arg is smaller than 10")
+      4.   }
+      5. }
+at debug.ch:3:5:5
+at foo (debug.ch:7:1:3)
+
+Uncaught Object:Exception: arg is smaller than 10
+```
+
+## Requiring files
