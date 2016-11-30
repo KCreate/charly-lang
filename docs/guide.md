@@ -602,3 +602,7 @@ export = {
 ```
 
 Recursive `require` call won't be catched or prevented in any way.
+
+___
+
+__Copyright © 2016 - present Leonard Schütz__
