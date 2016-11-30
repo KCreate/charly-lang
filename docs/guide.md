@@ -556,3 +556,49 @@ Uncaught Object:Exception: arg is smaller than 10
 ```
 
 ## Requiring files
+
+You can include other files using the `require` method. It accepts a single string argument that serves as the filename.
+
+When including a file, the contents of the `export` variable is then returned by the `require` call.
+
+Example:
+
+__main.ch__
+```javascript
+let external = require("./external.ch")
+print(external.message) # "hello world"
+print(external.foo(1, 2)) # 3
+```
+
+__external.ch__
+```javascript
+export = {
+  let message = "hello world"
+
+  func foo(l, r) {
+    l + r
+  }
+}
+```
+
+If you call require on the same file twice, it will result the value returned by the very first call.
+
+__main.ch__
+```javascript
+let external = require("./external.ch")
+external.message = "it changed"
+
+let external_second = require("./external.ch")
+print(external_second.message) # "it changed"
+
+external == external_second # true
+```
+
+__external.ch__
+```javascript
+export = {
+  let message = "hello world"
+}
+```
+
+Recursive `require` call won't be catched or prevented in any way.
