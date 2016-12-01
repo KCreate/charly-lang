@@ -108,7 +108,7 @@ You can concat two arrays together via the `+` operator:
 [1, 2] + [3, 4] # [1, 2, 3, 4]
 ```
 
-You can compare two arrays using the regular `==` operator:
+You can compare two arrays using the `==` operator:
 
 ```javascript
 [1, 2, 3, 4] == [1, 2, 3, 4] # true
@@ -169,6 +169,30 @@ When written inside a block as a top-level-expression, it is automatically rewri
 let foo = func() {
   return "hello world"
 }
+```
+
+The last expression inside a function is used as it's return value
+
+```javascript
+func foo() {
+  25
+}
+
+foo() # 25
+```
+
+You can also do explicit returns
+
+```javascript
+func foo() {
+  if true {
+    return true
+  }
+
+  return false
+}
+
+foo() # true
 ```
 
 If you only need the function literal, you can use anonymous function literals:
@@ -389,7 +413,11 @@ self.instance = 2
 
 ## Control expressions
 
-All control expressions inside charly behave as if they were regular expressions. You can't place them anywhere but they do return a value.
+All control expressions inside charly behave as if they were normal expressions.
+
+```javascript
+
+```
 
 ### Truthy and falsey values
 
