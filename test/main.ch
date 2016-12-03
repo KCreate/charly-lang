@@ -1938,6 +1938,24 @@ let testResult = TestCase.begin(func(describe) {
       assert(false, true)
     })
 
+    it("creates references to functions", func(assert) {
+      func foo() {
+        25
+      }
+
+      func bar() {
+        50
+      }
+
+      let ref = &foo
+
+      assert(&ref(), 25)
+
+      &ref = bar
+
+      assert(&ref(), 50)
+    })
+
   })
 
   describe("Primitive Types", func(it) {
