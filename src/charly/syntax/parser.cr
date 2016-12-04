@@ -548,7 +548,7 @@ module Charly
     private def parse_unary_expression
       start_location = @token.location
       case operator = @token.type
-      when TokenType::Minus, TokenType::Not
+      when TokenType::Plus, TokenType::Minus, TokenType::Not
         advance
         value = parse_unary_expression
         return UnaryExpression.new(operator, value).at(start_location, value.location_end)

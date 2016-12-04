@@ -112,6 +112,7 @@ module Charly
 
     # Mapping between unary operators and function names you use to override them
     UNARY_OPERATOR_MAPPING = {
+      TokenType::Plus => "__uplus",
       TokenType::Minus => "__uminus",
       TokenType::Not => "__unot"
     }
@@ -410,6 +411,8 @@ module Charly
       end
 
       case node.operator
+      when TokenType::Plus
+        return right
       when TokenType::Minus
         if right.is_a? TNumeric
           return TNumeric.new(-right.value)
