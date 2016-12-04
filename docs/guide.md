@@ -683,6 +683,56 @@ ARGV # ["hello", "world", 25, 25, "--foo", "-b"]
 IFLAGS # ["tokens"]
 ENV["TERM"] # xterm-256color
 ```
+
+## Extending primitive types
+
+Primitives in Charly can be extended as if they were regular objects. A good example of this is the `Numeric#times` method. It allows you to write really expressive code like this:
+
+```javascript
+5.times(->{
+  print("Hello!")
+})
+```
+
+It is implemented like this:
+
+```javascript
+Numeric.methods.times = func(callback) {
+  let i = 0
+  while (i < self) {
+    callback(i)
+    i += 1
+  }
+
+  self
+}
+```
+
+You can add your own methods to primitive classes via the `Numeric.methods` object.
+
+For arrays you would use `Array.methods`, for strings `String.methods` and so on.
+
+Let's define a `indent` method on strings which takes two arguments, the amount and a filler string.
+
+```javascript
+String.methods.indent = ->(amount, filler) {
+  @split("\n").map(->(line) {
+    (value * amount) + line
+  }).join("\n")
+}
+```
+
+You can now indent strings via the `String#indent` method.
+
+```javascript
+"hello\nworld\nwhats\nup".indent(2, "-")
+
+# --hello
+# --world
+# --whats
+# --up
+```
+
 ___
 
 __Copyright © 2016 - present Leonard Schütz__
