@@ -1408,10 +1408,12 @@ let testResult = TestCase.begin(func(describe) {
 
     it("redirects unary operators", func(assert) {
       let myBox = {
+        func __uplus() { "uplus" }
         func __uminus() { "uminus" }
         func __unot() { "unot" }
       }
 
+      assert(+myBox, "uplus")
       assert(-myBox, "uminus")
       assert(!myBox, "unot")
     })
