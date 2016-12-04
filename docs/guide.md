@@ -652,6 +652,37 @@ export = {
 
 Recursive `require` call won't be catched or prevented in any way.
 
+## Command line arguments and flags
+
+The `charly` command has the ability to receive flags. A list of these can be obtained by running `charly -h` in the command line.
+
+You can pass flags via the following format
+
+```bash
+charly input.ch -f lint
+```
+
+Arguments which are not flags are passed to the program instead of the interpreter.
+
+```bash
+charly input.ch hello -f tokens world 25 25 --foo -b
+                ^     ^  ^      ^     ^  ^  ^     ^
+                |     |__|      |_____|__|__|_____|
+               ARGV     |                |
+                      IFLAGS            ARGV
+```
+
+You can access command line arguments and flags via the `ARGV` and `IFLAGS` constants. Current environment variables are available via `ENV`.
+
+```bash
+charly input.ch hello -f tokens world 25 25 --foo -b
+```
+
+```javascript
+ARGV # ["hello", "world", 25, 25, "--foo", "-b"]
+IFLAGS # ["tokens"]
+ENV["TERM"] # xterm-256color
+```
 ___
 
 __Copyright © 2016 - present Leonard Schütz__
