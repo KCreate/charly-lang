@@ -13,7 +13,7 @@ module Charly::Internals
     keys = [] of BaseType
 
     object.data.dump_values(parents: false).each do |_, key|
-      unless Interpreter::DISALLOWED_VARS.includes? key
+      unless Visitor::DISALLOWED_VARS.includes? key
         keys << TString.new(key)
       end
     end

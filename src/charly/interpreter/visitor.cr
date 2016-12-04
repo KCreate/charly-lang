@@ -65,7 +65,7 @@ module Charly
   end
 
   # The interpreter takes a Program instance and executes the tree recursively.
-  class Interpreter
+  class Visitor
     property top : Scope
     property prelude : Scope
     property trace : Array(Trace) # The leftmost value is the main trace entry

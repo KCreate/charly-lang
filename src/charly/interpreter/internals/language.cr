@@ -6,7 +6,7 @@ module Charly::Internals
   charly_api "require", filename : TString do
     begin
       cwd = File.dirname(call.location_start.filename)
-      return Require.load(filename.value, cwd, interpreter.prelude)
+      return Require.load(filename.value, cwd, visitor.prelude)
     rescue e : Require::FileNotFoundException
       raise RunTimeError.new(call, "Can't load #{filename}")
     end
@@ -16,7 +16,7 @@ module Charly::Internals
   charly_api "require_no_prelude", filename : TString do
     begin
       cwd = File.dirname(call.location_start.filename)
-      return Require.load(filename.value, cwd, interpreter.prelude)
+      return Require.load(filename.value, cwd, visitor.prelude)
     rescue e : Require::FileNotFoundException
       raise RunTimeError.new(call, "Can't load #{filename}")
     end
@@ -43,7 +43,7 @@ module Charly::Internals
       end
 
       program = Parser.create(File.open(path), path)
-      interpreter.exec_program(program, scope)
+      visitor.exec_program(program, scope)
       return TNull.new
     rescue e : Require::FileNotFoundException
       raise RunTimeError.new(call.argumentlist[0], "Can't load #{filename}")

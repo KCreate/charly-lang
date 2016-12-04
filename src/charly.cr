@@ -1,5 +1,5 @@
 require "./charly/syntax/parser.cr"
-require "./charly/interpreter/interpreter.cr"
+require "./charly/interpreter/visitor.cr"
 require "./charly/gc_warning.cr"
 require "option_parser"
 
@@ -86,7 +86,7 @@ module Charly
     # Create some needed scopes
     prelude_scope = Scope.new
     user_scope = Scope.new(prelude_scope)
-    interpreter = Interpreter.new(user_scope, prelude_scope)
+    visitor = Visitor.new(user_scope, prelude_scope)
 
     # Insert ARGV, FLAGS and ENV
     c_argv = [] of BaseType
@@ -110,7 +110,7 @@ module Charly
     # Parse and run the prelude
     prelude = Parser.create(File.open(PRELUDE_PATH), PRELUDE_PATH)
     unless flags.includes? "lint"
-      interpreter.exec_program prelude, prelude_scope
+      visitor.exec_program prelude, prelude_scope
     end
 
     # Parse and run the user file
@@ -120,7 +120,7 @@ module Charly
     end
 
     unless flags.includes? "lint"
-      interpreter.exec_program program, user_scope
+      visitor.exec_program program, user_scope
     end
   rescue e : UserException
     puts e

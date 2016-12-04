@@ -78,9 +78,9 @@ module Charly::Internals
     # This is most likely an issue with the IO::Memory type not being able to pass the end border
     program = Parser.create("#{source.value} ", "--virtual--file--")
 
-    prelude = interpreter.prelude
-    interpreter = Interpreter.new context.data, prelude
-    return interpreter.exec_program(program, context.data)
+    prelude = visitor.prelude
+    visitor = Visitor.new context.data, prelude
+    return visitor.exec_program(program, context.data)
   end
 
   charly_api "file_get_contents", path : TString do

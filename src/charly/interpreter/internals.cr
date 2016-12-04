@@ -14,7 +14,7 @@ module Charly::Internals
   # end
   # ```
   macro charly_api(name, *types, variadic = false)
-    private def __{{name.id}}(call, interpreter, scope, context, argc : Int32, arguments : Array(BaseType))
+    private def __{{name.id}}(call, visitor, scope, context, argc : Int32, arguments : Array(BaseType))
       name = {{name}}
       types = [{{
         *types.map do |field|
@@ -42,8 +42,8 @@ module Charly::Internals
       {{yield}}
     end
 
-    METHODS[{{name}}] = ->(call : CallExpression, interpreter : Interpreter, scope : Scope, context : Context, argc : Int32, arguments : Array(BaseType)){
-      __{{name.id}}(call, interpreter, scope, context, argc, arguments).as(BaseType)
+    METHODS[{{name}}] = ->(call : CallExpression, visitor : Visitor, scope : Scope, context : Context, argc : Int32, arguments : Array(BaseType)){
+      __{{name.id}}(call, visitor, scope, context, argc, arguments).as(BaseType)
     }
   end
 end

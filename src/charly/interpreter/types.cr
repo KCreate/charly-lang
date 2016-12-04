@@ -193,7 +193,7 @@ module Charly
   # This is a quick and dirty workaround
   # This is currently a limitation of the language
   # See: https://github.com/crystal-lang/crystal/issues/3532
-  alias InternalFuncType =  Proc(CallExpression, Interpreter, Scope, Context, Int32, Array(BaseType), BaseType)
+  alias InternalFuncType =  Proc(CallExpression, Visitor, Scope, Context, Int32, Array(BaseType), BaseType)
 
   # A bound internal method
   class TInternalFunc < DataType
