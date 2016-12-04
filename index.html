@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Charly-lang by KCreate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Charly-lang</h1>
+      <h2 class="project-tagline">🐈 The Charly Interpreter</h2>
+      <a href="https://github.com/KCreate/charly-lang" class="btn">View on GitHub</a>
+      <a href="https://github.com/KCreate/charly-lang/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/KCreate/charly-lang/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="charly-language-guide" class="anchor" href="#charly-language-guide" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Charly Language Guide</h1>
+
+<h2>
+<a id="version-001" class="anchor" href="#version-001" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Version 0.0.1</h2>
+
+<p>Your syntax files need to be encoded in UTF-8.</p>
+
+<h2>
+<a id="comments" class="anchor" href="#comments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Comments</h2>
+
+<p>Comments start with the sharp <code>#</code> character. Only one-line comments are currently supported.</p>
+
+<div class="highlight highlight-source-js"><pre># This is a comment</pre></div>
+
+<h2>
+<a id="variables" class="anchor" href="#variables" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Variables</h2>
+
+<p>Variables are defined via the <code>let</code> keyword. If you try to access a variable that wasn't initialized before, a runtime exception is thrown.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> myVar <span class="pl-k">=</span> <span class="pl-c1">25</span>
+<span class="pl-k">let</span> myOtherVariable <span class="pl-k">=</span> <span class="pl-c1">50</span>
+
+myVar <span class="pl-k">+</span> myOtherVariable # <span class="pl-c1">75</span></pre></div>
+
+<h2>
+<a id="constants" class="anchor" href="#constants" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Constants</h2>
+
+<p>Constants are declared the same way as variables. They can't be changed, hence the name constant. You need to initialize them in the declaration.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-c1">myconst</span> # <span class="pl-c1">syntax</span> <span class="pl-c1">error</span>
+<span class="pl-k">const</span> <span class="pl-c1">myOtherConst</span> <span class="pl-k">=</span> <span class="pl-c1">25</span>
+myOtherConst <span class="pl-k">=</span> <span class="pl-c1">30</span> # runtime exception</pre></div>
+
+<h2>
+<a id="literals" class="anchor" href="#literals" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Literals</h2>
+
+<p>Charly has a total of 10 primitive types. Not all can be constructed directly. For example the <code>TInternalFunction</code> can only be gathered from a call to <code>__internal__method</code></p>
+
+<h3>
+<a id="null" class="anchor" href="#null" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Null</h3>
+
+<p>The <code>Null</code> type can be compared to <code>undefined</code> in javascript or <code>nil</code> in some other languages.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">null</span></pre></div>
+
+<h3>
+<a id="boolean" class="anchor" href="#boolean" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Boolean</h3>
+
+<p>A <code>Boolean</code> only has two different values: <code>true</code> and <code>false</code>.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">true</span>
+<span class="pl-c1">false</span></pre></div>
+
+<h3>
+<a id="numeric" class="anchor" href="#numeric" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Numeric</h3>
+
+<p>All Numeric types inside Charly are Crystal's native <code>Float64</code> type.</p>
+
+<p>Numeric literals, just like any other expression in the language, can be prefixed with <code>-</code> to negate them.</p>
+
+<p>Underscores can be used to make some numbers more readable:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-ii">1_000_000</span> # better than <span class="pl-c1">1000000</span></pre></div>
+
+<p>Floats are created using the <code>.</code> character.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-ii">123_456</span>.<span class="pl-ii">456_789</span></pre></div>
+
+<p>A Numeric will silently overflow if you pass the lower or upper limit of <code>Float64</code>. The following REPL session elaborates this:</p>
+
+<p><img src="images/overflow.png" alt="Numeric literal overflowing"></p>
+
+<p>Operations such as <code>1 / 0</code> will result in the <code>NAN</code> value.</p>
+
+<h3>
+<a id="string" class="anchor" href="#string" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>String</h3>
+
+<p>A String represents an immutable sequence of UTF-8 characters.</p>
+
+<p>It uses Crystal's native <code>String</code> type underneath.</p>
+
+<p>You can create it using <code>"</code> characters.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span></pre></div>
+
+<p>A backslash can be used to denote various special characters inside the string:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\"</span><span class="pl-pds">"</span></span> # double quote
+<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\\</span><span class="pl-pds">"</span></span> # backslash
+<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\e</span><span class="pl-pds">"</span></span> # escape
+<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\f</span><span class="pl-pds">"</span></span> # form feed
+<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span> # newline
+<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\r</span><span class="pl-pds">"</span></span> # carriage <span class="pl-k">return</span>
+<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\t</span><span class="pl-pds">"</span></span> # tab
+<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\v</span><span class="pl-pds">"</span></span> # vertical tab</pre></div>
+
+<p>A string can span multiple lines:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-s"><span class="pl-pds">"</span><span class="pl-ii">hello</span></span>
+<span class="pl-s">      word<span class="pl-pds">"</span></span> # same as <span class="pl-s"><span class="pl-pds">"</span>hello<span class="pl-cce">\n</span>     world<span class="pl-pds">"</span></span></pre></div>
+
+<h3>
+<a id="array" class="anchor" href="#array" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a> Array</h3>
+
+<p>An Array is a resizeable list of items of any type. It is typically created with an array literal:</p>
+
+<div class="highlight highlight-source-js"><pre>[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>]
+[<span class="pl-c1">1</span>, <span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>, [<span class="pl-s"><span class="pl-pds">"</span>whats up<span class="pl-pds">"</span></span>]]</pre></div>
+
+<p>You can add new items to an array using the push method:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> nums <span class="pl-k">=</span> []
+<span class="pl-smi">nums</span>.<span class="pl-c1">push</span>(<span class="pl-c1">0</span>)
+<span class="pl-smi">nums</span>.<span class="pl-c1">push</span>(<span class="pl-c1">1</span>)
+<span class="pl-smi">nums</span>.<span class="pl-c1">push</span>(<span class="pl-c1">2</span>)
+
+nums # [<span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">2</span>]</pre></div>
+
+<p>You can concat two arrays together via the <code>+</code> operator:</p>
+
+<div class="highlight highlight-source-js"><pre>[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>] <span class="pl-k">+</span> [<span class="pl-c1">3</span>, <span class="pl-c1">4</span>] # [<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>]</pre></div>
+
+<p>You can compare two arrays using the <code>==</code> operator:</p>
+
+<div class="highlight highlight-source-js"><pre>[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>] <span class="pl-k">==</span> [<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>] # <span class="pl-c1">true</span>
+[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>] <span class="pl-k">==</span> [<span class="pl-c1">3</span>, <span class="pl-c1">4</span>] # <span class="pl-c1">false</span></pre></div>
+
+<h3>
+<a id="objects" class="anchor" href="#objects" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Objects</h3>
+
+<p>Charly doesn't have special syntax to create objects. Instead it uses something we call <code>Containers</code>.</p>
+
+<p>A <code>Container</code> is basically the scope of a block turned into an Object:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> Box <span class="pl-k">=</span> {
+  <span class="pl-k">let</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>charly<span class="pl-pds">"</span></span>
+  <span class="pl-k">let</span> age <span class="pl-k">=</span> <span class="pl-c1">200</span>
+}
+
+<span class="pl-smi">Box</span>.<span class="pl-c1">name</span> # <span class="pl-s"><span class="pl-pds">"</span>charly<span class="pl-pds">"</span></span>
+<span class="pl-smi">Box</span>.<span class="pl-smi">age</span> # <span class="pl-c1">200</span></pre></div>
+
+<p>This can be compared to the javascript equivalent of using <code>new Function()</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> Box <span class="pl-k">=</span> (<span class="pl-k">new</span> <span class="pl-en">function</span>() {
+  <span class="pl-v">this</span>.<span class="pl-c1">name</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>charly<span class="pl-pds">"</span></span>
+  <span class="pl-v">this</span>.<span class="pl-smi">age</span> <span class="pl-k">=</span> <span class="pl-c1">200</span>
+})
+
+<span class="pl-smi">Box</span>.<span class="pl-c1">name</span> <span class="pl-c">// "charly"</span>
+<span class="pl-smi">Box</span>.<span class="pl-smi">age</span> <span class="pl-c">// 200</span></pre></div>
+
+<p>You can access properties of objects via <code>[]</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> Box <span class="pl-k">=</span> {
+  <span class="pl-k">let</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>mybox<span class="pl-pds">"</span></span>
+}
+
+Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>] # <span class="pl-s"><span class="pl-pds">"</span>mybox<span class="pl-pds">"</span></span></pre></div>
+
+<h3>
+<a id="functions" class="anchor" href="#functions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Functions</h3>
+
+<p>You can define a new function like this:</p>
+
+<div class="highlight highlight-source-js"><pre>func <span class="pl-en">foo</span>() {
+  <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<p>When written inside a block as a top-level-expression, it is automatically rewritten to the following:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> foo <span class="pl-k">=</span> <span class="pl-en">func</span>() {
+  <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<p>The last expression inside a function is used as it's return value</p>
+
+<div class="highlight highlight-source-js"><pre>func <span class="pl-en">foo</span>() {
+  <span class="pl-c1">25</span>
+}
+
+<span class="pl-en">foo</span>() # <span class="pl-c1">25</span></pre></div>
+
+<p>You can also do explicit returns</p>
+
+<div class="highlight highlight-source-js"><pre>func <span class="pl-en">foo</span>() {
+  <span class="pl-k">if</span> <span class="pl-c1">true</span> {
+    <span class="pl-k">return</span> <span class="pl-c1">true</span>
+  }
+
+  <span class="pl-k">return</span> <span class="pl-c1">false</span>
+}
+
+<span class="pl-en">foo</span>() # <span class="pl-c1">true</span></pre></div>
+
+<p>If you only need the function literal, you can use anonymous function literals:</p>
+
+<div class="highlight highlight-source-js"><pre>func <span class="pl-en">foo</span>(<span class="pl-smi">callback</span>) {
+  <span class="pl-en">callback</span>(<span class="pl-c1">42</span>)
+}
+
+<span class="pl-en">foo</span>(<span class="pl-en">func</span>(<span class="pl-smi">arg</span>) {
+  <span class="pl-en">print</span>(arg) # <span class="pl-c1">42</span>
+})</pre></div>
+
+<p>There is also the lambda syntax, which goes like this:</p>
+
+<div class="highlight highlight-source-js"><pre>[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>].<span class="pl-en">map</span>(<span class="pl-k">-</span><span class="pl-k">&gt;</span>(num) {
+  <span class="pl-en">print</span>(num)
+})
+
+[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>].<span class="pl-en">map</span>(<span class="pl-k">-</span><span class="pl-k">&gt;</span>(num) <span class="pl-en">print</span>(num))</pre></div>
+
+<p>Of course you could also pass the print method directly, this would however result in the following:</p>
+
+<div class="highlight highlight-source-js"><pre>[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>].<span class="pl-en">map</span>(print)
+
+# <span class="pl-c1">1</span>
+# <span class="pl-c1">0</span>
+# <span class="pl-c1">3</span>
+# <span class="pl-c1">2</span>
+# <span class="pl-c1">1</span>
+# <span class="pl-c1">3</span>
+# <span class="pl-c1">3</span>
+# <span class="pl-c1">2</span>
+# <span class="pl-c1">3</span></pre></div>
+
+<p>Because <code>Array#map</code> passes the value, index and size of the array to the callback, print will write all these values to the console.</p>
+
+<p>When you write a lambda function without parenthesis or curly braces, it will wrap the expression inside a block.</p>
+
+<p>The following:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-en">foo</span>(<span class="pl-k">-</span><span class="pl-k">&gt;</span><span class="pl-c1">25</span>)</pre></div>
+
+<p>becomes:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-en">foo</span>(<span class="pl-k">-</span><span class="pl-k">&gt;</span>{ <span class="pl-c1">25</span> })</pre></div>
+
+<p>which in turn get's converted to:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-en">foo</span>(<span class="pl-en">func</span>() {
+  <span class="pl-k">return</span> <span class="pl-c1">25</span>
+})</pre></div>
+
+<h3>
+<a id="classes" class="anchor" href="#classes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Classes</h3>
+
+<p>Classes in Charly can inherit from multiple other classes.</p>
+
+<p>They can have instance methods and properties and also static methods and properties.</p>
+
+<p>Below is an example of a simple <code>Person</code> class.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">class</span> <span class="pl-en">Person</span> {
+  property name
+  property age
+  property height
+
+  func <span class="pl-en">constructor</span>(<span class="pl-smi">name</span>, <span class="pl-smi">age</span>, <span class="pl-smi">height</span>) {
+    @name <span class="pl-k">=</span> name
+    @age <span class="pl-k">=</span> age
+    @height <span class="pl-k">=</span> height
+  }
+
+  func <span class="pl-en">greet</span>() {
+    <span class="pl-en">print</span>(<span class="pl-s"><span class="pl-pds">"</span>My name is <span class="pl-pds">"</span></span> <span class="pl-k">+</span> @name)
+    <span class="pl-en">print</span>(<span class="pl-s"><span class="pl-pds">"</span>I am <span class="pl-pds">"</span></span> <span class="pl-k">+</span> @age <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span> years old<span class="pl-pds">"</span></span>)
+    <span class="pl-en">print</span>(<span class="pl-s"><span class="pl-pds">"</span>I am <span class="pl-pds">"</span></span> <span class="pl-k">+</span> @height <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span> cm tall<span class="pl-pds">"</span></span>)
+  }
+}
+
+<span class="pl-k">let</span> John <span class="pl-k">=</span> <span class="pl-en">Person</span>(<span class="pl-s"><span class="pl-pds">"</span>John<span class="pl-pds">"</span></span>, <span class="pl-c1">21</span>, <span class="pl-c1">1.85</span>)
+<span class="pl-smi">John</span>.<span class="pl-en">greet</span>()
+
+# Will print
+#
+# My name is John
+# <span class="pl-c1">I</span> am <span class="pl-c1">21</span> years old
+# <span class="pl-c1">I</span> am <span class="pl-c1">1.85</span> cm tall</pre></div>
+
+<p>You define properties via the <code>property</code> keyword followed by an identifier.</p>
+
+<p>To define a static method or property, prefix the property or func keyword with the <code>static</code> keyword.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">class</span> <span class="pl-en">Box</span> {
+  <span class="pl-k">static</span> property count
+
+  <span class="pl-k">static</span> func <span class="pl-en">foo</span>() {
+    <span class="pl-s"><span class="pl-pds">"</span>class method<span class="pl-pds">"</span></span>
+  }
+}
+<span class="pl-smi">Box</span>.<span class="pl-smi">count</span> <span class="pl-k">=</span> <span class="pl-c1">0</span>
+
+<span class="pl-smi">Box</span>.<span class="pl-en">foo</span>() # <span class="pl-s"><span class="pl-pds">"</span>class method<span class="pl-pds">"</span></span></pre></div>
+
+<p>To inherit from other classes, you use the <code>extends</code> keyword.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">class</span> <span class="pl-en">Foo</span> {
+  func <span class="pl-en">foo</span>() {
+    <span class="pl-s"><span class="pl-pds">"</span>foo method<span class="pl-pds">"</span></span>
+  }
+}
+
+<span class="pl-k">class</span> <span class="pl-en">Bar</span> {
+  func <span class="pl-en">bar</span>() {
+    <span class="pl-s"><span class="pl-pds">"</span>bar method<span class="pl-pds">"</span></span>
+  }
+}
+
+<span class="pl-k">class</span> <span class="pl-en">Baz</span> <span class="pl-k">extends</span> <span class="pl-e">Foo</span>, Bar {
+  func <span class="pl-en">baz</span>() {
+    <span class="pl-s"><span class="pl-pds">"</span>baz method<span class="pl-pds">"</span></span>
+  }
+}
+
+<span class="pl-k">let</span> myBaz <span class="pl-k">=</span> <span class="pl-en">Baz</span>()
+<span class="pl-smi">myBaz</span>.<span class="pl-en">foo</span>() # <span class="pl-s"><span class="pl-pds">"</span>foo method<span class="pl-pds">"</span></span>
+<span class="pl-smi">myBaz</span>.<span class="pl-en">bar</span>() # <span class="pl-s"><span class="pl-pds">"</span>bar method<span class="pl-pds">"</span></span>
+<span class="pl-smi">myBaz</span>.<span class="pl-en">baz</span>() # <span class="pl-s"><span class="pl-pds">"</span>baz method<span class="pl-pds">"</span></span></pre></div>
+
+<p>Static properties and methods are also copied to the child classes. The values of static properties are copied by value. They are not references.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">class</span> <span class="pl-en">Foo</span> {
+  <span class="pl-k">static</span> property foo
+
+  <span class="pl-k">static</span> func <span class="pl-en">what</span>() {
+    <span class="pl-s"><span class="pl-pds">"</span>static what<span class="pl-pds">"</span></span>
+  }
+}
+<span class="pl-smi">Foo</span>.<span class="pl-smi">foo</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span>
+
+<span class="pl-k">class</span> <span class="pl-en">Bar</span> <span class="pl-k">extends</span> <span class="pl-e">Foo</span> {}
+
+<span class="pl-smi">Bar</span>.<span class="pl-en">what</span>() # <span class="pl-s"><span class="pl-pds">"</span>static what<span class="pl-pds">"</span></span>
+<span class="pl-smi">Bar</span>.<span class="pl-smi">foo</span> # <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span>
+
+<span class="pl-smi">Foo</span>.<span class="pl-smi">foo</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>
+
+<span class="pl-smi">Bar</span>.<span class="pl-smi">foo</span> # <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span></pre></div>
+
+<h2>
+<a id="self-reference" class="anchor" href="#self-reference" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>self</code> reference</h2>
+
+<p><code>@test</code> will be rewritten to <code>self.test</code> by the parser automatically.</p>
+
+<p>The <code>self</code> reference always points to the object a method was called on.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> myBox <span class="pl-k">=</span> {
+  <span class="pl-k">let</span> name;
+
+  func <span class="pl-en">foo</span>() {
+    @name
+  }
+}
+
+<span class="pl-smi">myBox</span>.<span class="pl-c1">name</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span>
+<span class="pl-smi">myBox</span>.<span class="pl-en">foo</span>() # <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span></pre></div>
+
+<p>If you directly call a method (<code>foo()</code>), <code>self</code> is set to whatever it what in the context where the method is defined. Think of it like Arrow Funtions in JavaScript.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> Box <span class="pl-k">=</span> {
+  <span class="pl-k">let</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span>
+
+  func <span class="pl-en">foo</span>() {
+    <span class="pl-k">return</span> <span class="pl-en">func</span>() {
+      <span class="pl-en">print</span>(<span class="pl-smi">self</span>.<span class="pl-c1">name</span>)
+    }
+  }
+}
+
+<span class="pl-k">let</span> method <span class="pl-k">=</span> <span class="pl-smi">Box</span>.<span class="pl-en">foo</span>()
+<span class="pl-en">method</span>() # <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span></pre></div>
+
+<h2>
+<a id="assignments" class="anchor" href="#assignments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Assignments</h2>
+
+<p>Assignment is done with the <code>=</code> character.</p>
+
+<div class="highlight highlight-source-js"><pre># assigns to a local variable
+local <span class="pl-k">=</span> <span class="pl-c1">1</span>
+
+# assigns to the current self variable
+@instance <span class="pl-k">=</span> <span class="pl-c1">2</span>
+
+# The above is simply rewritten to
+<span class="pl-smi">self</span>.<span class="pl-smi">instance</span> <span class="pl-k">=</span> <span class="pl-c1">2</span></pre></div>
+
+<h2>
+<a id="control-expressions" class="anchor" href="#control-expressions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Control expressions</h2>
+
+<p>All control expressions inside charly behave as if they were normal expressions.</p>
+
+<div class="highlight highlight-source-js"><pre></pre></div>
+
+<h3>
+<a id="truthy-and-falsey-values" class="anchor" href="#truthy-and-falsey-values" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Truthy and falsey values</h3>
+
+<p>A <em>truthy</em> value is a value that is considered true for an <code>if</code> and <code>while</code> guard. A <em>falsey</em> value is a value that is considered false in those places.</p>
+
+<p>The only falsey values are <code>false</code> and <code>null</code>. Any other value is <em>truthy</em>.</p>
+
+<h3>
+<a id="if-statements" class="anchor" href="#if-statements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>if statements</h3>
+
+<p>The parenthesis around the test expression are optional</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">if</span> (<span class="pl-c1">2</span> <span class="pl-k">&lt;</span> <span class="pl-c1">5</span>) {
+  <span class="pl-en">print</span>(<span class="pl-s"><span class="pl-pds">"</span>Mathematics still works!<span class="pl-pds">"</span></span>)
+} <span class="pl-k">else</span> {
+  <span class="pl-en">print</span>(<span class="pl-s"><span class="pl-pds">"</span>Something's off...<span class="pl-pds">"</span></span>)
+}
+
+<span class="pl-k">if</span> <span class="pl-c1">2</span> <span class="pl-k">+</span> <span class="pl-c1">2</span> <span class="pl-k">==</span> <span class="pl-c1">9</span> <span class="pl-k">-</span> <span class="pl-c1">7</span> {
+  <span class="pl-en">print</span>(<span class="pl-s"><span class="pl-pds">"</span>Mathematics still works!<span class="pl-pds">"</span></span>)
+} <span class="pl-k">else</span> {
+  <span class="pl-en">print</span>(<span class="pl-s"><span class="pl-pds">"</span>Somethings's off...<span class="pl-pds">"</span></span>)
+}</pre></div>
+
+<h3>
+<a id="while-statements" class="anchor" href="#while-statements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>while statements</h3>
+
+<p>The parenthesis around the test expression are optional</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">while</span> <span class="pl-c1">true</span> {
+  <span class="pl-en">print</span>(<span class="pl-s"><span class="pl-pds">"</span>and another one<span class="pl-pds">"</span></span>)
+}
+
+<span class="pl-k">let</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>
+<span class="pl-k">while</span> i <span class="pl-k">&lt;</span> <span class="pl-c1">100</span> {
+  <span class="pl-en">print</span>(i)
+  i <span class="pl-k">+=</span> <span class="pl-c1">1</span>
+}</pre></div>
+
+<p>For simple loops that repeat for a fixed amount of time, you are encouraged to use the <code>Numeric#times</code> method.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-ii">5</span>.<span class="pl-en">times</span>(<span class="pl-k">-</span><span class="pl-k">&gt;</span>(i){
+  <span class="pl-en">print</span>(i)
+})</pre></div>
+
+<p>You can break inside a while statement.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>
+<span class="pl-k">while</span> <span class="pl-c1">true</span> {
+
+  <span class="pl-k">if</span> i <span class="pl-k">&gt;=</span> <span class="pl-c1">100</span> {
+    <span class="pl-k">break</span>
+  }
+
+  <span class="pl-en">print</span>(i)
+
+  i <span class="pl-k">+=</span> <span class="pl-c1">1</span>
+}</pre></div>
+
+<h2>
+<a id="types-and-methods" class="anchor" href="#types-and-methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Types and methods</h2>
+
+<p>The next sections will assume you know what object oriented programming is, as well as the concepts of classes and methods.</p>
+
+<h3>
+<a id="everything-is-an-object" class="anchor" href="#everything-is-an-object" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Everything is an object</h3>
+
+<p>Everything in Charly is an object. Not every type can have an internal state however. Only <code>Object</code>, <code>Class</code>, <code>PrimitiveClass</code> and <code>Array</code> can have an internal state.</p>
+
+<p>When you write <code>5</code>, the interpreter actually treats it as a primitive. There are no funny castings or object instantiations (inside charly). All values inside charly are boxed in heap memory. When you write <code>5.times</code>, the interpreter searches for a primitive class called <code>Numeric</code> and checks if it contains a method called <code>times</code>.</p>
+
+<p>This allows the interpreter to reuse the same object for all primitives of the same type.</p>
+
+<p>This principle applies to all language primitives. The primitive class <code>Array</code> for example, specified a method called <code>push</code> which inserts an element into the array.</p>
+
+<h3>
+<a id="method-arguments" class="anchor" href="#method-arguments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Method arguments</h3>
+
+<p>If a method expects to be called with 2 arguments, you have to pass two. If you pass 1 it throws an exception.</p>
+
+<div class="highlight highlight-source-js"><pre>func <span class="pl-en">foo</span>(<span class="pl-smi">a</span>, <span class="pl-smi">b</span>, <span class="pl-smi">c</span>) {
+
+}
+
+<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>) # okay
+<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>) # also okay
+<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>) # </pre></div>
+
+<h3>
+<a id="operators" class="anchor" href="#operators" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operators</h3>
+
+<p>You can override any operator inside an object. Just define a method with the corresponding name.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">class</span> <span class="pl-en">Vector2</span> {
+  property x
+  property y
+
+  func <span class="pl-en">constructor</span>(<span class="pl-smi">x</span>, <span class="pl-smi">y</span>) {
+    @x <span class="pl-k">=</span> x
+    @y <span class="pl-k">=</span> y
+  }
+
+  func <span class="pl-en">__plus</span>(<span class="pl-smi">other</span>) {
+    <span class="pl-smi">Vector2</span>.<span class="pl-en">new</span>(@x <span class="pl-k">+</span> <span class="pl-smi">other</span>.<span class="pl-c1">x</span>, @y <span class="pl-k">+</span> <span class="pl-smi">other</span>.<span class="pl-c1">y</span>)
+  }
+}
+
+v1 <span class="pl-k">=</span> <span class="pl-en">Vector2</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>)
+v2 <span class="pl-k">=</span> <span class="pl-en">Vector2</span>(<span class="pl-c1">3</span>, <span class="pl-c1">4</span>)
+v1 <span class="pl-k">+</span> v2 # <span class="pl-en">Vector2</span>(@x<span class="pl-k">=</span><span class="pl-c1">4</span>, @y<span class="pl-k">=</span><span class="pl-c1">6</span>)</pre></div>
+
+<p>Overrideable operators are:</p>
+
+<ul>
+<li>
+<code>+</code> = <code>__plus</code>
+</li>
+<li>
+<code>-</code> = <code>__minus</code>
+</li>
+<li>
+<code>*</code> = <code>__mult</code>
+</li>
+<li>
+<code>/</code> = <code>__divd</code>
+</li>
+<li>
+<code>%</code> = <code>__mod</code>
+</li>
+<li><p><code>**</code> = <code>__pow</code></p></li>
+<li><p><code>!</code> = <code>__unot</code></p></li>
+<li><p><code>-</code> = <code>__uminus</code></p></li>
+<li><p><code>&lt;</code> = <code>__less</code></p></li>
+<li>
+<code>&gt;</code> = <code>__greater</code>
+</li>
+<li>
+<code>&lt;=</code> = <code>__lessequal</code>
+</li>
+<li>
+<code>&gt;=</code> = <code>__greaterequal</code>
+</li>
+<li>
+<code>==</code> = <code>__equal</code>
+</li>
+<li>
+<code>!</code> = <code>__not</code>
+</li>
+</ul>
+
+<h2>
+<a id="exceptions" class="anchor" href="#exceptions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Exceptions</h2>
+
+<p>You can throw exceptions from anywhere in the program. Everything is throwable.</p>
+
+<div class="highlight highlight-source-js"><pre>func <span class="pl-en">foo</span>(<span class="pl-smi">arg</span>) {
+  <span class="pl-k">if</span> arg <span class="pl-k">&lt;</span> <span class="pl-c1">10</span> {
+    <span class="pl-k">throw</span> <span class="pl-en">Exception</span>(<span class="pl-s"><span class="pl-pds">"</span>arg is smaller than 10<span class="pl-pds">"</span></span>)
+  }
+}
+
+<span class="pl-en">foo</span>(<span class="pl-c1">5</span>)</pre></div>
+
+<p>This will show up in the console as:</p>
+
+<pre><code>test/debug.ch
+      1. func foo(arg) {
+      2.   if arg &lt; 10 {
+-&gt;    3.     throw Exception("arg is smaller than 10")
+      4.   }
+      5. }
+at debug.ch:3:5:5
+at foo (debug.ch:7:1:3)
+
+Uncaught Object:Exception: arg is smaller than 10
+</code></pre>
+
+<h2>
+<a id="requiring-files" class="anchor" href="#requiring-files" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requiring files</h2>
+
+<p>You can include other files using the <code>require</code> method. It accepts a single string argument that serves as the filename.</p>
+
+<p>When including a file, the contents of the <code>export</code> variable is then returned by the <code>require</code> call.</p>
+
+<p>Example:</p>
+
+<p><strong>main.ch</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> external <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>./external.ch<span class="pl-pds">"</span></span>)
+<span class="pl-en">print</span>(<span class="pl-smi">external</span>.<span class="pl-smi">message</span>) # <span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>
+<span class="pl-en">print</span>(<span class="pl-smi">external</span>.<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>)) # <span class="pl-c1">3</span></pre></div>
+
+<p><strong>external.ch</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">export</span> <span class="pl-k">=</span> {
+  <span class="pl-smi">let</span> <span class="pl-smi">message</span> = "<span class="pl-smi">hello</span> <span class="pl-smi">world</span>"
+
+  <span class="pl-smi">func</span> <span class="pl-smi">foo</span>(<span class="pl-smi">l</span>, <span class="pl-smi">r</span>) {
+    <span class="pl-smi">l</span> + <span class="pl-smi">r</span>
+  }
+}</pre></div>
+
+<p>If you call require on the same file twice, it will result the value returned by the very first call.</p>
+
+<p><strong>main.ch</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> external <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>./external.ch<span class="pl-pds">"</span></span>)
+<span class="pl-smi">external</span>.<span class="pl-smi">message</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>it changed<span class="pl-pds">"</span></span>
+
+<span class="pl-k">let</span> external_second <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>./external.ch<span class="pl-pds">"</span></span>)
+<span class="pl-en">print</span>(<span class="pl-smi">external_second</span>.<span class="pl-smi">message</span>) # <span class="pl-s"><span class="pl-pds">"</span>it changed<span class="pl-pds">"</span></span>
+
+external <span class="pl-k">==</span> external_second # <span class="pl-c1">true</span></pre></div>
+
+<p><strong>external.ch</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">export</span> <span class="pl-k">=</span> {
+  <span class="pl-smi">let</span> <span class="pl-smi">message</span> = "<span class="pl-smi">hello</span> <span class="pl-smi">world</span>"
+}</pre></div>
+
+<p>Recursive <code>require</code> call won't be catched or prevented in any way.</p>
+
+<h2>
+<a id="command-line-arguments-and-flags" class="anchor" href="#command-line-arguments-and-flags" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Command line arguments and flags</h2>
+
+<p>The <code>charly</code> command has the ability to receive flags. A list of these can be obtained by running <code>charly -h</code> in the command line.</p>
+
+<p>You can pass flags via the following format</p>
+
+<div class="highlight highlight-source-shell"><pre>charly input.ch -f lint</pre></div>
+
+<p>Arguments which are not flags are passed to the program instead of the interpreter.</p>
+
+<div class="highlight highlight-source-shell"><pre>charly input.ch hello -f tokens world 25 25 --foo -b
+                ^     ^  ^      ^     ^  ^  ^     ^
+                <span class="pl-k">|</span>     <span class="pl-k">|</span>__<span class="pl-k">|</span>      <span class="pl-k">|</span>_____<span class="pl-k">|</span>__<span class="pl-k">|</span>__<span class="pl-k">|</span>_____<span class="pl-k">|</span>
+               ARGV     <span class="pl-k">|</span>                <span class="pl-k">|</span>
+                      IFLAGS            ARGV</pre></div>
+
+<p>You can access command line arguments and flags via the <code>ARGV</code> and <code>IFLAGS</code> constants. Current environment variables are available via <code>ENV</code>.</p>
+
+<div class="highlight highlight-source-shell"><pre>charly input.ch hello -f tokens world 25 25 --foo -b</pre></div>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">ARGV</span> # [<span class="pl-s"><span class="pl-pds">"</span>hello<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>world<span class="pl-pds">"</span></span>, <span class="pl-c1">25</span>, <span class="pl-c1">25</span>, <span class="pl-s"><span class="pl-pds">"</span>--foo<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>-b<span class="pl-pds">"</span></span>]
+<span class="pl-c1">IFLAGS</span> # [<span class="pl-s"><span class="pl-pds">"</span>tokens<span class="pl-pds">"</span></span>]
+<span class="pl-c1">ENV</span>[<span class="pl-s"><span class="pl-pds">"</span>TERM<span class="pl-pds">"</span></span>] # xterm<span class="pl-k">-</span><span class="pl-ii">256color</span></pre></div>
+
+<h2>
+<a id="extending-primitive-types" class="anchor" href="#extending-primitive-types" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Extending primitive types</h2>
+
+<p>Primitives in Charly can be extended as if they were regular objects. A good example of this is the <code>Numeric#times</code> method. It allows you to write really expressive code like this:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-ii">5</span>.<span class="pl-en">times</span>(<span class="pl-k">-</span><span class="pl-k">&gt;</span>{
+  <span class="pl-en">print</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello!<span class="pl-pds">"</span></span>)
+})</pre></div>
+
+<p>It is implemented like this:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">Numeric</span>.<span class="pl-smi">methods</span>.<span class="pl-smi">times</span> <span class="pl-k">=</span> <span class="pl-en">func</span>(<span class="pl-smi">callback</span>) {
+  <span class="pl-k">let</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>
+  <span class="pl-k">while</span> (i <span class="pl-k">&lt;</span> self) {
+    <span class="pl-en">callback</span>(i)
+    i <span class="pl-k">+=</span> <span class="pl-c1">1</span>
+  }
+
+  self
+}</pre></div>
+
+<p>You can add your own methods to primitive classes via the <code>Numeric.methods</code> object.</p>
+
+<p>For arrays you would use <code>Array.methods</code>, for strings <code>String.methods</code> and so on.</p>
+
+<p>Let's define a <code>indent</code> method on strings which takes two arguments, the amount and a filler string.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">String</span>.<span class="pl-smi">methods</span>.<span class="pl-smi">indent</span> <span class="pl-k">=</span> <span class="pl-k">-</span><span class="pl-k">&gt;</span>(amount, filler) {
+  @<span class="pl-en">split</span>(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>).<span class="pl-en">map</span>(<span class="pl-k">-</span><span class="pl-k">&gt;</span>(line) {
+    (value <span class="pl-k">*</span> amount) <span class="pl-k">+</span> line
+  }).<span class="pl-c1">join</span>(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>)
+}</pre></div>
+
+<p>You can now indent strings via the <code>String#indent</code> method.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-s"><span class="pl-pds">"</span>hello<span class="pl-cce">\n</span>world<span class="pl-cce">\n</span>whats<span class="pl-cce">\n</span>up<span class="pl-pds">"</span></span>.<span class="pl-en">indent</span>(<span class="pl-c1">2</span>, <span class="pl-s"><span class="pl-pds">"</span>-<span class="pl-pds">"</span></span>)
+
+# <span class="pl-k">--</span>hello
+# <span class="pl-k">--</span>world
+# <span class="pl-k">--</span>whats
+# <span class="pl-k">--</span>up</pre></div>
+
+<h2>
+<a id="unit-testing" class="anchor" href="#unit-testing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Unit-testing</h2>
+
+<p>Charly provides a built-in unit-testing library.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-c1">UnitTest</span> <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>unit-test<span class="pl-pds">"</span></span>)
+<span class="pl-k">const</span> <span class="pl-c1">result</span> <span class="pl-k">=</span> <span class="pl-en">UnitTest</span>(<span class="pl-s"><span class="pl-pds">"</span>myTests<span class="pl-pds">"</span></span>).<span class="pl-en">begin</span>(<span class="pl-k">-</span><span class="pl-k">&gt;</span>(describe) {
+
+  <span class="pl-en">describe</span>(<span class="pl-s"><span class="pl-pds">"</span>some behaviour<span class="pl-pds">"</span></span>, <span class="pl-k">-</span><span class="pl-k">&gt;</span>(it) {
+
+    <span class="pl-en">it</span>(<span class="pl-s"><span class="pl-pds">"</span>should do something<span class="pl-pds">"</span></span>, <span class="pl-k">-</span><span class="pl-k">&gt;</span>(assert) {
+      <span class="pl-en">assert</span>(<span class="pl-c1">25</span> <span class="pl-k">+</span> <span class="pl-c1">25</span>, <span class="pl-c1">50</span>)
+      <span class="pl-en">assert</span>(<span class="pl-c1">true</span>, <span class="pl-c1">true</span>)
+      <span class="pl-en">assert</span>(<span class="pl-s"><span class="pl-pds">"</span>hello<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>hello<span class="pl-pds">"</span></span>)
+    })
+
+    <span class="pl-en">it</span>(<span class="pl-s"><span class="pl-pds">"</span>does something else<span class="pl-pds">"</span></span>, <span class="pl-k">-</span><span class="pl-k">&gt;</span>(assert) {
+      <span class="pl-en">assert</span>(<span class="pl-c1">true</span>, <span class="pl-c1">false</span>)
+    })
+
+  })
+
+})</pre></div>
+
+<p>Running this file will output the following:</p>
+
+<p><img src="images/unit-test.png" alt="unit-test sample screenshot"></p>
+
+<p>If you have a lot of test cases, you can put them into another file and require them.</p>
+
+<p><strong>main.ch</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-c1">UnitTest</span> <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>unit-test<span class="pl-pds">"</span></span>)
+<span class="pl-k">const</span> <span class="pl-c1">result</span> <span class="pl-k">=</span> <span class="pl-en">UnitTest</span>(<span class="pl-s"><span class="pl-pds">"</span>myTests<span class="pl-pds">"</span></span>).<span class="pl-en">begin</span>(<span class="pl-k">-</span><span class="pl-k">&gt;</span>(describe) {
+
+  <span class="pl-en">describe</span>(<span class="pl-s"><span class="pl-pds">"</span>some behaviour<span class="pl-pds">"</span></span>, <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>./mytest.ch<span class="pl-pds">"</span></span>))
+
+})</pre></div>
+
+<p><strong>mytest.ch</strong></p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">export</span> <span class="pl-k">=</span> <span class="pl-k">-</span><span class="pl-k">&gt;</span>(<span class="pl-smi">it</span>) {
+
+  <span class="pl-smi">it</span>("<span class="pl-smi">should</span> <span class="pl-smi">do</span> <span class="pl-smi">something</span>", -&gt;(<span class="pl-smi">assert</span>) {
+    <span class="pl-smi">assert</span>(25 + 25, 50)
+    <span class="pl-smi">assert</span>(<span class="pl-smi">true</span>, <span class="pl-smi">true</span>)
+    <span class="pl-smi">assert</span>("<span class="pl-smi">hello</span>", "<span class="pl-smi">hello</span>")
+  })
+
+  <span class="pl-en">it</span>(<span class="pl-s"><span class="pl-pds">"</span>does something else<span class="pl-pds">"</span></span>, <span class="pl-k">-</span><span class="pl-k">&gt;</span>(assert) {
+    <span class="pl-en">assert</span>(<span class="pl-c1">true</span>, <span class="pl-c1">false</span>)
+  })
+
+}</pre></div>
+
+<hr>
+
+<p><strong>Copyright © 2016 - present Leonard Schütz</strong></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/KCreate/charly-lang">Charly-lang</a> is maintained by <a href="https://github.com/KCreate">KCreate</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
