@@ -813,7 +813,7 @@ let testResult = TestCase.begin(func(describe) {
       assert(arg2, 25)
     })
 
-    it("creates the __argument variable", func(assert) {
+    it("creates the arguments variable", func(assert) {
       let args_received
       func call_me() {
         args_received = arguments
@@ -1308,7 +1308,7 @@ let testResult = TestCase.begin(func(describe) {
       charly.name = "charly"
       charly.age = 16
 
-      let text = charly.to_s()
+      let text = "" + charly
       assert(text, "charly is 16 years old!")
     })
 
@@ -1802,6 +1802,221 @@ let testResult = TestCase.begin(func(describe) {
 
   })
 
+  describe("References", func(it) {
+
+    it("creates references to variables", func(assert) {
+      let string = "hello "
+      let reference = &string
+
+      string += "world"
+
+      assert(string, "hello world")
+      assert(&reference, "hello world")
+      assert(reference.to_s(), "Reference:String")
+
+      &reference = 25
+
+      assert(string, 25)
+      assert(reference.to_s(), "Reference:Numeric")
+    })
+
+    it("dereferences correctly", func(assert) {
+      let string = "test"
+      let reference= &string
+
+      assert(reference.typeof(), "Reference")
+
+      reference = 25
+
+      assert(string, "test")
+      assert(reference, 25)
+    })
+
+    it("passes references to functions", func(assert) {
+      let string = "test"
+      let reference = &string
+
+      func foo(arg) {
+        &arg = 25
+      }
+
+      foo(reference)
+
+      assert(string, 25)
+    })
+
+    it("references closured variables from functions", func(assert) {
+
+      func counter() {
+        let value = 0
+        &value
+      }
+
+      # get the reference
+      let value = counter()
+
+      &value += 10
+      &value += 10
+
+      assert(value.value(), 20)
+    })
+
+    it("references variables from deleted closures", func(assert) {
+      func counter() {
+        let value = 0
+        &value
+      }
+
+      # get the reference
+      let value = counter()
+
+      counter = null
+
+      &value += 10
+      &value += 10
+
+      assert(value.value(), 20)
+    })
+
+    it("puts references into objects", func(assert) {
+      let string = "test"
+      let container = {
+        let string = &string
+      }
+
+      string = "hello world"
+
+      assert(container.string.value(), "hello world")
+
+      let reference = container.string
+
+      assert(&reference, "hello world")
+
+      &reference = 25
+
+      assert(string, 25)
+      assert(container.string.value(), 25)
+    })
+
+    it("iterates over an array of references", func(assert) {
+      let n = 0
+      let r = &n
+      let nums = []
+
+      5.times(->{
+        nums.push(&r)
+        n += 1
+      })
+
+      assert(nums, [0, 1, 2, 3, 4])
+    })
+
+    it("compares references", func(assert) {
+      let n1 = 1
+      let n2 = 2
+
+      let r1 = &n1
+      let r2 = &n2
+
+      assert(r1 == r2, false)
+
+      r2 = &n1
+
+      assert(r1 == r2, true)
+    })
+
+    it("can't overwrite a constant referenced value", func(assert) {
+      const num = 25
+      let ref = &num
+
+      # We have to catch since this should throw
+      try {
+        &ref = 30
+      } catch(e) {
+        assert(true, true)
+        return
+      }
+
+      assert(false, true)
+    })
+
+  })
+
+  describe("Primitive Types", func(it) {
+
+    it("extends a primitive type", func(assert) {
+      Array.methods.foo = ->"overridden"
+      Boolean.methods.foo = ->"overridden"
+      Class.methods.foo = ->"overridden"
+      Function.methods.foo = ->"overridden"
+      Null.methods.foo = ->"overridden"
+      Numeric.methods.foo = ->"overridden"
+      Object.methods.foo = ->"overridden"
+      PrimitiveClass.methods.foo = ->"overridden"
+      String.methods.foo = ->"overridden"
+
+      assert([].foo(), "overridden")
+      assert(false.foo(), "overridden")
+      assert((class lol {}).foo(), "overridden")
+      assert((func () {}).foo(), "overridden")
+      assert(null.foo(), "overridden")
+      assert(5.foo(), "overridden")
+      assert({}.foo(), "overridden")
+      assert((primitive class Foo {}).foo(), "overridden")
+      assert("lol".foo(), "overridden")
+    })
+
+    it("can overwrite static methods", func(assert) {
+      let backup_size_of = Array.size_of
+      Array.size_of = ->"hello world"
+      assert(Array.size_of(), "hello world")
+      Array.size_of = backup_size_of
+    })
+
+    it("gives primitive classes the methods object", func(assert) {
+      assert(Array.methods.typeof(), "Object")
+      assert(Boolean.methods.typeof(), "Object")
+      assert(Class.methods.typeof(), "Object")
+      assert(Function.methods.typeof(), "Object")
+      assert(Null.methods.typeof(), "Object")
+      assert(Numeric.methods.typeof(), "Object")
+      assert(Object.methods.typeof(), "Object")
+      assert(PrimitiveClass.methods.typeof(), "Object")
+      assert(String.methods.typeof(), "Object")
+    })
+
+    it("can give references as a variable", func(assert) {
+      let num = 25
+
+      Numeric.methods.bar = &num
+
+      assert(5.bar.value(), 25)
+      assert(5.bar.typeof(), "Reference")
+    })
+
+  })
+
+  describe("Edge cases", func(it) {
+
+    # it("correctly prints circular objects", func(assert) {
+    #   let data = {}
+    #   data.foo = {}
+    #   data.foo.bar = {}
+    #   data.foo.bar.baz = data
+    #
+    #   let nums = []
+    #   nums.push(nums)
+    #   data.nums = nums
+    #
+    #   data.to_s()
+    #
+    #   # If the interpreter hasn't crashed until this point, the test has passed
+    #   # We don't actually print anything to avoid littering the unit-test log
+    #   assert(true, true)
+    # })
+
+  })
+
 })
 
-exit(testResult)
+io.exit(testResult)

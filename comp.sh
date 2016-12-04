@@ -5,7 +5,7 @@ clear
 mkdir -p bin
 
 # Build the interpreter
-crystal build src/charly.cr -o bin/charly $2
+crystal build src/charly.cr -o bin/charly
 
 RESULT=$?
 if [ $RESULT -eq 0 ]; then

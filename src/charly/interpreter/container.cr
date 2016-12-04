@@ -16,7 +16,7 @@ module Charly
   end
 
   # :nodoc:
-  private class Entry(V)
+  class Entry(V)
     property value : V
     property flags : Flag
 
@@ -29,6 +29,10 @@ module Charly
 
     def ===(other : V)
       @value == other
+    end
+
+    def to_s(io)
+      io << "<Entry(#{@value.class}):#{@value}"
     end
   end
 
