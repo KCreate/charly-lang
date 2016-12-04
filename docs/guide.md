@@ -733,6 +733,64 @@ You can now indent strings via the `String#indent` method.
 # --up
 ```
 
+## Unit-testing
+
+Charly provides a built-in unit-testing library.
+
+```javascript
+const UnitTest = require("unit-test")
+const result = UnitTest("myTests").begin(->(describe) {
+
+  describe("some behaviour", ->(it) {
+
+    it("should do something", ->(assert) {
+      assert(25 + 25, 50)
+      assert(true, true)
+      assert("hello", "hello")
+    })
+
+    it("does something else", ->(assert) {
+      assert(true, false)
+    })
+
+  })
+
+})
+```
+
+Running this file will output the following:
+
+![unit-test sample screenshot](images/unit-test.png)
+
+If you have a lot of test cases, you can put them into another file and require them.
+
+__main.ch__
+```javascript
+const UnitTest = require("unit-test")
+const result = UnitTest("myTests").begin(->(describe) {
+
+  describe("some behaviour", require("./mytest.ch"))
+
+})
+```
+
+__mytest.ch__
+```javascript
+export = ->(it) {
+
+  it("should do something", ->(assert) {
+    assert(25 + 25, 50)
+    assert(true, true)
+    assert("hello", "hello")
+  })
+
+  it("does something else", ->(assert) {
+    assert(true, false)
+  })
+
+}
+```
+
 ___
 
 __Copyright © 2016 - present Leonard Schütz__
