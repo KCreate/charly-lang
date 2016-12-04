@@ -10,6 +10,27 @@ Comments start with the sharp `#` character. Only one-line comments are currentl
 # This is a comment
 ```
 
+## Variables
+
+Variables are defined via the `let` keyword. If you try to access a variable that wasn't initialized before, a runtime exception is thrown.
+
+```javascript
+let myVar = 25
+let myOtherVariable = 50
+
+myVar + myOtherVariable # 75
+```
+
+## Constants
+
+Constants are declared the same way as variables. They can't be changed, hence the name constant. You need to initialize them in the declaration.
+
+```javascript
+const myconst # syntax error
+const myOtherConst = 25
+myOtherConst = 30 # runtime exception
+```
+
 ## Literals
 
 Charly has a total of 10 primitive types. Not all can be constructed directly. For example the `TInternalFunction` can only be gathered from a call to `__internal__method`
