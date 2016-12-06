@@ -35,8 +35,9 @@ myOtherConst = 30 # runtime exception
 
 Charly has a total of 10 primitive types. Not all can be constructed directly. For example the `TInternalFunction` can only be gathered from a call to `__internal__method`
 
-| 25                      | Numeric  |
+| Literal                 | Type     |
 |-------------------------|----------|
+| 25                      | Numeric  |
 | 25.5                    | Numeric  |
 | "Charly"                | String   |
 | [1, 2, 3]               | Array    |
