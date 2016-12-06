@@ -35,6 +35,20 @@ myOtherConst = 30 # runtime exception
 
 Charly has a total of 10 primitive types. Not all can be constructed directly. For example the `TInternalFunction` can only be gathered from a call to `__internal__method`
 
+| 25                      | Numeric  |
+|-------------------------|----------|
+| 25.5                    | Numeric  |
+| "Charly"                | String   |
+| [1, 2, 3]               | Array    |
+| null                    | Null     |
+| NAN                     | Numeric  |
+| false                   | Boolean  |
+| true                    | Boolean  |
+| class Box {}            | Class    |
+| func() {}               | Function |
+| ->() {}                 | Function |
+| { let name = "charly" } | Object   |
+
 ### Null
 The `Null` type can be compared to `undefined` in javascript or `nil` in some other languages.
 
