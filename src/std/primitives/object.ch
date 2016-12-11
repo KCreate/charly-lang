@@ -3,6 +3,7 @@ const _colorize = __internal__method("colorize")
 const typeof = __internal__method("typeof")
 const instanceof = __internal__method("instanceof")
 const _object_keys = __internal__method("_object_keys")
+const _isolate_object = __internal__method("_isolate_object")
 
 export = primitive class Object {
   func length() {
@@ -118,10 +119,18 @@ export = primitive class Object {
   }
 
   static func keys(object) {
-    if object.typeof() ! Object {
+    if object.typeof() ! "Object" {
       throw Exception("Expected object, got " + object.typeof())
     }
 
     _object_keys(object)
+  }
+
+  static func isolate(object) {
+    if object.typeof() ! "Object" {
+      throw Exception("Expected object, got " + object.typeof())
+    }
+
+    _isolate_object(object)
   }
 }

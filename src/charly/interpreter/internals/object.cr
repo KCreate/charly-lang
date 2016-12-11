@@ -19,4 +19,9 @@ module Charly::Internals
 
     return TArray.new(keys)
   end
+
+  charly_api "_isolate_object", object : TObject do
+    object.data.parent = nil
+    return object
+  end
 end
