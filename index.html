@@ -49,7 +49,7 @@ myVar <span class="pl-k">+</span> myOtherVariable # <span class="pl-c1">75</span
 
 <p>Constants are declared the same way as variables. They can't be changed, hence the name constant. You need to initialize them in the declaration.</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-c1">myconst</span> # <span class="pl-c1">syntax</span> <span class="pl-c1">error</span>
+<div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-c1">myconst</span> # <span class="pl-c1">syntax</span> <span class="pl-c1">error</span>
 <span class="pl-k">const</span> <span class="pl-c1">myOtherConst</span> <span class="pl-k">=</span> <span class="pl-c1">25</span>
 myOtherConst <span class="pl-k">=</span> <span class="pl-c1">30</span> # runtime exception</pre></div>
 
@@ -57,6 +57,65 @@ myOtherConst <span class="pl-k">=</span> <span class="pl-c1">30</span> # runtime
 <a id="literals" class="anchor" href="#literals" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Literals</h2>
 
 <p>Charly has a total of 10 primitive types. Not all can be constructed directly. For example the <code>TInternalFunction</code> can only be gathered from a call to <code>__internal__method</code></p>
+
+<table>
+<thead>
+<tr>
+<th>Literal</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>25</td>
+<td>Numeric</td>
+</tr>
+<tr>
+<td>25.5</td>
+<td>Numeric</td>
+</tr>
+<tr>
+<td>"Charly"</td>
+<td>String</td>
+</tr>
+<tr>
+<td>[1, 2, 3]</td>
+<td>Array</td>
+</tr>
+<tr>
+<td>null</td>
+<td>Null</td>
+</tr>
+<tr>
+<td>NAN</td>
+<td>Numeric</td>
+</tr>
+<tr>
+<td>false</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>true</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>class Box {}</td>
+<td>Class</td>
+</tr>
+<tr>
+<td>func() {}</td>
+<td>Function</td>
+</tr>
+<tr>
+<td>-&gt;() {}</td>
+<td>Function</td>
+</tr>
+<tr>
+<td>{ let name = "charly" }</td>
+<td>Object</td>
+</tr>
+</tbody>
+</table>
 
 <h3>
 <a id="null" class="anchor" href="#null" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Null</h3>
@@ -122,7 +181,7 @@ myOtherConst <span class="pl-k">=</span> <span class="pl-c1">30</span> # runtime
 <span class="pl-s">      word<span class="pl-pds">"</span></span> # same as <span class="pl-s"><span class="pl-pds">"</span>hello<span class="pl-cce">\n</span>     world<span class="pl-pds">"</span></span></pre></div>
 
 <h3>
-<a id="array" class="anchor" href="#array" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a> Array</h3>
+<a id="array" class="anchor" href="#array" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Array</h3>
 
 <p>An Array is a resizeable list of items of any type. It is typically created with an array literal:</p>
 
@@ -201,7 +260,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
   <span class="pl-c1">25</span>
 }
 
-<span class="pl-en">foo</span>() # <span class="pl-c1">25</span></pre></div>
+<span class="pl-en">foo</span>() # <span class="pl-c1">25</span></pre></div>
 
 <p>You can also do explicit returns</p>
 
@@ -222,7 +281,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 }
 
 <span class="pl-en">foo</span>(<span class="pl-en">func</span>(<span class="pl-smi">arg</span>) {
-  <span class="pl-en">print</span>(arg) # <span class="pl-c1">42</span>
+  <span class="pl-en">print</span>(arg) # <span class="pl-c1">42</span>
 })</pre></div>
 
 <p>There is also the lambda syntax, which goes like this:</p>
@@ -297,7 +356,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 
 # Will print
 #
-# My name is John
+# My name is John
 # <span class="pl-c1">I</span> am <span class="pl-c1">21</span> years old
 # <span class="pl-c1">I</span> am <span class="pl-c1">1.85</span> cm tall</pre></div>
 
@@ -339,7 +398,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 <span class="pl-k">let</span> myBaz <span class="pl-k">=</span> <span class="pl-en">Baz</span>()
 <span class="pl-smi">myBaz</span>.<span class="pl-en">foo</span>() # <span class="pl-s"><span class="pl-pds">"</span>foo method<span class="pl-pds">"</span></span>
 <span class="pl-smi">myBaz</span>.<span class="pl-en">bar</span>() # <span class="pl-s"><span class="pl-pds">"</span>bar method<span class="pl-pds">"</span></span>
-<span class="pl-smi">myBaz</span>.<span class="pl-en">baz</span>() # <span class="pl-s"><span class="pl-pds">"</span>baz method<span class="pl-pds">"</span></span></pre></div>
+<span class="pl-smi">myBaz</span>.<span class="pl-en">baz</span>() # <span class="pl-s"><span class="pl-pds">"</span>baz method<span class="pl-pds">"</span></span></pre></div>
 
 <p>Static properties and methods are also copied to the child classes. The values of static properties are copied by value. They are not references.</p>
 
@@ -362,7 +421,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 <span class="pl-smi">Bar</span>.<span class="pl-smi">foo</span> # <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span></pre></div>
 
 <h2>
-<a id="self-reference" class="anchor" href="#self-reference" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>self</code> reference</h2>
+<a id="self-reference" class="anchor" href="#self-reference" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>self reference</h2>
 
 <p><code>@test</code> will be rewritten to <code>self.test</code> by the parser automatically.</p>
 
@@ -377,7 +436,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 }
 
 <span class="pl-smi">myBox</span>.<span class="pl-c1">name</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span>
-<span class="pl-smi">myBox</span>.<span class="pl-en">foo</span>() # <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span></pre></div>
+<span class="pl-smi">myBox</span>.<span class="pl-en">foo</span>() # <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span></pre></div>
 
 <p>If you directly call a method (<code>foo()</code>), <code>self</code> is set to whatever it what in the context where the method is defined. Think of it like Arrow Funtions in JavaScript.</p>
 
@@ -405,7 +464,7 @@ local <span class="pl-k">=</span> <span class="pl-c1">1</span>
 # assigns to the current self variable
 @instance <span class="pl-k">=</span> <span class="pl-c1">2</span>
 
-# The above is simply rewritten to
+# The above is simply rewritten to
 <span class="pl-smi">self</span>.<span class="pl-smi">instance</span> <span class="pl-k">=</span> <span class="pl-c1">2</span></pre></div>
 
 <h2>
@@ -501,7 +560,7 @@ local <span class="pl-k">=</span> <span class="pl-c1">1</span>
 
 <span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>) # okay
 <span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>) # also okay
-<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>) # </pre></div>
+<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>) # </pre></div>
 
 <h3>
 <a id="operators" class="anchor" href="#operators" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operators</h3>
@@ -604,8 +663,8 @@ Uncaught Object:Exception: arg is smaller than 10
 <p><strong>main.ch</strong></p>
 
 <div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> external <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>./external.ch<span class="pl-pds">"</span></span>)
-<span class="pl-en">print</span>(<span class="pl-smi">external</span>.<span class="pl-smi">message</span>) # <span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>
-<span class="pl-en">print</span>(<span class="pl-smi">external</span>.<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>)) # <span class="pl-c1">3</span></pre></div>
+<span class="pl-en">print</span>(<span class="pl-smi">external</span>.<span class="pl-smi">message</span>) # <span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>
+<span class="pl-en">print</span>(<span class="pl-smi">external</span>.<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>)) # <span class="pl-c1">3</span></pre></div>
 
 <p><strong>external.ch</strong></p>
 
@@ -625,9 +684,9 @@ Uncaught Object:Exception: arg is smaller than 10
 <span class="pl-smi">external</span>.<span class="pl-smi">message</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>it changed<span class="pl-pds">"</span></span>
 
 <span class="pl-k">let</span> external_second <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>./external.ch<span class="pl-pds">"</span></span>)
-<span class="pl-en">print</span>(<span class="pl-smi">external_second</span>.<span class="pl-smi">message</span>) # <span class="pl-s"><span class="pl-pds">"</span>it changed<span class="pl-pds">"</span></span>
+<span class="pl-en">print</span>(<span class="pl-smi">external_second</span>.<span class="pl-smi">message</span>) # <span class="pl-s"><span class="pl-pds">"</span>it changed<span class="pl-pds">"</span></span>
 
-external <span class="pl-k">==</span> external_second # <span class="pl-c1">true</span></pre></div>
+external <span class="pl-k">==</span> external_second # <span class="pl-c1">true</span></pre></div>
 
 <p><strong>external.ch</strong></p>
 
@@ -658,9 +717,60 @@ external <span class="pl-k">==</span> external_second # <span class="pl-c1">tru
 
 <div class="highlight highlight-source-shell"><pre>charly input.ch hello -f tokens world 25 25 --foo -b</pre></div>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-c1">ARGV</span> # [<span class="pl-s"><span class="pl-pds">"</span>hello<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>world<span class="pl-pds">"</span></span>, <span class="pl-c1">25</span>, <span class="pl-c1">25</span>, <span class="pl-s"><span class="pl-pds">"</span>--foo<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>-b<span class="pl-pds">"</span></span>]
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">ARGV</span> # [<span class="pl-s"><span class="pl-pds">"</span>hello<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>world<span class="pl-pds">"</span></span>, <span class="pl-c1">25</span>, <span class="pl-c1">25</span>, <span class="pl-s"><span class="pl-pds">"</span>--foo<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>-b<span class="pl-pds">"</span></span>]
 <span class="pl-c1">IFLAGS</span> # [<span class="pl-s"><span class="pl-pds">"</span>tokens<span class="pl-pds">"</span></span>]
-<span class="pl-c1">ENV</span>[<span class="pl-s"><span class="pl-pds">"</span>TERM<span class="pl-pds">"</span></span>] # xterm<span class="pl-k">-</span><span class="pl-ii">256color</span></pre></div>
+<span class="pl-c1">ENV</span>[<span class="pl-s"><span class="pl-pds">"</span>TERM<span class="pl-pds">"</span></span>] # xterm<span class="pl-k">-</span><span class="pl-ii">256color</span></pre></div>
+
+<p>You can see the license and a list of contributors via the following commands</p>
+
+<pre><code>$ charly --license
+The MIT License (MIT)
+
+Copyright (c) 2016 Leonard Schuetz
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+</code></pre>
+
+<pre><code># Contributors
+- [Leonard Schütz (Author) @KCreate](https://github.com/KCreate)
+- ...
+</code></pre>
+
+<h2>
+<a id="built-in-repl" class="anchor" href="#built-in-repl" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Built-in REPL</h2>
+
+<p>Charly has a built-in REPL (Read Eval Print Loop) where you can quickly test out new ideas.</p>
+
+<p>You can invoke it by typing <code>charly</code> or <code>charly repl</code></p>
+
+<p>Here you can write charly statements. Run them by pressing enter.</p>
+
+<p>The REPL provides a few <code>magic</code> variables which are specific to your current REPL session.</p>
+
+<ul>
+<li>
+<code>$</code> This variable always contains the value of the last evaluated expression</li>
+<li>
+<code>history</code> This is an array of all commands you have entered</li>
+<li>
+<code>context</code> This is the top-level context of the REPL.</li>
+</ul>
 
 <h2>
 <a id="extending-primitive-types" class="anchor" href="#extending-primitive-types" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Extending primitive types</h2>
@@ -759,9 +869,79 @@ external <span class="pl-k">==</span> external_second # <span class="pl-c1">tru
 
 }</pre></div>
 
+<h2>
+<a id="io" class="anchor" href="#io" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>IO</h2>
+
+<p>Charly currently has bindings to STDOUT, STDERR and STDIN. Everything IO related will be found inside the <code>io</code> global object.</p>
+
+<div class="highlight highlight-source-js"><pre>
+# Using the <span class="pl-c1">IO</span> object
+<span class="pl-smi">io</span>.<span class="pl-smi">stdout</span>.<span class="pl-c1">print</span>(<span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>) # same as puts <span class="pl-k">in</span> ruby
+<span class="pl-smi">io</span>.<span class="pl-smi">stdout</span>.<span class="pl-c1">write</span>(<span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>) # same as print <span class="pl-k">in</span> ruby
+
+<span class="pl-smi">io</span>.<span class="pl-smi">stderr</span>.<span class="pl-c1">print</span>(<span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>)
+<span class="pl-smi">io</span>.<span class="pl-smi">stderr</span>.<span class="pl-c1">write</span>(<span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>)
+
+<span class="pl-smi">io</span>.<span class="pl-smi">stdin</span>.<span class="pl-en">gets</span>(<span class="pl-s"><span class="pl-pds">"</span>&gt; <span class="pl-pds">"</span></span>, <span class="pl-c1">false</span>) # uses the <span class="pl-c1">GNU</span> ReadLine library to read a line from <span class="pl-c1">STDIN</span>
+<span class="pl-smi">io</span>.<span class="pl-smi">stdin</span>.<span class="pl-en">getc</span>() # Read a single char from <span class="pl-c1">STDIN</span>
+
+<span class="pl-smi">io</span>.<span class="pl-en">sleep</span>(<span class="pl-c1">200</span>) # sleep <span class="pl-k">for</span> <span class="pl-c1">200</span> miliseconds
+
+<span class="pl-smi">io</span>.<span class="pl-en">exit</span>(<span class="pl-c1">1</span>) # exit the program <span class="pl-k">with</span> status code <span class="pl-c1">1</span>
+
+<span class="pl-smi">io</span>.<span class="pl-en">stackdump</span>() # returns the current scope <span class="pl-k">in</span> a nicely formated table
+
+<span class="pl-smi">io</span>.<span class="pl-en">time_ms</span>() # returns the current unix timestamp <span class="pl-k">in</span> miliseconds
+
+<span class="pl-smi">io</span>.<span class="pl-en">eval</span>(<span class="pl-s"><span class="pl-pds">"</span>2 + 2<span class="pl-pds">"</span></span>, self) # Execute <span class="pl-s"><span class="pl-pds">"</span>2 + 2<span class="pl-pds">"</span></span>, using self as the <span class="pl-smi">context</span>. <span class="pl-smi">This</span> call will <span class="pl-k">return</span> <span class="pl-c1">4</span>
+
+# The prelude contains direct bindings <span class="pl-k">for</span> the following methods<span class="pl-k">:</span>
+<span class="pl-en">print</span>()
+<span class="pl-en">write</span>()
+<span class="pl-en">gets</span>()
+<span class="pl-en">getc</span>()
+<span class="pl-en">exit</span>()</pre></div>
+
+<h2>
+<a id="native-extensions-written-in-crystal" class="anchor" href="#native-extensions-written-in-crystal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Native extensions written in Crystal</h2>
+
+<p>Charly currently has rudimentary support for native extensions written in Crystal.</p>
+
+<p>The way this works is via Crystal files that have to be compiled into the interpreter itself.</p>
+
+<p>You can add your own files like this:</p>
+
+<ol>
+<li><p>Create a file called <code>myfile.cr</code> inside <code>src/charly/interpreter/internals</code></p></li>
+<li><p>Insert the following code:</p></li>
+</ol>
+
+<div class="highlight highlight-source-crystal"><pre><span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">"</span>../**<span class="pl-pds">"</span></span>
+
+<span class="pl-k">module</span> <span class="pl-en">Chalry::Internals</span>
+
+  charly_api <span class="pl-s"><span class="pl-pds">"</span>mymethod<span class="pl-pds">"</span></span>, myarg : <span class="pl-c1">TString</span> <span class="pl-k">do</span>
+    <span class="pl-k">return</span> <span class="pl-c1">TString</span>.new(<span class="pl-s"><span class="pl-pds">"</span>You said: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> myarg.value)
+  <span class="pl-k">end</span>
+
+<span class="pl-k">end</span></pre></div>
+
+<ol>
+<li><p>Recompile &amp; reinstall the interpreter</p></li>
+<li><p>Link against the method inside your charly program like this:</p></li>
+</ol>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-c1">mymethod</span> <span class="pl-k">=</span> <span class="pl-en">__internal__method</span>(<span class="pl-s"><span class="pl-pds">"</span>mymethod<span class="pl-pds">"</span></span>)
+
+<span class="pl-en">print</span>(<span class="pl-en">mymethod</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello World<span class="pl-pds">"</span></span>)) # You said<span class="pl-k">:</span> Hello World</pre></div>
+
+<ol>
+<li>Finished!</li>
+</ol>
+
 <hr>
 
-<p><strong>Copyright © 2016 - present Leonard Schütz</strong></p>
+<p><strong>Copyright © 2016 - present Leonard Schütz</strong></p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/KCreate/charly-lang">Charly-lang</a> is maintained by <a href="https://github.com/KCreate">KCreate</a>.</span>
