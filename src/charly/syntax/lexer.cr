@@ -552,6 +552,111 @@ module Charly
         else
           consume_ident
         end
+      when '_'
+        case read_char
+        when '_'
+          case read_char
+          when 'F'
+            case read_char
+            when 'I'
+              case read_char
+              when 'L'
+                case read_char
+                when 'E'
+                  case read_char
+                  when '_'
+                    case read_char
+                    when '_'
+                      if ident_start(peek_char)
+                      else
+                        read_char
+                        @token.type = TokenType::String
+                        @token.value = File.basename @filename
+                      end
+                    else
+                      consume_ident
+                    end
+                  else
+                    consume_ident
+                  end
+                else
+                  consume_ident
+                end
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          when 'D'
+            case read_char
+            when 'I'
+              case read_char
+              when 'R'
+                case read_char
+                when '_'
+                  case read_char
+                  when '_'
+                    if ident_start(peek_char)
+                      read_char
+                      consume_ident
+                    else
+                      read_char
+                      @token.type = TokenType::String
+                      @token.value = File.dirname @filename
+                    end
+                  else
+                    consume_ident
+                  end
+                else
+                  consume_ident
+                end
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          when 'L'
+            case read_char
+            when 'I'
+              case read_char
+              when 'N'
+                case read_char
+                when 'E'
+                  case read_char
+                  when '_'
+                    case read_char
+                    when '_'
+                      if ident_start(peek_char)
+                        read_char
+                        consume_ident
+                      else
+                        read_char
+                        @token.type = TokenType::Numeric
+                        @token.value = "#{@row + 1}"
+                      end
+                    else
+                      consume_ident
+                    end
+                  else
+                    consume_ident
+                  end
+                else
+                  consume_ident
+                end
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
       else
         if ident_start(current_char)
           consume_ident
