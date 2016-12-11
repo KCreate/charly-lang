@@ -5,6 +5,19 @@ const stderr_write = __internal__method("stderr_write")
 
 export = {
 
+  # Raw bindings to the output methods
+  const raw = {
+    const stdout = {
+      const print = stdout_print
+      const write = stdout_write
+    }
+
+    const stderr = {
+      const print = stderr_print
+      const write = stderr_write
+    }
+  }
+
   # Various bindings to STDOUT
   const stdout = {
     func print() {

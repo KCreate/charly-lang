@@ -17,6 +17,7 @@ const Numeric = require("./primitives/numeric.ch")
 const Function = require("./primitives/function.ch")
 const Boolean = require("./primitives/boolean.ch")
 const Null = require("./primitives/null.ch")
+const Reference = require("./primitives/reference.ch")
 
 # IO related stuff
 const io = require("./io.ch")

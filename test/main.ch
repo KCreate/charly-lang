@@ -15,4 +15,6 @@ io.exit(UnitTest("Charly").begin(func(describe) {
   describe("CLI",                                 require("./cli.ch"))
   describe("Math",                                require("./math.ch"))
   describe("try & catch",                         require("./exceptions.ch"))
+  describe("References",                          require("./references.ch"))
+  describe("Primitives",                          require("./primitives.ch"))
 }))

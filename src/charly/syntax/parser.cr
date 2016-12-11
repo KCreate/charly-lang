@@ -664,6 +664,17 @@ module Charly
         else
           unexpected_token TokenType::Keyword, "func"
         end
+      when TokenType::AndSign
+        start_location = @token.location
+        advance
+
+        identifier = nil
+        assert_token TokenType::Identifier do
+          identifier = IdentifierLiteral.new(@token.value).at(@token.location)
+          advance
+        end
+
+        node = ReferenceIdentifier.new(identifier.not_nil!).at(start_location, identifier.not_nil!.location_end)
       else
         unexpected_token value: "an expression"
       end

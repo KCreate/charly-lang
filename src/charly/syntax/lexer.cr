@@ -124,9 +124,12 @@ module Charly
           @token.type = TokenType::Assignment
         end
       when '&'
-        case read_char
+        case peek_char
         when '&'
+          read_char
           read_char TokenType::AND
+        else
+          read_char TokenType::AndSign
         end
       when '|'
         case read_char

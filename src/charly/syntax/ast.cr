@@ -220,6 +220,9 @@ module Charly::AST
     end
   end
 
+  ast_node ReferenceIdentifier,
+    identifier : IdentifierLiteral
+
   ast_node StringLiteral,
     value : String do
     def initialize(@value : String)
