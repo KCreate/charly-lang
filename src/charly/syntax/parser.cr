@@ -62,6 +62,41 @@ module Charly
       @token
     end
 
+    @[AlwaysInline]
+    private def advance_to_token(type : TokenType)
+      token_char = [] of TokenType
+      until @token.type == type && token_char.size == 0
+        case @token.type
+        when TokenType::LeftCurly
+          token_char << @token.type
+        when TokenType::LeftParen
+          token_char << @token.type
+        when TokenType::LeftBracket
+          token_char << @token.type
+        when TokenType::RightCurly
+          if token_char.last == TokenType::LeftCurly
+            token_char.pop
+          else
+            unexpected_token @token.type
+          end
+        when TokenType::RightParen
+          if token_char.last == TokenType::LeftParen
+            token_char.pop
+          else
+            unexpected_token @token.type
+          end
+        when TokenType::RightBracket
+          if token_char.last == TokenType::LeftBracket
+            token_char.pop
+          else
+            unexpected_token @token.type
+          end
+        end
+
+        advance
+      end
+    end
+
     # :nodoc:
     @[AlwaysInline]
     private def unexpected_token(expected : TokenType? = nil, value : String? = nil)
@@ -297,7 +332,7 @@ module Charly
             end_location = return_value.location_end
           end
 
-          skip TokenType::Semicolon
+          advance_to_token TokenType::RightCurly
           return ReturnStatement.new(return_value).at(start_location, end_location)
         when "break"
           unless @break_allowed
@@ -307,12 +342,14 @@ module Charly
           advance
           end_location = start_location
           skip TokenType::Semicolon
+          advance_to_token TokenType::RightCurly
           return BreakStatement.new.at(start_location, end_location)
         when "throw"
           advance
           value = parse_expression
           end_location = value.location_end
           skip TokenType::Semicolon
+          advance_to_token TokenType::RightCurly
           return ThrowStatement.new(value).at(start_location, end_location)
         when "func", "class", "primitive"
           node = parse_expression
