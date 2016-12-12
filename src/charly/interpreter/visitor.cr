@@ -389,7 +389,7 @@ module Charly
       right = visit_expression(node.right, scope, context)
 
       # Checks if this operator is unary overrideable
-      if operator.unary_overrideable
+      if operator.unary_operator?
         override_method_name = operator.unary_method_name
 
         method = nil
@@ -433,30 +433,30 @@ module Charly
       operator = node.operator
       left = visit_expression(node.left, scope, context)
 
-      override_method_name = OPERATOR_MAPPING[operator]
+      if operator.regular_operator?
+        override_method_name = operator.regular_method_name
 
-      # Check if the data of the value contains this method
-      # If it doesn't check if the primitive class has an entry for it
-      method = nil
-      if left.is_a?(DataType) && left.data.contains override_method_name
-        method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
-      elsif left.is_a? TArray
-        method = get_primitive_method(left, override_method_name, scope, context)
-      end
+        method = nil
+        if left.is_a?(DataType) && left.data.contains override_method_name
+          method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
+        elsif left.is_a? TArray
+          method = get_primitive_method(left, override_method_name, scope, context)
+        end
 
-      if method.is_a? TFunc
-        # Create a fake call expression
-        callex = CallExpression.new(
-          MemberExpression.new(
-            node.left,
-            IdentifierLiteral.new("#{operator}").at(node.left)
-          ).at(node.left),
-          ExpressionList.new([
-            node.right,
-          ] of ASTNode).at(node.right)
-        ).at(node)
+        if method.is_a? TFunc
+          # Create a fake call expression
+          callex = CallExpression.new(
+            MemberExpression.new(
+              node.left,
+              IdentifierLiteral.new("#{operator}").at(node.left)
+            ).at(node.left),
+            ExpressionList.new([
+              node.right,
+            ] of ASTNode).at(node.right)
+          ).at(node)
 
-        return visit_function_call(method, callex, left, scope, context)
+          return visit_function_call(method, callex, left, scope, context)
+        end
       end
 
       # No primitive method was found
@@ -565,30 +565,30 @@ module Charly
       operator = node.operator
       left = visit_expression(node.left, scope, context)
 
-      override_method_name = OPERATOR_MAPPING[operator]
+      if operator.regular_operator?
+        override_method_name = operator.regular_method_name
 
-      # Check if the data of the value contains this method
-      # If it doesn't check if the primitive class has an entry for it
-      method = nil
-      if left.is_a?(DataType) && left.data.contains override_method_name
-        method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
-      elsif left.is_a? TArray
-        method = get_primitive_method(left, override_method_name, scope, context)
-      end
+        method = nil
+        if left.is_a?(DataType) && left.data.contains override_method_name
+          method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
+        elsif left.is_a? TArray
+          method = get_primitive_method(left, override_method_name, scope, context)
+        end
 
-      if method.is_a? TFunc
-        # Create a fake call expression
-        callex = CallExpression.new(
-          MemberExpression.new(
-            node.left,
-            IdentifierLiteral.new("#{operator}").at(node.left)
-          ).at(node.left),
-          ExpressionList.new([
-            node.right,
-          ] of ASTNode).at(node.right)
-        ).at(node)
+        if method.is_a? TFunc
+          # Create a fake call expression
+          callex = CallExpression.new(
+            MemberExpression.new(
+              node.left,
+              IdentifierLiteral.new("#{operator}").at(node.left)
+            ).at(node.left),
+            ExpressionList.new([
+              node.right,
+            ] of ASTNode).at(node.right)
+          ).at(node)
 
-        return visit_function_call(method, callex, left, scope, context)
+          return visit_function_call(method, callex, left, scope, context)
+        end
       end
 
       # No primitive method was found

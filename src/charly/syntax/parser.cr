@@ -16,16 +16,6 @@ module Charly
       TokenType::Comment,
     }
 
-    # Mapping between the assignment operators and the actual operators
-    OPERATOR_MAPPING = {
-      TokenType::PlusAssignment  => TokenType::Plus,
-      TokenType::MinusAssignment => TokenType::Minus,
-      TokenType::MultAssignment  => TokenType::Mult,
-      TokenType::DivdAssignment  => TokenType::Divd,
-      TokenType::ModAssignment   => TokenType::Mod,
-      TokenType::PowAssignment   => TokenType::Pow,
-    }
-
     # Some properties to make the parser context aware
     property return_allowed : Bool
     property break_allowed : Bool
@@ -520,12 +510,12 @@ module Charly
           advance
           right = parse_assignment
 
-          if operator == TokenType::Assignment
-            left = VariableAssignment.new(left, right).at(left.location_start, right.location_end)
-          else
+          if operator.and_operator?
             left = VariableAssignment.new(left,
-              BinaryExpression.new(OPERATOR_MAPPING[operator], left, right).at(left.location_start, right.location_end)
+              BinaryExpression.new(operator.and_real_operator, left, right).at(left.location_start, right.location_end)
             ).at(left.location_start, right.location_end)
+          else
+            left = VariableAssignment.new(left, right).at(left.location_start, right.location_end)
           end
         else
           return left
@@ -755,13 +745,13 @@ module Charly
         advance
       when .is_operator?
         operator_token = @token.type
-        identifier = IdentifierLiteral.new(Visitor::OPERATOR_MAPPING[@token.type]).at(@token.location)
+        identifier = IdentifierLiteral.new(@token.type.regular_method_name).at(@token.location)
         advance
 
         # Check for overrideable unary operators
         if_token TokenType::AtSign do
-          if operator_token.unary_possible?
-            identifier.name = Visitor::UNARY_OPERATOR_MAPPING[operator_token]
+          if operator_token.unary_operator?
+            identifier.name = operator_token.unary_method_name
             identifier.at(identifier.location_start, @token.location)
             advance
           else

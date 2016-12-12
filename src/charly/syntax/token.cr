@@ -29,6 +29,17 @@ module Charly
     TokenType::Not   => "__unot",
   }
 
+  # Mapping between and assignment operators and real operators
+  AND_ASSIGNMENT_MAPPING = {
+    TokenType::PlusAssignment  => TokenType::Plus,
+    TokenType::MinusAssignment => TokenType::Minus,
+    TokenType::MultAssignment  => TokenType::Mult,
+    TokenType::DivdAssignment  => TokenType::Divd,
+    TokenType::ModAssignment   => TokenType::Mod,
+    TokenType::PowAssignment   => TokenType::Pow,
+  }
+
+
   enum TokenType
     # Literals
     Numeric
@@ -111,29 +122,39 @@ module Charly
       end
     end
 
-    # Returns true if this is a regular operator
-    def regular_overrideable
+    def regular_operator?
       OPERATOR_MAPPING.has_key? self
     end
 
-    # Returns true if this is a unary operator
-    def unary_overrideable
+    def unary_operator?
       UNARY_OPERATOR_MAPPING.has_key? self
+    end
+
+    def and_operator?
+      AND_ASSIGNMENT_MAPPING.has_key? self
     end
 
     # Returns true if this operator can be overridden
     def overrideable
-      regular_overrideable || unary_overrideable
+      regular_operator? || unary_operator?
+    end
+
+    def is_operator?
+      overrideable
     end
 
     # Returns the overrideable method name of this operator
-    def method_name
+    def regular_method_name
       OPERATOR_MAPPING[self]
     end
 
     # Returns the overrideable method name of this unary operator
     def unary_method_name
       UNARY_OPERATOR_MAPPING[self]
+    end
+
+    def and_real_operator
+      AND_ASSIGNMENT_MAPPING[self]
     end
   end
 
