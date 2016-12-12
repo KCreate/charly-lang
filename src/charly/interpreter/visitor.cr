@@ -762,7 +762,7 @@ module Charly
 
     private def visit_function_literal(node : FunctionLiteral, scope, context)
       TFunc.new(
-        node.name,
+        node.name || "",
         node.argumentlist,
         node.block,
         scope
@@ -1047,7 +1047,12 @@ module Charly
       end
 
       # Execute the functions block inside the function_scope
-      @trace << Trace.new("#{target.name || "anonymous"}", node)
+      target_name = target.name
+      if target_name.size == 0
+        target_name = "anonymous"
+      end
+
+      @trace << Trace.new(target_name, node)
       begin
         result = visit_block(target.block, function_scope, context)
       rescue e : ReturnException

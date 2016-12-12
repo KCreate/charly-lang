@@ -170,7 +170,7 @@ module Charly
 
   # A regular function
   class TFunc < DataType
-    property name : String?
+    property name : String
     property argumentlist : IdentifierList
     property block : Block
     property parent_scope : Scope
