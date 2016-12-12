@@ -3,6 +3,7 @@ require "./lexer.cr"
 require "./token.cr"
 require "./ast.cr"
 require "../program.cr"
+require "../transformations/*"
 
 module Charly
   # The `Parser` turns a list of tokens into a Parse Tree (AST)
@@ -45,6 +46,9 @@ module Charly
     # Parses a program and resets the @file_buffer afterwards
     def parse
       tree = parse_program
+
+      ConstantFoldingTransformation.transform tree
+
       program = Program.new(@filename, tree)
       @reader.clear
       program
