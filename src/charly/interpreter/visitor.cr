@@ -91,33 +91,6 @@ module Charly
       TReference      => "Reference"
     }
 
-    # Mapping between operators and function names you use to override them
-    OPERATOR_MAPPING = {
-
-      # Arithmetic
-      TokenType::Plus  => "__plus",
-      TokenType::Minus => "__minus",
-      TokenType::Mult  => "__mult",
-      TokenType::Divd  => "__divd",
-      TokenType::Mod   => "__mod",
-      TokenType::Pow   => "__pow",
-
-      # Comparison
-      TokenType::Less         => "__less",
-      TokenType::Greater      => "__greater",
-      TokenType::LessEqual    => "__lessequal",
-      TokenType::GreaterEqual => "__greaterequal",
-      TokenType::Equal        => "__equal",
-      TokenType::Not          => "__not",
-    }
-
-    # Mapping between unary operators and function names you use to override them
-    UNARY_OPERATOR_MAPPING = {
-      TokenType::Plus  => "__uplus",
-      TokenType::Minus => "__uminus",
-      TokenType::Not   => "__unot",
-    }
-
     # Creates a new Interpreter inside *top*
     # Setting *load_prelude* to false will prevent loading the prelude file
     def initialize(@top : Scope, @prelude)
@@ -415,28 +388,30 @@ module Charly
       operator = node.operator
       right = visit_expression(node.right, scope, context)
 
-      override_method_name = UNARY_OPERATOR_MAPPING[operator]
+      # Checks if this operator is unary overrideable
+      if operator.unary_overrideable
+        override_method_name = operator.unary_method_name
 
-      # Check if the data of the value contains this method
-      # If it doesn't check if the primitive class has an entry for it
-      method = nil
-      if right.is_a?(DataType) && right.data.contains override_method_name
-        method = right.data.get(override_method_name, Flag::IGNORE_PARENT)
-      elsif right.is_a? TArray
-        method = get_primitive_method(right, override_method_name, scope, context)
-      end
+        method = nil
+        if right.is_a?(DataType) && right.data.contains override_method_name
+          method = right.data.get(override_method_name, Flag::IGNORE_PARENT)
+        elsif right.is_a? TArray
+          method = get_primitive_method(right, override_method_name, scope, context)
+        end
 
-      if method.is_a? TFunc
-        # Create a fake call expression
-        callex = CallExpression.new(
-          MemberExpression.new(
-            node.right,
-            IdentifierLiteral.new("#{operator}").at(node.right)
-          ).at(node.right),
-          ExpressionList.new([] of ASTNode).at(node.right)
-        ).at(node)
+        if method.is_a? TFunc
 
-        return visit_function_call(method, callex, right, scope, context)
+          # Create a fake call expression
+          callex = CallExpression.new(
+            MemberExpression.new(
+              node.right,
+              IdentifierLiteral.new("#{operator}").at(node.right)
+            ).at(node.right),
+            ExpressionList.new([] of ASTNode).at(node.right)
+          ).at(node)
+
+          return visit_function_call(method, callex, right, scope, context)
+        end
       end
 
       case node.operator

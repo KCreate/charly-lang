@@ -1,6 +1,34 @@
 require "./location.cr"
 
 module Charly
+
+  # Mapping between operators and function names you use to override them
+  OPERATOR_MAPPING = {
+
+    # Arithmetic
+    TokenType::Plus  => "__plus",
+    TokenType::Minus => "__minus",
+    TokenType::Mult  => "__mult",
+    TokenType::Divd  => "__divd",
+    TokenType::Mod   => "__mod",
+    TokenType::Pow   => "__pow",
+
+    # Comparison
+    TokenType::Less         => "__less",
+    TokenType::Greater      => "__greater",
+    TokenType::LessEqual    => "__lessequal",
+    TokenType::GreaterEqual => "__greaterequal",
+    TokenType::Equal        => "__equal",
+    TokenType::Not          => "__not",
+  }
+
+  # Mapping between unary operators and function names you use to override them
+  UNARY_OPERATOR_MAPPING = {
+    TokenType::Plus  => "__uplus",
+    TokenType::Minus => "__uminus",
+    TokenType::Not   => "__unot",
+  }
+
   enum TokenType
     # Literals
     Numeric
@@ -70,17 +98,42 @@ module Charly
         io << ">="
       when LessEqual
         io << "<="
+      when AtSign
+        io << "@"
+      when AndSign
+        io << "&"
+      when RightArrow
+        io << "->"
+      when LeftArrow
+        io << "<-"
       else
         io << super
       end
     end
 
-    def is_operator?
-      Visitor::OPERATOR_MAPPING.has_key? self
+    # Returns true if this is a regular operator
+    def regular_overrideable
+      OPERATOR_MAPPING.has_key? self
     end
 
-    def unary_possible?
-      Visitor::UNARY_OPERATOR_MAPPING.has_key? self
+    # Returns true if this is a unary operator
+    def unary_overrideable
+      UNARY_OPERATOR_MAPPING.has_key? self
+    end
+
+    # Returns true if this operator can be overridden
+    def overrideable
+      regular_overrideable || unary_overrideable
+    end
+
+    # Returns the overrideable method name of this operator
+    def method_name
+      OPERATOR_MAPPING[self]
+    end
+
+    # Returns the overrideable method name of this unary operator
+    def unary_method_name
+      UNARY_OPERATOR_MAPPING[self]
     end
   end
 
