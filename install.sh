@@ -1,6 +1,7 @@
 sudo -v
 
 mkdir -p bin
+crystal deps
 crystal build src/charly.cr --release --stats -o bin/charly
 
 sudo cp bin/charly /usr/bin/charly
