@@ -82,8 +82,7 @@ module Charly
   end
 
   begin
-    # Parse the prelude and userfile
-    prelude_program = Parser.create(File.open(PRELUDE_PATH), PRELUDE_PATH)
+    # Parse the userfile
     user_program = Parser.create(File.open(filename), filename, print_tokens: flags.includes? "tokens")
 
     if flags.includes? "ast"
@@ -95,6 +94,7 @@ module Charly
     visitor = Visitor.new(user_scope, prelude_scope)
 
     unless flags.includes? "lint"
+      prelude_program = Parser.create(File.open(PRELUDE_PATH), PRELUDE_PATH)
       visitor.visit_program prelude_program, prelude_scope
       visitor.visit_program user_program, user_scope
     end
