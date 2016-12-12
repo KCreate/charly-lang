@@ -108,6 +108,18 @@ export = func(it) {
     assert(myBox ! 1, "notequal")
   })
 
+  it("redirects unary operators", func(assert) {
+    let myBox = {
+      func __uplus() { "uplus" }
+      func __uminus() { "uminus" }
+      func __unot() { "unot" }
+    }
+
+    assert(+myBox, "uplus")
+    assert(-myBox, "uminus")
+    assert(!myBox, "unot")
+  })
+
   it("redirects arithmetic operators with an operator as the func name", func(assert) {
     let myBox = {
       func +(element) { "plus" }
@@ -142,18 +154,6 @@ export = func(it) {
     assert(myBox >= 1, "greaterequal")
     assert(myBox == 1, "equal")
     assert(myBox ! 1, "notequal")
-  })
-
-  it("redirects unary operators", func(assert) {
-    let myBox = {
-      func __uplus() { "uplus" }
-      func __uminus() { "uminus" }
-      func __unot() { "unot" }
-    }
-
-    assert(+myBox, "uplus")
-    assert(-myBox, "uminus")
-    assert(!myBox, "unot")
   })
 
   it("redirects unary operators with an operator as the func name", func(assert) {
