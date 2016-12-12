@@ -11,9 +11,18 @@ module Charly
         right = node.children[1]
 
         if left.is_a? NumericLiteral && right.is_a? NumericLiteral
-          case operator
-          when TokenType::Plus
-            return NumericLiteral.new(left.value + right.value).at(left.location_start, right.location_end)
+          left = TNumeric.new left.value
+          right = TNumeric.new right.value
+
+          value = Calculator.visit(operator, left, right)
+
+          case value
+          when TNumeric
+            return NumericLiteral.new(value.value).at(node.location_start, node.location_end)
+          when TString
+            return StringLiteral.new(value.value).at(node.location_start, node.location_end)
+          else
+            raise Exception.new("Constant Folder Transformation produced faulty result: #{value} for #{node}")
           end
         end
       end

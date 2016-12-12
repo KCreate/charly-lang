@@ -1,19 +1,5 @@
 export = func(it) {
 
-  it("can override native methods", func(assert) {
-    let charly = {
-      let name
-      let age
-
-      func to_s() {
-        name + " is " + age + " years old!"
-      }
-    }
-    charly.name = "charly"
-    charly.age = 16
-    assert("" + charly, "charly is 16 years old!")
-  })
-
   it("adds properties to objects", func(assert) {
     class Box {}
     let myBox = Box()

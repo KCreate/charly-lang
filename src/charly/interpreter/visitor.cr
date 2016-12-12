@@ -4,6 +4,7 @@ require "./container.cr"
 require "./types.cr"
 require "./context.cr"
 require "./internals.cr"
+require "./calculator.cr"
 
 module Charly
   include AST
@@ -207,17 +208,17 @@ module Charly
       when .is_a? WhileStatement
         return visit_while_statement(node, scope, context)
       when .is_a? And
-        left = visit_get_truthyness(visit_expression(node.left, scope, context), scope, context)
+        left = Calculator.truthyness(visit_expression(node.left, scope, context))
 
         if left
-          right = visit_get_truthyness(visit_expression(node.right, scope, context), scope, context)
+          right = Calculator.truthyness(visit_expression(node.right, scope, context))
           return TBoolean.new(right)
         else
           return TBoolean.new(false)
         end
       when .is_a? Or
         left_value = visit_expression(node.left, scope, context)
-        left = visit_get_truthyness(left_value, scope, context)
+        left = Calculator.truthyness(left_value)
 
         if left
           return left_value
@@ -414,18 +415,7 @@ module Charly
         end
       end
 
-      case node.operator
-      when TokenType::Plus
-        return right
-      when TokenType::Minus
-        if right.is_a? TNumeric
-          return TNumeric.new(-right.value)
-        end
-      when TokenType::Not
-        return TBoolean.new(!visit_get_truthyness(right, scope, context))
-      end
-
-      return TNull.new
+      return Calculator.visit_unary node.operator, right
     end
 
     private def visit_binary_expression(node : BinaryExpression, scope, context)
@@ -461,103 +451,7 @@ module Charly
 
       # No primitive method was found
       right = visit_expression(node.right, scope, context)
-
-      if left.is_a?(TNumeric) && right.is_a?(TNumeric)
-        case operator
-        when TokenType::Plus
-          return TNumeric.new(left.value + right.value)
-        when TokenType::Minus
-          return TNumeric.new(left.value - right.value)
-        when TokenType::Mult
-          if left.value == 0 || right.value == 0
-            return TNumeric.new(0)
-          end
-          return TNumeric.new(left.value * right.value)
-        when TokenType::Divd
-          if left.value == 0 || right.value == 0
-            return TNumeric.new(Float64::NAN)
-          end
-          return TNumeric.new(left.value / right.value)
-        when TokenType::Mod
-          if right.value == 0
-            return TNumeric.new(Float64::NAN)
-          end
-          return TNumeric.new(left.value.to_i64 % right.value.to_i64)
-        when TokenType::Pow
-          return TNumeric.new(left.value ** right.value)
-        end
-      end
-
-      if left.is_a?(TString) && right.is_a?(TString)
-        case operator
-        when TokenType::Plus
-          return TString.new("#{left}#{right}")
-        end
-      end
-
-      if left.is_a?(TString) && !right.is_a?(TString)
-        case operator
-        when TokenType::Plus
-          #  Check if the right expression has a to_s method
-          if right.is_a?(DataType) && right.data.contains("to_s")
-            entry = right.data.get("to_s")
-
-            if entry.is_a? TFunc
-              # Create a fake call expression
-              callex = CallExpression.new(
-                MemberExpression.new(
-                  node.right,
-                  IdentifierLiteral.new("#{to_s}").at(node.right)
-                ).at(node.right),
-                ExpressionList.new([] of ASTNode).at(node.right)
-              ).at(node.right)
-
-              right_string = visit_function_call(entry, callex, right, scope, context)
-              return TString.new("#{left}#{right_string}")
-            end
-          end
-
-          return TString.new("#{left}#{right}")
-        when TokenType::Mult
-          # Check if the right side is a TNumeric
-          if right.is_a?(TNumeric)
-            return TString.new(left.value * right.value.to_i64)
-          end
-        end
-      end
-
-      if !left.is_a?(TString) && right.is_a?(TString)
-        case operator
-        when TokenType::Plus
-          #  Check if the right expression has a to_s method
-          if right.is_a?(DataType) && right.data.contains("to_s")
-            entry = right.data.get("to_s")
-
-            if entry.is_a? TFunc
-              # Create a fake call expression
-              callex = CallExpression.new(
-                MemberExpression.new(
-                  node.right,
-                  IdentifierLiteral.new("#{to_s}").at(node.right)
-                ).at(node.right),
-                ExpressionList.new([] of ASTNode).at(node.right)
-              ).at(node.right)
-
-              right_string = visit_function_call(entry, callex, right, scope, context)
-              return TString.new("#{left}#{right_string}")
-            end
-          end
-
-          return TString.new("#{left}#{right}")
-        when TokenType::Mult
-          # Check if the left side is a TNumeric
-          if left.is_a?(TNumeric)
-            return TString.new(right.value * left.value.to_i64)
-          end
-        end
-      end
-
-      return TNumeric.new(Float64::NAN)
+      return Calculator.visit operator, left, right
     end
 
     private def visit_comparison_expression(node : ComparisonExpression, scope, context)
@@ -594,160 +488,7 @@ module Charly
       # No primitive method was found
       right = visit_expression(node.right, scope, context)
 
-      # When comparing TNumeric's
-      if left.is_a?(TNumeric) && right.is_a?(TNumeric)
-        # Different types of operators
-        case operator
-        when TokenType::Greater
-          return TBoolean.new(left.value > right.value)
-        when TokenType::Less
-          return TBoolean.new(left.value < right.value)
-        when TokenType::GreaterEqual
-          return TBoolean.new(left.value >= right.value)
-        when TokenType::LessEqual
-          return TBoolean.new(left.value <= right.value)
-        when TokenType::Equal
-          if left.value.nan? && right.value.nan?
-            return TBoolean.new(true)
-          else
-            return TBoolean.new(left.value == right.value)
-          end
-        when TokenType::Not
-          return TBoolean.new(left.value != right.value)
-        end
-      end
-
-      # When comparing TBools
-      if left.is_a?(TBoolean) && right.is_a?(TBoolean)
-        case operator
-        when TokenType::Equal
-          return TBoolean.new(left.value == right.value)
-        when TokenType::Not
-          return TBoolean.new(left.value != right.value)
-        end
-      end
-
-      # When comparing strings
-      if left.is_a?(TString) && right.is_a?(TString)
-        case operator
-        when TokenType::Greater
-          return TBoolean.new(left.value.size > right.value.size)
-        when TokenType::Less
-          return TBoolean.new(left.value.size < right.value.size)
-        when TokenType::GreaterEqual
-          return TBoolean.new(left.value.size >= right.value.size)
-        when TokenType::LessEqual
-          return TBoolean.new(left.value.size <= right.value.size)
-        when TokenType::Equal
-          return TBoolean.new(left.value == right.value)
-        when TokenType::Not
-          return TBoolean.new(left.value != right.value)
-        end
-      end
-
-      # When comparing TFunc
-      if left.is_a?(TFunc) && right.is_a?(TFunc)
-        case operator
-        when TokenType::Equal
-          return TBoolean.new(left == right)
-        when TokenType::Not
-          return TBoolean.new(left != right)
-        end
-      end
-
-      # When comparing TClass
-      if left.is_a?(TClass) && right.is_a?(TClass)
-        case operator
-        when TokenType::Equal
-          return TBoolean.new(left == right)
-        when TokenType::Not
-          return TBoolean.new(left != right)
-        end
-      end
-
-      # When comparing TPrimitiveClass
-      if left.is_a?(TPrimitiveClass) && right.is_a?(TPrimitiveClass)
-        case operator
-        when TokenType::Equal
-          return TBoolean.new(left == right)
-        when TokenType::Not
-          return TBoolean.new(left != right)
-        end
-      end
-
-      # When comparing TObject
-      if left.is_a?(TObject) && right.is_a?(TObject)
-        case operator
-        when TokenType::Equal
-          return TBoolean.new(left == right)
-        when TokenType::Not
-          return TBoolean.new(left != right)
-        end
-      end
-
-      if left.is_a? TNull
-        case operator
-        when TokenType::Equal
-          if right.is_a? TBoolean
-            return TBoolean.new(!right.value)
-          end
-
-          return TBoolean.new(right.is_a? TNull)
-        when TokenType::Not
-          if right.is_a? TBoolean
-            return TBoolean.new(right.value)
-          end
-
-          return TBoolean.new(!right.is_a?(TNull))
-        end
-      end
-
-      if right.is_a? TNull
-        case operator
-        when TokenType::Equal
-          if left.is_a? TBoolean
-            return TBoolean.new(left.value)
-          end
-
-          return TBoolean.new(left.is_a? TNull)
-        when TokenType::Not
-          if left.is_a? TBoolean
-            return TBoolean.new(!left.value)
-          end
-
-          return TBoolean.new(!left.is_a?(TNull))
-        end
-      end
-
-      # If the left side is bool
-      if left.is_a?(TBoolean) && !right.is_a?(TBoolean)
-        case operator
-        when TokenType::Equal
-          return TBoolean.new(left.value == visit_get_truthyness(right, scope, context))
-        when TokenType::Not
-          return TBoolean.new(left.value != visit_get_truthyness(right, scope, context))
-        end
-      end
-
-      if !left.is_a?(TBoolean) && right.is_a?(TBoolean)
-        case operator
-        when TokenType::Equal
-          return TBoolean.new(right.value == visit_get_truthyness(left, scope, context))
-        when TokenType::Not
-          return TBoolean.new(right.value != visit_get_truthyness(left, scope, context))
-        end
-      end
-
-      if left.is_a?(TReference) && right.is_a?(TReference)
-        case operator
-        when TokenType::Equal
-          return TBoolean.new(left.value == right.value)
-        when TokenType::Not
-          return TBoolean.new(left.value != right.value)
-        end
-      end
-
-      return TBoolean.new(false)
+      return Calculator.visit operator, left, right
     end
 
     private def visit_array_literal(node : ArrayLiteral, scope, context)
@@ -1276,7 +1017,7 @@ module Charly
 
       # Resolve the expression first
       test = visit_expression(node.test, scope, context)
-      test = visit_get_truthyness(test, scope, context)
+      test = Calculator.truthyness(test)
 
       if test
         return visit_block(node.consequent, scope, context)
@@ -1297,7 +1038,7 @@ module Charly
 
       # Resolve the expression first
       last_result = TNull.new
-      while visit_get_truthyness(visit_expression(node.test, scope, context), scope, context)
+      while Calculator.truthyness(visit_expression(node.test, scope, context))
         begin
           last_result = visit_block(node.consequent, scope, context)
         rescue e : BreakException
@@ -1320,17 +1061,6 @@ module Charly
       # Run the block inside the scope
       visit_block(node.block, object_data, context)
       return object
-    end
-
-    private def visit_get_truthyness(value : BaseType, scope, context)
-      case value
-      when .is_a? TBoolean
-        return value.value
-      when .is_a? TNull
-        return false
-      else
-        return true
-      end
     end
 
     private def visit_try_catch_statement(node : TryCatchStatement, scope, context)
