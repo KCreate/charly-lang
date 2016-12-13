@@ -17,10 +17,6 @@ module Charly
     end
   end
 
-  # `IOException` is thrown when a file could not be read
-  class IOException < BaseException
-  end
-
   # `LocalException` is the base type for all exceptions that can highlight
   # parts of a file
   class LocalException < BaseException
