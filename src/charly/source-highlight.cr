@@ -4,8 +4,12 @@ require "./syntax/location.cr"
 module Charly
   # Highlight a part of a file
   class SourceHighlight
-    LOOKBACK_ROW    = 5
-    LOOKFORWARD_ROW = 2
+    LOOKBACK_ROW            = 5
+    LOOKFORWARD_ROW         = 2
+    COLOR_HIGHLIGHT         = :white
+    COLOR_HIGHLIGHT_BACK    = :red
+    COLOR_LINENR            = :white
+    ERROR_POINTER           = "-> "
 
     property location_start : Location
     property location_end : Location
@@ -26,7 +30,7 @@ module Charly
       highlighted_source = ""
       source.each_char do |char|
         if color_pos_range.covers? index
-          highlighted_source += char.colorize(:white).back(:red).to_s
+          highlighted_source += char.colorize(COLOR_HIGHLIGHT).back(COLOR_HIGHLIGHT_BACK).to_s
         else
           highlighted_source += char.colorize.mode(:dim).to_s
         end
@@ -45,13 +49,13 @@ module Charly
           end
 
           if color_range.covers? index
-            io << "-> ".colorize(:yellow)
-            io << (index + 1).to_s.rjust(4).colorize(:yellow).mode(:bold)
-            io << ".".colorize(:yellow).mode(:bold)
+            io << ERROR_POINTER.colorize(COLOR_LINENR)
+            io << (index + 1).to_s.rjust(4).colorize(COLOR_LINENR).mode(:bold)
+            io << ".".colorize(COLOR_LINENR).mode(:bold)
           else
-            io << "   "
-            io << (index + 1).to_s.rjust(4).colorize(:yellow).mode(:dim)
-            io << ".".colorize(:yellow).mode(:dim)
+            io << " " * ERROR_POINTER.size
+            io << (index + 1).to_s.rjust(4).colorize(COLOR_LINENR).mode(:dim)
+            io << ".".colorize(COLOR_LINENR).mode(:dim)
           end
           io << ' '
           io << line
