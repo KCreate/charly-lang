@@ -1,4 +1,3 @@
-require "./syntax/token.cr"
 require "./syntax/ast.cr"
 
 module Charly
