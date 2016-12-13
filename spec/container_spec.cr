@@ -5,9 +5,9 @@ describe Container do
   it "Correctly creates a new container" do
     myContainer = Container(Int32).new
 
-    myContainer["a", Flag::INIT] = 25
-    myContainer["b", Flag::INIT] = 50
-    myContainer["c", Flag::INIT] = 75
+    myContainer.init("a", 25)
+    myContainer.init("b", 50)
+    myContainer.init("c", 75)
     myContainer["a"] = 100
 
     myContainer["a"].should eq 100
@@ -18,7 +18,7 @@ describe Container do
   it "Correctly creates a new nested container" do
     parent = Container(Int32).new
     child = Container(Int32).new(parent)
-    parent["var", Flag::INIT] = 25
+    parent.init("var", 25)
     child["var"].should eq 25
     child["var"] = 100
     parent["var"].should eq 100
@@ -27,7 +27,7 @@ describe Container do
   it "Creates constants" do
     c = Container(Float64).new
 
-    c["PI", Flag::CONSTANT | Flag::INIT] = 3.14
+    c.init("PI", 3.14, true)
 
     expect_raises(ContainerReferenceError) do
       c["PI"] = 4.14
@@ -37,7 +37,7 @@ describe Container do
   it "Overwrites constants" do
     c = Container(Int32).new
 
-    c["a", Flag::CONSTANT | Flag::INIT] = 25
+    c.init("a", 25, true)
     c["a", Flag::OVERWRITE_CONSTANT] = 50
 
     c["a"].should eq 50
@@ -46,9 +46,9 @@ describe Container do
   it "Stores multiple data types" do
     c = Container(Int32 | String | Bool).new
 
-    c["myNum", Flag::INIT] = 25
-    c["myString", Flag::INIT] = "hello"
-    c["myBool", Flag::INIT] = true
+    c.init("myNum", 25)
+    c.init("myString", "hello")
+    c.init("myBool", true)
 
     c["myNum"].should eq 25
     c["myString"].should eq "hello"
@@ -59,7 +59,7 @@ describe Container do
     parent = Container(Int32).new
     child = Container(Int32).new(parent)
 
-    parent["a", Flag::INIT] = 25
+    parent.init("a", 25)
 
     expect_raises(ContainerReferenceError) do
       child["a", Flag::IGNORE_PARENT]
@@ -70,8 +70,8 @@ describe Container do
     parent = Container(Int32).new
     child = Container(Int32).new(parent)
 
-    parent["a", Flag::INIT] = 25
-    child["a", Flag::INIT] = 50
+    parent.init("a", 25)
+    child.init("a", 50)
 
     parent["a"].should eq 25
 
@@ -89,8 +89,8 @@ describe Container do
     parent = Container(Int32).new
     child = Container(Int32).new(parent)
 
-    parent["myConst", Flag::INIT | Flag::CONSTANT] = 200
-    child["myConst", Flag::INIT | Flag::CONSTANT] = 300
+    parent.init("myConst", 200, true)
+    child.init("myConst", 300, true)
 
     parent["myConst"].should eq 200
     child["myConst"].should eq 300
