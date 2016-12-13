@@ -1,11 +1,15 @@
 module Charly
+
+  # The path at which the prelude is located
+  PRELUDE_PATH = File.real_path(ENV["CHARLYDIR"] + "/src/std/prelude.ch")
+
   class PreludeLoader
     def self.load(path, arguments, flags)
       scope = Scope.new
 
-      scope.write("ARGV", load_arguments(arguments), Flag::INIT | Flag::CONSTANT)
-      scope.write("IFLAGS", load_flags(flags), Flag::INIT | Flag::CONSTANT)
-      scope.write("ENV", load_env, Flag::INIT | Flag::CONSTANT)
+      scope.init("ARGV", load_arguments(arguments), true)
+      scope.init("IFLAGS", load_flags(flags), true)
+      scope.init("ENV", load_env, true)
 
       scope
     end
@@ -29,7 +33,7 @@ module Charly
     private def self.load_env
       object = TObject.new
       ENV.each do |key, value|
-        object.data.write(key, TString.new(value), Flag::INIT | Flag::CONSTANT)
+        object.data.init(key, TString.new(value), true)
       end
       object
     end

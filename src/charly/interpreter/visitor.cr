@@ -9,9 +9,6 @@ require "./calculator.cr"
 module Charly
   include AST
 
-  # The path at which the prelude is located
-  PRELUDE_PATH = File.real_path(ENV["CHARLYDIR"] + "/src/std/prelude.ch")
-
   alias Scope = Container(BaseType)
 
   # Single trace entry for callstacks
@@ -118,13 +115,13 @@ module Charly
     def visit_program(program : Program, scope : Scope = @top)
       # Insert *export* if not already set
       unless scope.contains "export"
-        scope.write("export", TObject.new, Flag::INIT)
+        scope.init("export", TObject.new)
       end
 
       unless scope.contains "self"
         self_object = TObject.new
         self_object.data = scope
-        scope.write("self", self_object, Flag::INIT | Flag::CONSTANT)
+        scope.init("self", self_object, true)
       end
 
       context = Context.new(program, @trace)
@@ -262,9 +259,9 @@ module Charly
 
       # Check if we have to assign a constant or not
       if node.is_a? VariableInitialisation
-        scope.write(node.identifier.name, expression, Flag::INIT)
+        scope.init(node.identifier.name, expression)
       else
-        scope.write(node.identifier.name, expression, Flag::INIT | Flag::CONSTANT)
+        scope.init(node.identifier.name, expression, true)
       end
 
       return expression
@@ -308,7 +305,7 @@ module Charly
           if _identifier.data.contains(member.name)
             _identifier.data.write(member.name, expression, Flag::None)
           else
-            _identifier.data.write(member.name, expression, Flag::INIT)
+            _identifier.data.init(member.name, expression)
           end
         else
           raise RunTimeError.new(identifier, context, "Can't write to non-object")
@@ -350,7 +347,7 @@ module Charly
           if target.data.contains(argument.value)
             target.data.write(argument.value, expression, Flag::None)
           else
-            target.data.write(argument.value, expression, Flag::INIT)
+            target.data.init(argument.value, expression)
           end
         else
           raise RunTimeError.new(identifier, context, "Expected array or object, got #{target.class}")
@@ -548,7 +545,7 @@ module Charly
       # Extract parent methods and properties
       parents.each do |parent|
         parent.data.dump_values(false).each do |depth, key, value, flags|
-          class_scope.write(key, value, Flag::INIT | Flag::CONSTANT)
+          class_scope.init(key, value, true)
         end
       end
 
@@ -568,7 +565,7 @@ module Charly
             if class_scope.contains value.identifier.name
               class_scope.write(value.identifier.name, TNull.new, Flag::None)
             else
-              class_scope.write(value.identifier.name, TNull.new, Flag::INIT)
+              class_scope.init(value.identifier.name, TNull.new)
             end
           when .is_a? FunctionLiteral
             method = visit_function_literal(value, class_scope, context)
@@ -582,7 +579,7 @@ module Charly
             if class_scope.contains name
               class_scope.write(name, method, Flag::None)
             else
-              class_scope.write(name, method, Flag::INIT)
+              class_scope.init(name, method)
             end
           else
             raise RunTimeError.new(child, context, "Unallowed #{value.class.name}")
@@ -633,9 +630,9 @@ module Charly
           case stat_node = statement.node
           when .is_a? FunctionLiteral
             method = visit_function_literal(stat_node, scope, context)
-            primscope.write(method.name || "", method, Flag::INIT)
+            primscope.init(method.name || "", method)
           when .is_a? PropertyDeclaration
-            primscope.write(stat_node.identifier.name, TNull.new, Flag::INIT)
+            primscope.init(stat_node.identifier.name, TNull.new)
           end
         end
       end
@@ -659,7 +656,7 @@ module Charly
       methods.each do |method|
         if (name = method.name).is_a? String
           unless primscope.contains(name)
-            method_scope.write(name, method, Flag::INIT | Flag::CONSTANT)
+            method_scope.init(name, method, true)
           end
         end
       end
@@ -779,12 +776,12 @@ module Charly
 
       # If an identifier is given, assign it to the self keyword
       if identifier.is_a? BaseType
-        function_scope.write("self", identifier, Flag::INIT | Flag::CONSTANT)
+        function_scope.init("self", identifier, true)
       end
 
       # Insert the arguments
       unless function_scope.contains("arguments")
-        function_scope.write("arguments", TArray.new(arguments), Flag::INIT)
+        function_scope.init("arguments", TArray.new(arguments))
       end
 
       # Execute the functions block inside the function_scope
@@ -809,7 +806,7 @@ module Charly
       object = TObject.new(target)
       object_scope = Scope.new(target.parent_scope)
       object.data = object_scope
-      object_scope.write("type", target, Flag::INIT | Flag::CONSTANT)
+      object_scope.init("type", target, true)
 
       # The properties the method needs
       properties = get_class_props(target)
@@ -820,7 +817,7 @@ module Charly
 
       # Register the properties
       properties.each do |prop|
-        object_scope.write(prop, TNull.new, Flag::INIT)
+        object_scope.init(prop, TNull.new)
       end
 
       # Run the first constructor we can find
@@ -832,7 +829,7 @@ module Charly
         if name.is_a? String
           # Check if such a method was already registered
           unless object_scope.contains(name, Flag::IGNORE_PARENT)
-            object_scope.write(name, method, Flag::INIT | Flag::CONSTANT)
+            object_scope.init(name, method, true)
 
             if name == "constructor"
               constructor = method
@@ -1056,7 +1053,7 @@ module Charly
       object.data = object_data
 
       # Insert the self keyword
-      object_data.write("self", object, Flag::INIT | Flag::CONSTANT)
+      object_data.init("self", object, true)
 
       # Run the block inside the scope
       visit_block(node.block, object_data, context)
@@ -1073,7 +1070,7 @@ module Charly
         # Reset the trace position
         context.trace.delete_at(trace_position..-1)
 
-        scope.write(node.exception_name.name, e.payload, Flag::INIT)
+        scope.init(node.exception_name.name, e.payload)
         return visit_block(node.catch_block, scope, context)
       rescue e : RunTimeError | SyntaxError
         # Extract the trace entries
@@ -1088,11 +1085,11 @@ module Charly
         # Create the exception object
         exc = TObject.new
         exc.data = Scope.new
-        exc.data.write("message", TString.new(e.message || "RunTimeError"), Flag::INIT)
-        exc.data.write("trace", TArray.new(trace_entries), Flag::INIT)
+        exc.data.init("message", TString.new(e.message || "RunTimeError"))
+        exc.data.init("trace", TArray.new(trace_entries))
 
         # Insert into the catch block
-        scope.write(node.exception_name.name, exc, Flag::INIT)
+        scope.init(node.exception_name.name, exc)
         return visit_block(node.catch_block, scope, context)
       end
     end

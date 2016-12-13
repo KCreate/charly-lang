@@ -93,7 +93,7 @@ module Charly
           delete key, flags
         end
       end
-      write key, value, flags
+      init key, value, flags.includes? Flag::CONSTANT
     end
 
     # Writes to the container
@@ -106,17 +106,6 @@ module Charly
     # - *key* is a constant
     # - *key* Is already defined
     def write(key : String, value : V, flags : Flag = Flag::None) : V
-      # Declarations
-      if flags.includes? Flag::INIT
-        # Check if the value already exists
-        if contains key
-          raise ContainerReferenceError.new("#{key} is already defined")
-        end
-
-        @values[key] = Entry(V).new(value, flags)
-        return value
-      end
-
       if contains key
         # Check if the value is a constant
         entry = @values[key]
@@ -143,6 +132,22 @@ module Charly
     # :ditto:
     def []=(key : String, value : V) : V
       write(key, value, Flag::None)
+    end
+
+    # Initialize a new variable or constant
+    def init(key : String, value : V, constant : Bool = false)
+      if contains key
+        raise ContainerReferenceError.new("#{key} is already defined")
+      end
+
+      flags = Flag::INIT
+
+      if constant
+        flags = flags | Flag::CONSTANT
+      end
+
+      @values[key] = Entry(V).new(value, flags)
+      return value
     end
 
     # Returns the entry for the *key*
