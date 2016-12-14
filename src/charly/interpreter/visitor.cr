@@ -241,12 +241,12 @@ module Charly
     private def visit_initialisation(node : ASTNode, scope, context)
       # Check if this is a disallowed variable name
       if DISALLOWED_VARS.includes? node.identifier.name
-        raise RunTimeError.new(node.identifier, context, "#{node.identifier.name} is a reserved keyword")
+        raise RunTimeError.new(node.identifier, context, "Can't use #{node.identifier.name} as an identifier. It's a reserved keyword")
       end
 
       # Check if the current scope already contains such a value
       if scope.contains(node.identifier.name)
-        raise RunTimeError.new(node.identifier, context, "#{node.identifier.name} is already defined")
+        raise RunTimeError.new(node.identifier, context, "#{node.identifier.name} was already defined before")
       end
 
       # Resolve the expression
@@ -278,17 +278,17 @@ module Charly
       when IdentifierLiteral
         # Check if the identifier name is disallowed
         if DISALLOWED_VARS.includes? identifier.name
-          raise RunTimeError.new(node, context, "#{identifier.name} is a reserved keyword")
+          raise RunTimeError.new(node, context, "Can't use #{identifier.name} as an identifier. It's a reserved keyword")
         end
 
         # Check if the identifier exists
         unless scope.defined identifier.name
-          raise RunTimeError.new(identifier, context, "#{identifier.name} is not defined")
+          raise RunTimeError.new(identifier, context, "Can't assign to #{identifier.name}, it was not declared.")
         end
 
         # Check if the identifier is a constant
         if scope.get_reference(identifier.name).is_constant
-          raise RunTimeError.new(identifier, context, "#{identifier.name} is a constant")
+          raise RunTimeError.new(identifier, context, "Can't assign to #{identifier.name}, it's a constant")
         end
 
         # Write to the scope
