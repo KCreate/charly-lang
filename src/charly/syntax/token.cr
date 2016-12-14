@@ -89,6 +89,8 @@ module Charly
     AndSign
     RightArrow
     LeftArrow
+    QuestionMark
+    Colon
 
     # Whitespace
     Whitespace

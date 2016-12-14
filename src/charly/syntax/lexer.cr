@@ -179,6 +179,10 @@ module Charly
         consume_comment # TODO: Deprecate this in a future patch
       when '@'
         read_char TokenType::AtSign
+      when '?'
+        read_char TokenType::QuestionMark
+      when ':'
+        read_char TokenType::Colon
       when 'b'
         case read_char
         when 'r'
