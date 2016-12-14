@@ -43,7 +43,7 @@ module Charly
       @break_allowed = false
     end
 
-    # Parses a program and resets the @file_buffer afterwards
+    # Parses a program
     def parse
       tree = parse_program
 
@@ -537,7 +537,7 @@ module Charly
     end
 
     private def parse_assignment
-      left = parse_logical_and
+      left = parse_ternary_if
       while true
         case @token.type
         when TokenType::Assignment,
@@ -561,6 +561,33 @@ module Charly
         else
           return left
         end
+      end
+    end
+
+    private def parse_ternary_if
+      condition = parse_logical_and
+      case @token.type
+      when TokenType::QuestionMark
+        advance
+        left = parse_ternary_if
+        expect TokenType::Colon
+        right = parse_ternary_if
+
+
+        # Wrap the elements in blocks as required by the IfStatement
+        left_block = Block.new([] of ASTNode).at(left)
+        left_block << left
+
+        right_block = right
+
+        unless right.is_a? IfStatement
+          right_block = Block.new([] of ASTNode).at(right)
+          right_block << right
+        end
+
+        return IfStatement.new(condition, left_block, right_block).at(condition.location_start, right.location_end)
+      else
+        return condition
       end
     end
 
