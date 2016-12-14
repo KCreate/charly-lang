@@ -230,6 +230,8 @@ module Charly
         return visit_try_catch_statement(node, scope, context)
       when .is_a? ThrowStatement
         return visit_throw_statement(node, scope, context)
+      when .is_a? PrecalculatedValue
+        return node.value
       end
 
       # Catch unknown nodes

@@ -1,8 +1,25 @@
 require "../helper.cr"
 require "./token.cr"
 require "./location.cr"
+require "../interpreter/types.cr"
 
 module Charly::AST
+
+  # Returns true if a given node represents a primitive value
+  #
+  # ```
+  # AST.is_primitive(IfStatement.new) # => false
+  # AST.is_primitive(NumericLiteral.new) # => true
+  # ```
+  def self.is_primitive(node : ASTNode)
+    node.is_a?(NumericLiteral) ||
+    node.is_a?(StringLiteral) ||
+    node.is_a?(BooleanLiteral) ||
+    node.is_a?(NullLiteral) ||
+    node.is_a?(NANLiteral) ||
+    node.is_a?(PrecalculatedValue)
+  end
+
   # The `AST` is the result of the parsing step, holding all variable names
   # function declarations and language constructs.
   abstract class ASTNode
@@ -97,7 +114,7 @@ module Charly::AST
                    *properties.map do |field|
                      field.var
                    end
-                 }}] of ASTNode | TokenType | String | Nil
+                 }}] of ASTNode | TokenType | String | Nil | BaseType
 
           tmp_children = [] of ASTNode
 
@@ -110,6 +127,13 @@ module Charly::AST
       {% end %}
 
       {{yield}}
+    end
+  end
+
+  ast_node PrecalculatedValue,
+    value : BaseType do
+    def info
+      "#{@value}"
     end
   end
 

@@ -10,20 +10,12 @@ module Charly
         left = node.children[0]
         right = node.children[1]
 
-        if left.is_a? NumericLiteral && right.is_a? NumericLiteral
-          left = TNumeric.new left.value
-          right = TNumeric.new right.value
+        if AST.is_primitive(left) && AST.is_primitive(right)
+          left = BaseType.from left
+          right = BaseType.from right
 
           value = Calculator.visit(operator, left, right)
-
-          case value
-          when TNumeric
-            return NumericLiteral.new(value.value).at(node.location_start, node.location_end)
-          when TString
-            return StringLiteral.new(value.value).at(node.location_start, node.location_end)
-          else
-            raise Exception.new("Constant Folder Transformation produced faulty result: #{value} for #{node}")
-          end
+          return AST::PrecalculatedValue.new(value).at(node)
         end
       end
 
