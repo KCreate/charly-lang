@@ -1,25 +1,44 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html>
+<html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Charly-lang by KCreate</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
   </head>
   <body>
-    <section class="page-header">
-      <h1 class="project-name">Charly-lang</h1>
-      <h2 class="project-tagline">🐈 The Charly Interpreter</h2>
-      <a href="https://github.com/KCreate/charly-lang" class="btn">View on GitHub</a>
-      <a href="https://github.com/KCreate/charly-lang/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/KCreate/charly-lang/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/KCreate/charly-lang">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/KCreate/charly-lang/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/KCreate/charly-lang/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
 
-    <section class="main-content">
-      <h1>
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Charly-lang</h1>
+          <p>🐈 The Charly Interpreter</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/KCreate">KCreate</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
 <a id="charly-language-guide" class="anchor" href="#charly-language-guide" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Charly Language Guide</h1>
 
 <h2>
@@ -42,16 +61,16 @@
 <div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> myVar <span class="pl-k">=</span> <span class="pl-c1">25</span>
 <span class="pl-k">let</span> myOtherVariable <span class="pl-k">=</span> <span class="pl-c1">50</span>
 
-myVar <span class="pl-k">+</span> myOtherVariable # <span class="pl-c1">75</span></pre></div>
+myVar <span class="pl-k">+</span> myOtherVariable # <span class="pl-k">=&gt;</span> <span class="pl-c1">75</span></pre></div>
 
 <h2>
 <a id="constants" class="anchor" href="#constants" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Constants</h2>
 
 <p>Constants are declared the same way as variables. They can't be changed, hence the name constant. You need to initialize them in the declaration.</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-c1">myconst</span> # <span class="pl-c1">syntax</span> <span class="pl-c1">error</span>
+<div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-c1">myconst</span> # <span class="pl-k">=</span><span class="pl-k">&gt;</span> syntax error
 <span class="pl-k">const</span> <span class="pl-c1">myOtherConst</span> <span class="pl-k">=</span> <span class="pl-c1">25</span>
-myOtherConst <span class="pl-k">=</span> <span class="pl-c1">30</span> # runtime exception</pre></div>
+myOtherConst <span class="pl-k">=</span> <span class="pl-c1">30</span> # <span class="pl-k">=&gt;</span> runtime exception</pre></div>
 
 <h2>
 <a id="literals" class="anchor" href="#literals" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Literals</h2>
@@ -195,16 +214,16 @@ myOtherConst <span class="pl-k">=</span> <span class="pl-c1">30</span> # runtime
 <span class="pl-smi">nums</span>.<span class="pl-c1">push</span>(<span class="pl-c1">1</span>)
 <span class="pl-smi">nums</span>.<span class="pl-c1">push</span>(<span class="pl-c1">2</span>)
 
-nums # [<span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">2</span>]</pre></div>
+nums # <span class="pl-k">=&gt;</span> [<span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class="pl-c1">2</span>]</pre></div>
 
 <p>You can concat two arrays together via the <code>+</code> operator:</p>
 
-<div class="highlight highlight-source-js"><pre>[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>] <span class="pl-k">+</span> [<span class="pl-c1">3</span>, <span class="pl-c1">4</span>] # [<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>]</pre></div>
+<div class="highlight highlight-source-js"><pre>[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>] <span class="pl-k">+</span> [<span class="pl-c1">3</span>, <span class="pl-c1">4</span>] # <span class="pl-k">=&gt;</span> [<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>]</pre></div>
 
 <p>You can compare two arrays using the <code>==</code> operator:</p>
 
-<div class="highlight highlight-source-js"><pre>[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>] <span class="pl-k">==</span> [<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>] # <span class="pl-c1">true</span>
-[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>] <span class="pl-k">==</span> [<span class="pl-c1">3</span>, <span class="pl-c1">4</span>] # <span class="pl-c1">false</span></pre></div>
+<div class="highlight highlight-source-js"><pre>[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>] <span class="pl-k">==</span> [<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>] # <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span>
+[<span class="pl-c1">1</span>, <span class="pl-c1">2</span>] <span class="pl-k">==</span> [<span class="pl-c1">3</span>, <span class="pl-c1">4</span>] # <span class="pl-k">=&gt;</span> <span class="pl-c1">false</span></pre></div>
 
 <h3>
 <a id="objects" class="anchor" href="#objects" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Objects</h3>
@@ -218,8 +237,8 @@ nums # [<span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class=
   <span class="pl-k">let</span> age <span class="pl-k">=</span> <span class="pl-c1">200</span>
 }
 
-<span class="pl-smi">Box</span>.<span class="pl-c1">name</span> # <span class="pl-s"><span class="pl-pds">"</span>charly<span class="pl-pds">"</span></span>
-<span class="pl-smi">Box</span>.<span class="pl-smi">age</span> # <span class="pl-c1">200</span></pre></div>
+<span class="pl-smi">Box</span>.<span class="pl-c1">name</span> # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>charly<span class="pl-pds">"</span></span>
+<span class="pl-smi">Box</span>.<span class="pl-smi">age</span> # <span class="pl-k">=&gt;</span> <span class="pl-c1">200</span></pre></div>
 
 <p>This can be compared to the javascript equivalent of using <code>new Function()</code>:</p>
 
@@ -237,7 +256,7 @@ nums # [<span class="pl-c1">0</span>, <span class="pl-c1">1</span>, <span class=
   <span class="pl-k">let</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>mybox<span class="pl-pds">"</span></span>
 }
 
-Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>] # <span class="pl-s"><span class="pl-pds">"</span>mybox<span class="pl-pds">"</span></span></pre></div>
+Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>] # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>mybox<span class="pl-pds">"</span></span></pre></div>
 
 <h3>
 <a id="functions" class="anchor" href="#functions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Functions</h3>
@@ -260,7 +279,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
   <span class="pl-c1">25</span>
 }
 
-<span class="pl-en">foo</span>() # <span class="pl-c1">25</span></pre></div>
+<span class="pl-en">foo</span>() # <span class="pl-k">=&gt;</span> <span class="pl-c1">25</span></pre></div>
 
 <p>You can also do explicit returns</p>
 
@@ -272,7 +291,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
   <span class="pl-k">return</span> <span class="pl-c1">false</span>
 }
 
-<span class="pl-en">foo</span>() # <span class="pl-c1">true</span></pre></div>
+<span class="pl-en">foo</span>() # <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span></pre></div>
 
 <p>If you only need the function literal, you can use anonymous function literals:</p>
 
@@ -281,7 +300,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 }
 
 <span class="pl-en">foo</span>(<span class="pl-en">func</span>(<span class="pl-smi">arg</span>) {
-  <span class="pl-en">print</span>(arg) # <span class="pl-c1">42</span>
+  <span class="pl-en">print</span>(arg) # <span class="pl-k">=&gt;</span> <span class="pl-c1">42</span>
 })</pre></div>
 
 <p>There is also the lambda syntax, which goes like this:</p>
@@ -373,7 +392,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 }
 <span class="pl-smi">Box</span>.<span class="pl-smi">count</span> <span class="pl-k">=</span> <span class="pl-c1">0</span>
 
-<span class="pl-smi">Box</span>.<span class="pl-en">foo</span>() # <span class="pl-s"><span class="pl-pds">"</span>class method<span class="pl-pds">"</span></span></pre></div>
+<span class="pl-smi">Box</span>.<span class="pl-en">foo</span>() # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>class method<span class="pl-pds">"</span></span></pre></div>
 
 <p>To inherit from other classes, you use the <code>extends</code> keyword.</p>
 
@@ -396,9 +415,9 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 }
 
 <span class="pl-k">let</span> myBaz <span class="pl-k">=</span> <span class="pl-en">Baz</span>()
-<span class="pl-smi">myBaz</span>.<span class="pl-en">foo</span>() # <span class="pl-s"><span class="pl-pds">"</span>foo method<span class="pl-pds">"</span></span>
-<span class="pl-smi">myBaz</span>.<span class="pl-en">bar</span>() # <span class="pl-s"><span class="pl-pds">"</span>bar method<span class="pl-pds">"</span></span>
-<span class="pl-smi">myBaz</span>.<span class="pl-en">baz</span>() # <span class="pl-s"><span class="pl-pds">"</span>baz method<span class="pl-pds">"</span></span></pre></div>
+<span class="pl-smi">myBaz</span>.<span class="pl-en">foo</span>() # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>foo method<span class="pl-pds">"</span></span>
+<span class="pl-smi">myBaz</span>.<span class="pl-en">bar</span>() # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>bar method<span class="pl-pds">"</span></span>
+<span class="pl-smi">myBaz</span>.<span class="pl-en">baz</span>() # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>baz method<span class="pl-pds">"</span></span></pre></div>
 
 <p>Static properties and methods are also copied to the child classes. The values of static properties are copied by value. They are not references.</p>
 
@@ -413,12 +432,12 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 
 <span class="pl-k">class</span> <span class="pl-en">Bar</span> <span class="pl-k">extends</span> <span class="pl-e">Foo</span> {}
 
-<span class="pl-smi">Bar</span>.<span class="pl-en">what</span>() # <span class="pl-s"><span class="pl-pds">"</span>static what<span class="pl-pds">"</span></span>
-<span class="pl-smi">Bar</span>.<span class="pl-smi">foo</span> # <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span>
+<span class="pl-smi">Bar</span>.<span class="pl-en">what</span>() # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>static what<span class="pl-pds">"</span></span>
+<span class="pl-smi">Bar</span>.<span class="pl-smi">foo</span> # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span>
 
 <span class="pl-smi">Foo</span>.<span class="pl-smi">foo</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>hello world<span class="pl-pds">"</span></span>
 
-<span class="pl-smi">Bar</span>.<span class="pl-smi">foo</span> # <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span></pre></div>
+<span class="pl-smi">Bar</span>.<span class="pl-smi">foo</span> # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>test<span class="pl-pds">"</span></span></pre></div>
 
 <h2>
 <a id="self-reference" class="anchor" href="#self-reference" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>self reference</h2>
@@ -436,9 +455,9 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 }
 
 <span class="pl-smi">myBox</span>.<span class="pl-c1">name</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span>
-<span class="pl-smi">myBox</span>.<span class="pl-en">foo</span>() # <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span></pre></div>
+<span class="pl-smi">myBox</span>.<span class="pl-en">foo</span>() # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span></pre></div>
 
-<p>If you directly call a method (<code>foo()</code>), <code>self</code> is set to whatever it what in the context where the method is defined. Think of it like Arrow Funtions in JavaScript.</p>
+<p>If you directly call a method <code>foo()</code>, <code>self</code> is set to whatever it what in the context where the method is defined. Think of it like Arrow Funtions in JavaScript.</p>
 
 <div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> Box <span class="pl-k">=</span> {
   <span class="pl-k">let</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span>
@@ -451,7 +470,7 @@ Box[<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</
 }
 
 <span class="pl-k">let</span> method <span class="pl-k">=</span> <span class="pl-smi">Box</span>.<span class="pl-en">foo</span>()
-<span class="pl-en">method</span>() # <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span></pre></div>
+<span class="pl-en">method</span>() # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>box<span class="pl-pds">"</span></span></pre></div>
 
 <h2>
 <a id="assignments" class="anchor" href="#assignments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Assignments</h2>
@@ -472,7 +491,18 @@ local <span class="pl-k">=</span> <span class="pl-c1">1</span>
 
 <p>All control expressions inside charly behave as if they were normal expressions.</p>
 
-<div class="highlight highlight-source-js"><pre></pre></div>
+<p>This means that altough you can't place a control expression inside a method call, it will still return a value.</p>
+
+<div class="highlight highlight-source-js"><pre>func <span class="pl-en">foo</span>(<span class="pl-smi">arg</span>) {
+  <span class="pl-k">if</span> arg <span class="pl-k">&lt;</span> <span class="pl-c1">25</span> {
+    <span class="pl-c1">true</span>
+  } <span class="pl-k">else</span> {
+    <span class="pl-c1">false</span>
+  }
+}
+
+<span class="pl-en">foo</span>(<span class="pl-c1">10</span>) # <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span>
+<span class="pl-en">foo</span>(<span class="pl-c1">40</span>) # <span class="pl-k">=&gt;</span> <span class="pl-c1">false</span></pre></div>
 
 <h3>
 <a id="truthy-and-falsey-values" class="anchor" href="#truthy-and-falsey-values" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Truthy and falsey values</h3>
@@ -555,12 +585,12 @@ local <span class="pl-k">=</span> <span class="pl-c1">1</span>
 <p>If a method expects to be called with 2 arguments, you have to pass two. If you pass 1 it throws an exception.</p>
 
 <div class="highlight highlight-source-js"><pre>func <span class="pl-en">foo</span>(<span class="pl-smi">a</span>, <span class="pl-smi">b</span>, <span class="pl-smi">c</span>) {
-
+  <span class="pl-k">return</span> <span class="pl-c1">true</span>
 }
 
-<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>) # okay
-<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>) # also okay
-<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>) # </pre></div>
+<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>) # <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span>
+<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>, <span class="pl-c1">3</span>, <span class="pl-c1">4</span>) # <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span>
+<span class="pl-en">foo</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>) # <span class="pl-k">=&gt;</span> runtime exception</pre></div>
 
 <h3>
 <a id="operators" class="anchor" href="#operators" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operators</h3>
@@ -583,7 +613,7 @@ local <span class="pl-k">=</span> <span class="pl-c1">1</span>
 
 v1 <span class="pl-k">=</span> <span class="pl-en">Vector2</span>(<span class="pl-c1">1</span>, <span class="pl-c1">2</span>)
 v2 <span class="pl-k">=</span> <span class="pl-en">Vector2</span>(<span class="pl-c1">3</span>, <span class="pl-c1">4</span>)
-v1 <span class="pl-k">+</span> v2 # <span class="pl-en">Vector2</span>(@x<span class="pl-k">=</span><span class="pl-c1">4</span>, @y<span class="pl-k">=</span><span class="pl-c1">6</span>)</pre></div>
+v1 <span class="pl-k">+</span> v2 # <span class="pl-k">=&gt;</span> <span class="pl-en">Vector2</span>(@x<span class="pl-k">=</span><span class="pl-c1">4</span>, @y<span class="pl-k">=</span><span class="pl-c1">6</span>)</pre></div>
 
 <p>Overrideable operators are:</p>
 
@@ -684,9 +714,9 @@ Uncaught Object:Exception: arg is smaller than 10
 <span class="pl-smi">external</span>.<span class="pl-smi">message</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>it changed<span class="pl-pds">"</span></span>
 
 <span class="pl-k">let</span> external_second <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>./external.ch<span class="pl-pds">"</span></span>)
-<span class="pl-en">print</span>(<span class="pl-smi">external_second</span>.<span class="pl-smi">message</span>) # <span class="pl-s"><span class="pl-pds">"</span>it changed<span class="pl-pds">"</span></span>
+<span class="pl-en">print</span>(<span class="pl-smi">external_second</span>.<span class="pl-smi">message</span>) # <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>it changed<span class="pl-pds">"</span></span>
 
-external <span class="pl-k">==</span> external_second # <span class="pl-c1">true</span></pre></div>
+external <span class="pl-k">==</span> external_second # <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span></pre></div>
 
 <p><strong>external.ch</strong></p>
 
@@ -717,9 +747,9 @@ external <span class="pl-k">==</span> external_second # <span class="pl-c1">true
 
 <div class="highlight highlight-source-shell"><pre>charly input.ch hello -f tokens world 25 25 --foo -b</pre></div>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-c1">ARGV</span> # [<span class="pl-s"><span class="pl-pds">"</span>hello<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>world<span class="pl-pds">"</span></span>, <span class="pl-c1">25</span>, <span class="pl-c1">25</span>, <span class="pl-s"><span class="pl-pds">"</span>--foo<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>-b<span class="pl-pds">"</span></span>]
-<span class="pl-c1">IFLAGS</span> # [<span class="pl-s"><span class="pl-pds">"</span>tokens<span class="pl-pds">"</span></span>]
-<span class="pl-c1">ENV</span>[<span class="pl-s"><span class="pl-pds">"</span>TERM<span class="pl-pds">"</span></span>] # xterm<span class="pl-k">-</span><span class="pl-ii">256color</span></pre></div>
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">ARGV</span> # <span class="pl-k">=&gt;</span> [<span class="pl-s"><span class="pl-pds">"</span>hello<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>world<span class="pl-pds">"</span></span>, <span class="pl-c1">25</span>, <span class="pl-c1">25</span>, <span class="pl-s"><span class="pl-pds">"</span>--foo<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>-b<span class="pl-pds">"</span></span>]
+<span class="pl-c1">IFLAGS</span> # <span class="pl-k">=&gt;</span> [<span class="pl-s"><span class="pl-pds">"</span>tokens<span class="pl-pds">"</span></span>]
+<span class="pl-c1">ENV</span>[<span class="pl-s"><span class="pl-pds">"</span>TERM<span class="pl-pds">"</span></span>] # <span class="pl-k">=&gt;</span> xterm<span class="pl-k">-</span><span class="pl-ii">256color</span></pre></div>
 
 <p>You can see the license and a list of contributors via the following commands</p>
 
@@ -933,7 +963,7 @@ THE SOFTWARE.
 
 <div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-c1">mymethod</span> <span class="pl-k">=</span> <span class="pl-en">__internal__method</span>(<span class="pl-s"><span class="pl-pds">"</span>mymethod<span class="pl-pds">"</span></span>)
 
-<span class="pl-en">print</span>(<span class="pl-en">mymethod</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello World<span class="pl-pds">"</span></span>)) # You said<span class="pl-k">:</span> Hello World</pre></div>
+<span class="pl-en">print</span>(<span class="pl-en">mymethod</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello World<span class="pl-pds">"</span></span>)) # <span class="pl-k">=&gt;</span> You said<span class="pl-k">:</span> Hello World</pre></div>
 
 <ol>
 <li>Finished!</li>
@@ -942,15 +972,10 @@ THE SOFTWARE.
 <hr>
 
 <p><strong>Copyright © 2016 - present Leonard Schütz</strong></p>
+      </section>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/KCreate/charly-lang">Charly-lang</a> is maintained by <a href="https://github.com/KCreate">KCreate</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
-
-    </section>
-
-  
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
   </body>
 </html>
