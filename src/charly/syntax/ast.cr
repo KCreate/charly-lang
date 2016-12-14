@@ -47,6 +47,11 @@ module Charly::AST
       at(node.location_start, node.location_end)
     end
 
+    # Set the location to the start of *left* and the end of *right*
+    def at(left : ASTNode, right : ASTNode)
+      at(left.location_start, right.location_end)
+    end
+
     delegate "<<", to: @children
     delegate "[]", to: @children
     delegate "[]=", to: @children

@@ -357,24 +357,24 @@ module Charly
           if node.is_a?(FunctionLiteral)
             if (name = node.name).is_a?(String)
               node = VariableInitialisation.new(
-                IdentifierLiteral.new(name).at(node.location_start, node.location_end),
+                IdentifierLiteral.new(name).at(node),
                 node
-              ).at(node.location_start, node.location_end)
+              ).at(node)
             end
           end
 
           if node.is_a? ClassLiteral
             node = VariableInitialisation.new(
-              IdentifierLiteral.new(node.name).at(node.location_start, node.location_end),
+              IdentifierLiteral.new(node.name).at(node),
               node
-            ).at(node.location_start, node.location_end)
+            ).at(node)
           end
 
           if node.is_a? PrimitiveClassLiteral
             node = VariableInitialisation.new(
-              IdentifierLiteral.new(node.name).at(node.location_start, node.location_end),
+              IdentifierLiteral.new(node.name).at(node),
               node
-            ).at(node.location_start, node.location_end)
+            ).at(node)
           end
 
           skip TokenType::Semicolon
@@ -448,7 +448,7 @@ module Charly
 
       consequent = parse_block
 
-      alternate = Empty.new.at(consequent.location_start, consequent.location_end)
+      alternate = Empty.new.at(consequent)
       if_token TokenType::Keyword, "else" do
         advance
 
@@ -523,7 +523,7 @@ module Charly
               operator = @token.type
               advance
               right = parse_{{next_operator.id}}
-              left = ({{node.id}}).at(left.location_start, right.location_end)
+              left = ({{node.id}}).at(left, right)
             else
               return left
             end
@@ -553,10 +553,10 @@ module Charly
 
           if operator.and_operator?
             left = VariableAssignment.new(left,
-              BinaryExpression.new(operator.and_real_operator, left, right).at(left.location_start, right.location_end)
-            ).at(left.location_start, right.location_end)
+              BinaryExpression.new(operator.and_real_operator, left, right).at(left, right)
+            ).at(left, right)
           else
-            left = VariableAssignment.new(left, right).at(left.location_start, right.location_end)
+            left = VariableAssignment.new(left, right).at(left, right)
           end
         else
           return left
@@ -585,7 +585,7 @@ module Charly
           right_block << right
         end
 
-        return IfStatement.new(condition, left_block, right_block).at(condition.location_start, right.location_end)
+        return IfStatement.new(condition, left_block, right_block).at(condition, right)
       else
         return condition
       end
@@ -619,7 +619,7 @@ module Charly
           operator = @token.type
           advance
           right = parse_pow
-          left = BinaryExpression.new(operator, left, right).at(left.location_start, right.location_end)
+          left = BinaryExpression.new(operator, left, right).at(left, right)
         else
           return left
         end
@@ -655,7 +655,7 @@ module Charly
           end
 
           if member.is_a? IdentifierLiteral
-            identifier = MemberExpression.new(identifier, member).at(identifier.location_start, member.location_end)
+            identifier = MemberExpression.new(identifier, member).at(identifier, member)
           end
         else
           return identifier
@@ -798,7 +798,7 @@ module Charly
       block = parse_block
       @return_allowed = backup_return_allowed
       @break_allowed = backup_break_allowed
-      return ContainerLiteral.new(block).at(block.location_start, block.location_end)
+      return ContainerLiteral.new(block).at(block)
     end
 
     private def parse_func_literal
