@@ -17,6 +17,34 @@ module Charly
     def self.name(io)
       io << "BaseType"
     end
+
+    # Creates a new BaseType from an ASTNode
+    #
+    # ```
+    # BaseType.from(NumericLiteral.new(5)) # => TNumeric(@value=5)
+    # ```
+    def self.from(node : ASTNode)
+      unless AST.is_primitive node
+        raise "#{node.class} does not represent a primitive type"
+      end
+
+      case node
+      when NumericLiteral
+        return TNumeric.new node.value.to_f64
+      when StringLiteral
+        return TString.new node.value
+      when BooleanLiteral
+        return TBoolean.new node.value
+      when NullLiteral
+        return TNull.new
+      when NANLiteral
+        return TNumeric.new Float64::NAN
+      when PrecalculatedValue
+        return node.value
+      else
+        raise "#{node.class} not implemented in BaseType#from"
+      end
+    end
   end
 
   # The basetype of all types in charly that have their own data scope
