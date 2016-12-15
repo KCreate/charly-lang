@@ -644,7 +644,7 @@ module Charly
                   when '_'
                     case read_char
                     when '_'
-                      if ident_start(peek_char)
+                      if ident_part(peek_char)
                         read_char
                         consume_ident
                       else
@@ -661,6 +661,67 @@ module Charly
                 else
                   consume_ident
                 end
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 'u'
+        case read_char
+        when 'n'
+          case read_char
+          when 'l'
+            case read_char
+            when 'e'
+              case read_char
+              when 's'
+                case read_char
+                when 's'
+                  check_ident_or_keyword(TokenType::Keyword)
+                else
+                  consume_ident
+                end
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          when 't'
+            case read_char
+            when 'i'
+              case read_char
+              when 'l'
+                check_ident_or_keyword(TokenType::Keyword)
+              else
+                consume_ident
+              end
+            else
+              consume_ident
+            end
+          else
+            consume_ident
+          end
+        else
+          consume_ident
+        end
+      when 'g'
+        case read_char
+        when 'u'
+          case read_char
+          when 'a'
+            case read_char
+            when 'r'
+              case read_char
+              when 'd'
+                check_ident_or_keyword(TokenType::Keyword)
               else
                 consume_ident
               end
