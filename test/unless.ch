@@ -29,7 +29,7 @@ export = ->(it) {
     }
 
     func bar() {
-      unless true { 25 } else { 30 }
+      unless true { 25 } else { 30 }
     }
 
     assert(foo(), 25)
