@@ -20,5 +20,6 @@ io.exit(UnitTest("Charly").begin(func(describe) {
   describe("Primitives",                          require("./primitives.ch"))
   describe("Unless statement",                    require("./unless.ch"))
   describe("Guard statement",                     require("./guard.ch"))
+  describe("Ternary statements",                  require("./ternary.ch"))
   describe("Comments",                            require("./comments.ch"))
 }))
