@@ -148,10 +148,26 @@ module Charly::AST
   ast_node IfStatement,
     test : ASTNode,
     consequent : Block,
-    alternate : ASTNode
+    alternate : ASTNode?
+
+  ast_node GuardStatement,
+    test : ASTNode,
+    alternate : Block
+
+  ast_node UnlessStatement,
+    test : ASTNode,
+    consequent : Block,
+    alternate : Block?
 
   ast_node WhileStatement,
     test : ASTNode,
+    consequent : Block
+
+  ast_node UntilStatement,
+    test : ASTNode,
+    consequent : Block
+
+  ast_node LoopStatement,
     consequent : Block
 
   ast_node Expression

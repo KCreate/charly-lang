@@ -315,6 +315,14 @@ module Charly
           return parse_while_statement
         when "try"
           return parse_try_statement
+        when "until"
+          return parse_until_statement
+        when "unless"
+          return parse_unless_statement
+        when "guard"
+          return parse_guard_statement
+        when "loop"
+          return parse_loop_statement
         when "return"
           unless @return_allowed
             unallowed_token
@@ -448,7 +456,7 @@ module Charly
 
       consequent = parse_block
 
-      alternate = Empty.new.at(consequent)
+      alternate = nil
       if_token TokenType::Keyword, "else" do
         advance
 
@@ -462,7 +470,61 @@ module Charly
         end
       end
 
-      node = IfStatement.new(test, consequent, alternate).at(start_location, alternate.location_end)
+      if alternate
+        end_location = alternate.location_end
+      else
+        end_location = consequent.location_end
+      end
+
+      return IfStatement.new(test, consequent, alternate).at(start_location, end_location)
+    end
+
+    private def parse_guard_statement
+      start_location = @token.location
+      expect TokenType::Keyword, "guard"
+
+      case @token.type
+      when TokenType::LeftParen
+        advance
+        test = parse_expression
+        expect TokenType::RightParen
+      else
+        test = parse_expression
+      end
+
+      alternate = parse_block
+
+      return GuardStatement.new(test, alternate).at(start_location, alternate.location_end)
+    end
+
+    private def parse_unless_statement
+      start_location = @token.location
+      expect TokenType::Keyword, "unless"
+
+      case @token.type
+      when TokenType::LeftParen
+        advance
+        test = parse_expression
+        expect TokenType::RightParen
+      else
+        test = parse_expression
+      end
+
+      consequent = parse_block
+
+      alternate = nil
+      if_token TokenType::Keyword, "else" do
+        advance
+        alternate = parse_block
+      end
+
+      if alternate
+        end_location = alternate.location_end
+      else
+        end_location = consequent.location_end
+      end
+
+      return UnlessStatement.new(test, consequent, alternate).at(start_location, end_location)
     end
 
     private def parse_while_statement
@@ -483,6 +545,37 @@ module Charly
       consequent = parse_block
       @break_allowed = backup_break_allowed
       return WhileStatement.new(test, consequent).at(start_location, consequent.location_end)
+    end
+
+    private def parse_until_statement
+      start_location = @token.location
+      expect TokenType::Keyword, "until"
+
+      case @token.type
+      when TokenType::LeftParen
+        advance
+        test = parse_expression
+        expect TokenType::RightParen
+      else
+        test = parse_expression
+      end
+
+      backup_break_allowed = @break_allowed
+      @break_allowed = true
+      consequent = parse_block
+      @break_allowed = backup_break_allowed
+      return UntilStatement.new(test, consequent).at(start_location, consequent.location_end)
+    end
+
+    private def parse_loop_statement
+      start_location = @token.location
+      expect TokenType::Keyword, "loop"
+
+      backup_break_allowed = @break_allowed
+      @break_allowed = true
+      consequent = parse_block
+      @break_allowed = backup_break_allowed
+      return LoopStatement.new(consequent).at(start_location, consequent.location_end)
     end
 
     private def parse_try_statement
