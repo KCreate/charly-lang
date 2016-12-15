@@ -933,10 +933,10 @@ You can add your own files like this:
 
 2. Insert the following code:
 
-```crystal
+```ruby
 require "../**"
 
-module Chalry::Internals
+module Charly::Internals
 
   charly_api "mymethod", myarg : TString do
     return TString.new("You said: " + myarg.value)
