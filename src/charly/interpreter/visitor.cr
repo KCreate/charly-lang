@@ -1045,7 +1045,7 @@ module Charly
 
       # Resolve the expression first
       test = visit_expression(node.test, scope, context)
-      test = !visit_get_truthyness(test, scope, context)
+      test = !Calculator.truthyness(test)
 
       if test
         return visit_block(node.consequent, scope, context)
@@ -1063,7 +1063,7 @@ module Charly
 
       # Resolve the expression first
       test = visit_expression(node.test, scope, context)
-      test = !visit_get_truthyness(test, scope, context)
+      test = !Calculator.truthyness(test)
 
       if test
         return visit_block(node.alternate, scope, context)
@@ -1090,7 +1090,7 @@ module Charly
       scope = Scope.new(scope)
       last_result = TNull.new
 
-      while !visit_get_truthyness(visit_expression(node.test, scope, context), scope, context)
+      while !Calculator.truthyness(visit_expression(node.test, scope, context))
         begin
           last_result = visit_block(node.consequent, scope, context)
         rescue e : BreakException
