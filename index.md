@@ -1,5 +1,4 @@
-# Charly Language Guide
-## Version 0.0.1
+# Charly Language Guide (v0.0.1)
 
 Your syntax files need to be encoded in UTF-8.
 
@@ -654,6 +653,7 @@ When including a file, the contents of the `export` variable is then returned by
 Example:
 
 __main.ch__
+
 ```javascript
 let external = require("./external.ch")
 print(external.message) # "hello world"
@@ -661,6 +661,7 @@ print(external.foo(1, 2)) # 3
 ```
 
 __external.ch__
+
 ```javascript
 export = {
   let message = "hello world"
@@ -676,6 +677,7 @@ If you call require on the same file twice, it will result the value returned by
 If you call require on a file that was already required before, a cached version will be returned. The file won't be executed twice.
 
 __main.ch__
+
 ```javascript
 let external = require("./external.ch")
 external.message = "it changed"
@@ -687,6 +689,7 @@ external == external_second # => true
 ```
 
 __external.ch__
+
 ```javascript
 export = {
   let message = "hello world"
@@ -856,6 +859,7 @@ Running this file will output the following:
 If you have a lot of test cases, you can put them into another file and require them.
 
 __main.ch__
+
 ```javascript
 const UnitTest = require("unit-test")
 const result = UnitTest("myTests").begin(->(describe) {
@@ -866,6 +870,7 @@ const result = UnitTest("myTests").begin(->(describe) {
 ```
 
 __mytest.ch__
+
 ```javascript
 export = ->(it) {
 
