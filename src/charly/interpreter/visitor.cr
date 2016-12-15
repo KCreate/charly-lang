@@ -202,8 +202,16 @@ module Charly
         raise BreakException.new
       when .is_a? IfStatement
         return visit_if_statement(node, scope, context)
+      when .is_a? UnlessStatement
+        return visit_unless_statement(node, scope, context)
+      when .is_a? GuardStatement
+        return visit_guard_statement(node, scope, context)
       when .is_a? WhileStatement
         return visit_while_statement(node, scope, context)
+      when .is_a? UntilStatement
+        return visit_until_statement(node, scope, context)
+      when .is_a? LoopStatement
+        return visit_loop_statement(node, scope, context)
       when .is_a? And
         left = Calculator.truthyness(visit_expression(node.left, scope, context))
 
@@ -1032,13 +1040,73 @@ module Charly
       end
     end
 
-    private def visit_while_statement(node : WhileStatement, scope, context)
+    private def visit_unless_statement(node : UnlessStatement, scope, context)
       scope = Scope.new(scope)
 
       # Resolve the expression first
+      test = visit_expression(node.test, scope, context)
+      test = !visit_get_truthyness(test, scope, context)
+
+      if test
+        return visit_block(node.consequent, scope, context)
+      else
+        if (alternate = node.alternate).is_a? Block
+          return visit_block(alternate, scope, context)
+        else
+          return TNull.new
+        end
+      end
+    end
+
+    private def visit_guard_statement(node : GuardStatement, scope, context)
+      scope = Scope.new(scope)
+
+      # Resolve the expression first
+      test = visit_expression(node.test, scope, context)
+      test = !visit_get_truthyness(test, scope, context)
+
+      if test
+        return visit_block(node.alternate, scope, context)
+      else
+        return TNull.new
+      end
+    end
+
+    private def visit_while_statement(node : WhileStatement, scope, context)
+      scope = Scope.new(scope)
       last_result = TNull.new
       while Calculator.truthyness(visit_expression(node.test, scope, context))
         begin
+          last_result = visit_block(node.consequent, scope, context)
+        rescue e : BreakException
+          break
+        end
+      end
+
+      return last_result
+    end
+
+    private def visit_until_statement(node : UntilStatement, scope, context)
+      scope = Scope.new(scope)
+      last_result = TNull.new
+
+      while !visit_get_truthyness(visit_expression(node.test, scope, context), scope, context)
+        begin
+          last_result = visit_block(node.consequent, scope, context)
+        rescue e : BreakException
+          break
+        end
+      end
+
+      return last_result
+    end
+
+    private def visit_loop_statement(node : LoopStatement, scope, context)
+      scope = Scope.new(scope)
+      last_result = TNull.new
+
+      loop do
+        begin last_result = visit_block(node.consequent, scope, context)
           last_result = visit_block(node.consequent, scope, context)
         rescue e : BreakException
           break
