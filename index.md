@@ -26,7 +26,7 @@ myVar + myOtherVariable # => 75
 Constants are declared the same way as variables. They can't be changed, hence the name constant. You need to initialize them in the declaration.
 
 ```javascript
-const myconst # => syntax error
+const myconst # => syntax error
 const myOtherConst = 25
 myOtherConst = 30 # => runtime exception
 ```
@@ -119,7 +119,7 @@ A string can span multiple lines:
       word" # same as "hello\n     world"
 ```
 
-### Array
+### Array
 An Array is a resizeable list of items of any type. It is typically created with an array literal:
 
 ```javascript
@@ -214,7 +214,7 @@ func foo() {
   25
 }
 
-foo() # => 25
+foo() # => 25
 ```
 
 You can also do explicit returns
@@ -239,7 +239,7 @@ func foo(callback) {
 }
 
 foo(func(arg) {
-  print(arg) # => 42
+  print(arg) # => 42
 })
 ```
 
@@ -325,7 +325,7 @@ John.greet()
 
 # Will print
 #
-# My name is John
+# My name is John
 # I am 21 years old
 # I am 1.85 cm tall
 ```
@@ -371,7 +371,7 @@ class Baz extends Foo, Bar {
 let myBaz = Baz()
 myBaz.foo() # => "foo method"
 myBaz.bar() # => "bar method"
-myBaz.baz() # => "baz method"
+myBaz.baz() # => "baz method"
 ```
 
 Static properties and methods are also copied to the child classes. The values of static properties are copied by value. They are not references.
@@ -412,7 +412,7 @@ let myBox = {
 }
 
 myBox.name = "box"
-myBox.foo() # => "box"
+myBox.foo() # => "box"
 ```
 
 If you directly call a method `foo()`, `self` is set to whatever it what in the context where the method is defined. Think of it like Arrow Funtions in JavaScript.
@@ -443,7 +443,7 @@ local = 1
 # assigns to the current self variable
 @instance = 2
 
-# The above is simply rewritten to
+# The above is simply rewritten to
 self.instance = 2
 ```
 
@@ -462,7 +462,7 @@ func foo(arg) {
   }
 }
 
-foo(10) # => true
+foo(10) # => true
 foo(40) # => false
 ```
 
@@ -483,7 +483,7 @@ if (2 < 5) {
   print("Something's off...")
 }
 
-if 2 + 2 == 9 - 7 {
+if 2 + 2 == 9 - 5 {
   print("Mathematics still works!")
 } else {
   print("Somethings's off...")
@@ -542,7 +542,7 @@ When you write `5`, the interpreter actually treats it as a primitive. There are
 
 This allows the interpreter to reuse the same object for all primitives of the same type.
 
-This principle applies to all language primitives. The primitive class `Array` for example, specified a method called `push` which inserts an element into the array.
+This principle applies to all language primitives. The primitive class `Array` for example, specifies a method called `push` which inserts an element into the array.
 
 ### Method arguments
 
@@ -555,7 +555,7 @@ func foo(a, b, c) {
 
 foo(1, 2, 3) # => true
 foo(1, 2, 3, 4) # => true
-foo(1, 2) # => runtime exception
+foo(1, 2) # => runtime exception
 ```
 
 ### Operators
@@ -656,8 +656,8 @@ Example:
 __main.ch__
 ```javascript
 let external = require("./external.ch")
-print(external.message) # "hello world"
-print(external.foo(1, 2)) # 3
+print(external.message) # "hello world"
+print(external.foo(1, 2)) # 3
 ```
 
 __external.ch__
@@ -673,15 +673,17 @@ export = {
 
 If you call require on the same file twice, it will result the value returned by the very first call.
 
+If you call require on a file that was already required before, a cached version will be returned. The file won't be executed twice.
+
 __main.ch__
 ```javascript
 let external = require("./external.ch")
 external.message = "it changed"
 
 let external_second = require("./external.ch")
-print(external_second.message) # => "it changed"
+print(external_second.message) # => "it changed"
 
-external == external_second # => true
+external == external_second # => true
 ```
 
 __external.ch__
@@ -720,9 +722,9 @@ charly input.ch hello -f tokens world 25 25 --foo -b
 ```
 
 ```javascript
-ARGV # => ["hello", "world", 25, 25, "--foo", "-b"]
+ARGV # => ["hello", "world", 25, 25, "--foo", "-b"]
 IFLAGS # => ["tokens"]
-ENV["TERM"] # => xterm-256color
+ENV["TERM"] # => xterm-256color
 ```
 
 You can see the license and a list of contributors via the following commands
@@ -766,11 +768,12 @@ You can invoke it by typing `charly` or `charly repl`
 
 Here you can write charly statements. Run them by pressing enter.
 
-The REPL provides a few `magic` variables which are specific to your current REPL session.
+The REPL provides a few _magic_ variables which are specific to your current REPL session.
 
 - `$` This variable always contains the value of the last evaluated expression
 - `history` This is an array of all commands you have entered
 - `context` This is the top-level context of the REPL.
+- `echo` Boolean value to toggle the echo of entered expressions
 
 ## Extending primitive types
 
@@ -804,7 +807,7 @@ Let's define a `indent` method on strings which takes two arguments, the amount 
 
 ```javascript
 String.methods.indent = ->(amount, filler) {
-  @split("\n").map(->(line) {
+  @split("\n").each(->(line) {
     (value * amount) + line
   }).join("\n")
 }
@@ -951,4 +954,4 @@ print(mymethod("Hello World")) # => You said: Hello World
 
 ___
 
-__Copyright © 2016 - present Leonard Schütz__
+__Copyright © 2016 - present Leonard Schütz__
