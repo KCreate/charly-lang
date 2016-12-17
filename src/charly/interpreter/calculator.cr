@@ -276,16 +276,20 @@ module Charly
         return TBoolean.new(left != right)
       end
 
-      if left.is_a?(TNull) && right.is_a? TBoolean
-        return right
-      else
-        return TBoolean.new(!right.is_a?(TNull))
+      if left.is_a?(TNull)
+        if right.is_a?(TBoolean)
+          return TBoolean.new(right.value)
+        else
+          return TBoolean.new(!right.is_a?(TNull))
+        end
       end
 
-      if right.is_a?(TNull) && left.is_a? TBoolean
-        return left
-      else
-        return TBoolean.new(!left.is_a?(TNull))
+      if right.is_a?(TNull)
+        if left.is_a?(TBoolean)
+          return TBoolean.new(left.value)
+        else
+          return TBoolean.new(!left.is_a?(TNull))
+        end
       end
 
       if left.is_a?(TReference) && right.is_a?(TReference)

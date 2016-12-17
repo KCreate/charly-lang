@@ -197,4 +197,14 @@ export = func(it) {
     assert(d.typeof(), "Null")
   })
 
+  it("compares with null values", func(assert) {
+    assert(25 ! null, true)
+    assert(null ! null, false)
+    assert(null == null, true)
+    assert(null == false, true)
+    assert(null == true, false)
+    assert(null ! false, false)
+    assert(null ! true, true)
+  })
+
 }
