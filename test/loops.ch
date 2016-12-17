@@ -55,4 +55,16 @@ export = func(it) {
 
     assert(i, 100)
   })
+
+  it("until loop returns a value", func(assert) {
+    func foo() {
+      let a = false
+      until a {
+        a = true
+        30
+      }
+
+      assert(foo(), 30)
+    }
+  })
 }
