@@ -24,8 +24,10 @@ export = primitive class Object {
 
       let child_render = ""
       Object.keys(self).each(->(key, index, size) {
+        const own_key = self[key]
 
-        if self[key] == self {
+
+        if own_key == self && own_key.typeof() == self.typeof() {
           child_render += key + ": " + "(circular)"
         } else {
           child_render += key + ": " + self[key].to_s()
