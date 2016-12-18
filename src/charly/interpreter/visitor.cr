@@ -640,9 +640,9 @@ module Charly
           case stat_node = statement.node
           when .is_a? FunctionLiteral
             method = visit_function_literal(stat_node, scope, context)
-            primscope.init(method.name || "", method)
+            primscope.replace(method.name || "", method)
           when .is_a? PropertyDeclaration
-            primscope.init(stat_node.identifier.name, TNull.new)
+            primscope.replace(stat_node.identifier.name, TNull.new)
           end
         end
       end
@@ -816,7 +816,6 @@ module Charly
       object = TObject.new(target)
       object_scope = Scope.new(target.parent_scope)
       object.data = object_scope
-      object_scope.init("type", target, true)
 
       # The properties the method needs
       properties = get_class_props(target)
@@ -827,7 +826,7 @@ module Charly
 
       # Register the properties
       properties.each do |prop|
-        object_scope.init(prop, TNull.new)
+        object_scope.replace(prop, TNull.new)
       end
 
       # Run the first constructor we can find
@@ -864,6 +863,8 @@ module Charly
         visit_function_call(constructor, callex, object, scope, context)
         @trace.pop
       end
+
+      object_scope.replace("__class", target, Flag::INIT | Flag::CONSTANT)
 
       return object
     end

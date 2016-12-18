@@ -213,4 +213,25 @@ export = func(it) {
     assert(box.value, 6)
   })
 
+  it("set the __class property", func(assert) {
+    class Box {}
+    const myBox = Box()
+
+    assert(myBox.__class == Box, true)
+  })
+
+  it("can't overwrite the __class property", func(assert) {
+    class Box {
+      property __class
+
+      func constructor() {
+        @__class = 25
+      }
+    }
+
+    const myBox = Box()
+    assert(myBox.__class == 25, false)
+    assert(myBox.__class == Box, true)
+  })
+
 }

@@ -67,6 +67,18 @@ export = ->(it) {
     Array.size_of = backup_size_of
   })
 
+  it("gives primitive classes the name object", func(assert) {
+    assert(Array.name, "Array")
+    assert(Boolean.name, "Boolean")
+    assert(Class.name, "Class")
+    assert(Function.name, "Function")
+    assert(Null.name, "Null")
+    assert(Numeric.name, "Numeric")
+    assert(Object.name, "Object")
+    assert(PrimitiveClass.name, "PrimitiveClass")
+    assert(String.name, "String")
+  })
+
   it("gives primitive classes the methods object", func(assert) {
     assert(Array.methods.typeof(), "Object")
     assert(Boolean.methods.typeof(), "Object")
