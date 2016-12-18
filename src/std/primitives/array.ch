@@ -69,10 +69,24 @@ export = primitive class Array {
     self
   }
 
+  # Returns and removes the last element of the array
+  func pop() {
+    const item = @last()
+    @delete(@length() - 1)
+    item
+  }
+
   # Append an item to the beginning of this array
   func unshift(item) {
     array_insert(self, item, 0)
     self
+  }
+
+  # Returns and removes the first element of the array
+  func shift() {
+    const item = @first()
+    @delete(0)
+    item
   }
 
   # Inserts *item* at *index*
