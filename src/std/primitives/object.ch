@@ -26,8 +26,7 @@ export = primitive class Object {
       Object.keys(self).each(->(key, index, size) {
         const own_key = self[key]
 
-
-        if own_key == self && own_key.typeof() == self.typeof() {
+        if own_key == self && own_key.typeof() == @typeof() {
           child_render += key + ": " + "(circular)"
         } else {
           child_render += key + ": " + self[key].to_s()
@@ -53,7 +52,9 @@ export = primitive class Object {
 
       let child_render = ""
       Object.keys(self).each(->(key, index, size) {
-        if self[key] == self {
+        const own_key = self[key]
+
+        if own_key == self && own_key.typeof() == @typeof() {
           child_render += key + ": (circular)"
         } else {
           child_render += key + ": " + self[key].pretty_print()
@@ -74,7 +75,7 @@ export = primitive class Object {
   }
 
   func colorize(code) {
-    _colorize(self.to_s(), code)
+    _colorize(@to_s(), code)
   }
 
   func typeof() {
