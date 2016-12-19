@@ -11,6 +11,14 @@ UnitTest(->(describe, it, assert) {
 
     })
 
+    it("does something else", ->{
+      assert(true, true)
+    })
+
+  })
+
+  describe("another functionality", ->{
+    assert(false, false)
   })
 
 })

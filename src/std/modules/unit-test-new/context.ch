@@ -23,7 +23,7 @@ class Context {
     const backup = @current
     @current.push(new, @depth)
     @current = new
-    @visitor.on_node(title, @depth, callback)
+    @visitor.on_node(@current, @depth, callback)
     @current = backup
 
     @depth -= 1
@@ -39,10 +39,14 @@ class Context {
   }
 
   func assert(real, expected) {
+    const assertion = Assertion(real, expected)
+
     @current.push(
-      Assertion(real, expected),
+      assertion,
       @depth
     )
+
+    @visitor.on_assertion(@current.length() - 1, assertion, @depth)
     self
   }
 }

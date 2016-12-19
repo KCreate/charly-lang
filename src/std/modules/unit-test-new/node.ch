@@ -30,6 +30,10 @@ class Node {
     })
     passed
   }
+
+  func length() {
+    @children.length()
+  }
 }
 
 class Assertion extends Node {
