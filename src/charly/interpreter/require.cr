@@ -17,6 +17,7 @@ module Charly::Require
   # A list of core modules the interpreter provides
   CORE_MODULES = [
     "unit-test",
+    "unit-test-new",
     "math",
     "charly",
   ] of String
