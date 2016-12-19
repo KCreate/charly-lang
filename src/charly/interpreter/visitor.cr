@@ -515,7 +515,7 @@ module Charly
         node.block,
         scope
       ).tap do |func|
-        func.data.replace("name", TString.new(node.name || ""), Flag::INIT)
+        func.data.replace("name", TString.new(node.name || ""), Flag::INIT | Flag::IGNORE_PARENT | Flag::CONSTANT)
       end
     end
 
@@ -640,9 +640,9 @@ module Charly
           case stat_node = statement.node
           when .is_a? FunctionLiteral
             method = visit_function_literal(stat_node, scope, context)
-            primscope.replace(method.name || "", method)
+            primscope.replace(method.name || "", method, Flag::INIT | Flag::IGNORE_PARENT)
           when .is_a? PropertyDeclaration
-            primscope.replace(stat_node.identifier.name, TNull.new)
+            primscope.replace(stat_node.identifier.name, TNull.new, Flag::INIT | Flag::IGNORE_PARENT)
           end
         end
       end
@@ -656,8 +656,8 @@ module Charly
 
       primclass = TPrimitiveClass.new(node.name, method_scope, scope)
       primclass.data = primscope
-      primclass.data.replace("name", TString.new(node.name), Flag::INIT | Flag::CONSTANT)
-      primclass.data.replace("methods", method_object, Flag::INIT | Flag::CONSTANT)
+      primclass.data.replace("name", TString.new(node.name), Flag::INIT | Flag::CONSTANT | Flag::IGNORE_PARENT)
+      primclass.data.replace("methods", method_object, Flag::INIT | Flag::CONSTANT | Flag::IGNORE_PARENT)
 
       # Reverse to use correct precedence
       methods.reverse!
@@ -826,7 +826,7 @@ module Charly
 
       # Register the properties
       properties.each do |prop|
-        object_scope.replace(prop, TNull.new)
+        object_scope.replace(prop, TNull.new, Flag::INIT | Flag::IGNORE_PARENT)
       end
 
       # Run the first constructor we can find
@@ -864,7 +864,7 @@ module Charly
         @trace.pop
       end
 
-      object_scope.replace("__class", target, Flag::INIT | Flag::CONSTANT)
+      object_scope.replace("__class", target, Flag::INIT | Flag::CONSTANT | Flag::IGNORE_PARENT)
 
       return object
     end

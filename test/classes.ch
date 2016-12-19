@@ -217,7 +217,7 @@ export = func(it) {
     class Box {}
     const myBox = Box()
 
-    assert(myBox.__class == Box, true)
+    assert(myBox.__class, Box)
   })
 
   it("can't overwrite the __class property", func(assert) {
@@ -234,4 +234,67 @@ export = func(it) {
     assert(myBox.__class == Box, true)
   })
 
+  it("doesn't leak class properties into higher scopes", func(assert) {
+    let a = 25
+
+    class Box {
+      property a
+    }
+
+    Box()
+
+    assert(a, 25)
+  })
+
+  it("self reference in constructors doesn't leak into parent scope", func(assert) {
+    let a = 25
+
+    class Box {
+      property a
+
+      func constructor() {
+        @a = 50
+      }
+    }
+
+    let myBox = Box()
+
+    assert(myBox.a, 50)
+    assert(a, 25)
+  })
+
+  it("doesn't leak method declarations into higher scopes", func(assert) {
+    let a = 25
+
+    class Box {
+      func a() {}
+    }
+
+    Box()
+
+    assert(a.typeof(), "Numeric")
+    assert(a, 25)
+  })
+
+  it("doesn't leak static properties into higher scopes", func(assert) {
+    let a = 25
+
+    class Box {
+      static property a
+    }
+
+    assert(a.typeof(), "Numeric")
+    assert(a, 25)
+  })
+
+  it("doesn't leak static methods into higher scopes", func(assert) {
+    let a = 25
+
+    class Box {
+      static func a() {}
+    }
+
+    assert(a.typeof(), "Numeric")
+    assert(a, 25)
+  })
 }
