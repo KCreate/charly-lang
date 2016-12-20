@@ -7,16 +7,16 @@ class TestVisitor {
     @print = print
   }
 
+  func on_root(node) {
+    @print((node.title + " Graph").colorize(35))
+  }
+
   func on_node(node, depth, callback) {
     @print(("- " + node.title.colorize(33)).indent(depth - 1, " "))
     callback()
   }
 
-  func on_assertion(index, assertion, depth) {
-    @write(("- " + (index + 1) + ". ").indent(depth, " "))
-    @write(assertion.passed() ? "Passed".colorize(32) : "Failed".colorize(31))
-    @write("\n")
-  }
+  func on_assertion(index, assertion, depth) {}
 }
 
 export = TestVisitor

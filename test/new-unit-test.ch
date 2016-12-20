@@ -1,5 +1,5 @@
 const UnitTest = require("unit-test-new")
-UnitTest(->(describe, it, assert) {
+const Result = UnitTest(->(describe, it, assert, context) {
 
   describe("some functionality", ->{
 
@@ -18,7 +18,9 @@ UnitTest(->(describe, it, assert) {
   })
 
   describe("another functionality", ->{
-    assert(false, false)
+    assert(false, true)
   })
 
 })
+
+UnitTest.display_result(Result, io.exit)

@@ -10,10 +10,12 @@ class Context {
   property visitor
 
   func constructor(visitor) {
+    @visitor = visitor
+    @depth = 0
     @current = Node("Charly Unit Test Framework", NodeType.Root)
     @tree = @current
-    @depth = 0
-    @visitor = visitor
+
+    @visitor.on_root(@current)
   }
 
   func add_node(type, title, callback) {

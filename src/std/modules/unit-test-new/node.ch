@@ -1,3 +1,11 @@
+const get_node_id = ->() {
+  let index = 0
+  ->() {
+    index += 1
+    return index
+  }
+}()
+
 const NodeType = {
   const Root = 0
   const Suite = 1
@@ -6,11 +14,13 @@ const NodeType = {
 }
 
 class Node {
+  property id
   property title
   property children
   property type
 
   func constructor(title, type) {
+    @id = get_node_id()
     @title = title
     @type = type
     @children = []
@@ -33,6 +43,21 @@ class Node {
 
   func length() {
     @children.length()
+  }
+
+  func deep_failed(callback) {
+    unless @passed() {
+      let path = arguments[1] || []
+
+      if @children.length() == 0 {
+        callback(path + self)
+      } else {
+        @children.each(->(child) {
+          child.deep_failed(callback, path + self)
+        })
+      }
+
+    }
   }
 }
 
