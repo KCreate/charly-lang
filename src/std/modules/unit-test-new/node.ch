@@ -42,6 +42,7 @@ class Assertion extends Node {
   property has_passed
 
   func constructor(expected, real) {
+    @id = get_node_id()
     @title = ""
     @children = []
     @type = NodeType.Assertion
