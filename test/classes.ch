@@ -200,4 +200,17 @@ export = func(it) {
     Box.foo()
   })
 
+  it("inserts quick access identifiers into constructor calls", func(assert) {
+    class Box {
+      property value
+
+      func constructor() {
+        @value = $0 + $1 + $2
+      }
+    }
+
+    let box = Box(1, 2, 3)
+    assert(box.value, 6)
+  })
+
 }

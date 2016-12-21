@@ -298,6 +298,7 @@ export = func(it) {
     assert(a.name, "")
   })
 
+
   it("raises on duplicate argument names", func(assert) {
     func foo(a, a) {}
 
@@ -310,6 +311,62 @@ export = func(it) {
     }
 
     assert(result.message, "Duplicate argument a")
+  })
+
+  it("inserts quick access identifiers for regular methods calls", func(assert) {
+    func foo() {
+      $0 + $1 + $2
+    }
+
+    let result = foo(1, 2, 3)
+    assert(result, 6)
+  })
+
+  it("inserts quick access identifiers for method calls on objects", func(assert) {
+    let Box = {
+      func foo() {
+        $0 + $1 + $2
+      }
+    }
+
+    let result = Box.foo(1, 2, 3)
+    assert(result, 6)
+  })
+
+  it("inserts quick access identifiers for method calls on arrays", func(assert) {
+    let methods = [
+      func foo() {
+        $0 + $1 + $2
+      }
+    ]
+
+    let result = methods[0](1, 2, 3)
+    assert(result, 6)
+  })
+
+  it("inserts quick access identifiers on redirected properties", func(assert) {
+    Numeric.methods.foo = func() {
+      $0 + $1 + $2
+    }
+
+    let result = 5.foo(1, 2, 3)
+    assert(result, 6)
+  })
+
+  it("inserts quick access identifiers into lambda functions", func(assert) {
+    let numbers = [1, 2, 3, 4]
+
+    let result = numbers.map(->$0 * 2)
+    assert(result, [2, 4, 6, 8])
+  })
+
+  it("can overwrite quick access identifiers", func(assert) {
+    func foo($2, $1, $0) {
+      [$0, $1, $2]
+    }
+
+    let result = foo(1, 2, 3)
+    assert(result, [3, 2, 1])
   })
 
 }
