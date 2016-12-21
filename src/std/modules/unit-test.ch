@@ -1,9 +1,11 @@
 class Test {
   property title
+  property catched_exception
   property assertions
 
   func constructor(title) {
     @title = title
+    @catched_exception = null
     @assertions = []
   }
 
@@ -25,7 +27,7 @@ class Test {
   }
 
   func passed() {
-    @failed().empty()
+    @failed().empty() && @catched_exception == null
   }
 }
 
@@ -88,10 +90,15 @@ export = class UnitTest {
 
         write(("it " + description + " ").colorize(37))
         const start = io.time_ms()
-        callback(func assert(real, expect) {
-          current_test.add(real, expect)
-          null
-        })
+
+        try {
+          callback(func assert(real, expect) {
+            current_test.add(real, expect)
+            null
+          })
+        } catch(e) {
+          current_test.catched_exception = e
+        }
 
         if (current_test.passed()) {
           write("Passed".colorize(32) + " " + (io.time_ms() - start) + "ms")
@@ -125,11 +132,15 @@ export = class UnitTest {
       suites_run += 1
       suite.tests.each(func(test, t_index) {
 
+        if test.catched_exception == null {
+          passed = false
+        }
+
         tests_run += 1
         test.assertions.each(func(assertion, a_index) {
 
           assertions_run += 1
-          if (assertion[2] == false) {
+          if assertion[2] == false {
             passed = false
           }
         })
@@ -149,9 +160,14 @@ export = class UnitTest {
         suite.failed().each(func(test) {
 
           print("  - " + test.title.colorize(37))
-          test.failed().each(func(assertion) {
-            print("      " + (assertion[0] + 1) + ": " + ("Expected: >" + assertion[1][1] + "<, got: >" + assertion[1][0] + "<").colorize(31))
-          })
+
+          if test.catched_exception {
+            print(("       Exception: " + test.catched_exception.message).colorize(31))
+          } else {
+            test.failed().each(func(assertion) {
+              print("      " + (assertion[0] + 1) + ": " + ("Expected: >" + assertion[1][1] + "<, got: >" + assertion[1][0] + "<").colorize(31))
+            })
+          }
         })
       })
 
