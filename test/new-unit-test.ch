@@ -21,6 +21,10 @@ const Result = UnitTest(->(describe, it, assert, context) {
     assert(false, true)
   })
 
+  it("should catch exceptions thrown inside it statements", ->{
+    undefined_identifier
+  })
+
 })
 
 UnitTest.display_result(Result, io.exit)

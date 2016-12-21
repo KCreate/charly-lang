@@ -25,7 +25,13 @@ class Context {
     const backup = @current
     @current.push(new, @depth)
     @current = new
-    @visitor.on_node(@current, @depth, callback)
+
+    try {
+      @visitor.on_node(@current, @depth, callback)
+    } catch(e) {
+      @catch_exception(e)
+    }
+
     @current = backup
 
     @depth -= 1
@@ -50,6 +56,10 @@ class Context {
 
     @visitor.on_assertion(@current.length() - 1, assertion, @depth)
     self
+  }
+
+  func catch_exception(e) {
+    @assert(e, false)
   }
 }
 
