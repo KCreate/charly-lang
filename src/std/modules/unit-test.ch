@@ -132,7 +132,7 @@ export = class UnitTest {
       suites_run += 1
       suite.tests.each(func(test, t_index) {
 
-        if test.catched_exception == null {
+        if test.catched_exception ! null {
           passed = false
         }
 
