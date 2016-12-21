@@ -298,21 +298,6 @@ export = func(it) {
     assert(a.name, "")
   })
 
-
-  it("raises on duplicate argument names", func(assert) {
-    func foo(a, a) {}
-
-    let result
-
-    try {
-      foo(0, 0)
-    } catch(e) {
-      result = e
-    }
-
-    assert(result.message, "Duplicate argument a")
-  })
-
   it("inserts quick access identifiers for regular methods calls", func(assert) {
     func foo() {
       $0 + $1 + $2
