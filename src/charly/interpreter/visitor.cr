@@ -1044,8 +1044,10 @@ module Charly
 
       # Resolve the arguments
       arguments = [] of BaseType
-      node.argumentlist.each do |arg|
-        arguments << visit_expression(arg, scope, context)
+      node.argumentlist.each_with_index do |arg, index|
+        value = visit_expression(arg, scope, context)
+        arguments << value
+        function_scope.write("$#{index}", value, Flag::INIT)
       end
 
       # Insert the arguments
@@ -1059,7 +1061,7 @@ module Charly
           raise RunTimeError.new(arg, context, "Duplicate argument #{arg.name}")
         end
 
-        function_scope.write(arg.name, arguments[i], Flag::INIT)
+        function_scope.replace(arg.name, arguments[i], Flag::INIT | Flag::IGNORE_PARENT)
         i += 1
       end
 
