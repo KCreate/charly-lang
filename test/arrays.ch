@@ -116,6 +116,34 @@ export = func(it) {
     assert(nums == [6, 5, 4, 3, 1, 2], true)
   })
 
+  it("pops", func(assert) {
+    let nums = [1, 2, 3, 4]
+
+    let results = []
+
+    results.push(nums.pop())
+    results.push(nums.pop())
+    results.push(nums.pop())
+    results.push(nums.pop())
+
+    assert(results.length(), 4)
+    assert(results, [4, 3, 2, 1])
+  })
+
+  it("shifts", func(assert) {
+    let nums = [4, 3, 2, 1]
+
+    let results = []
+
+    results.push(nums.shift())
+    results.push(nums.shift())
+    results.push(nums.shift())
+    results.push(nums.shift())
+
+    assert(results.length(), 4)
+    assert(results, [4, 3, 2, 1])
+  })
+
   it("inserts at a given index", func(assert) {
     let nums = [1, 2]
 
