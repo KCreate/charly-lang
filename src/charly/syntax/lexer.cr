@@ -105,7 +105,16 @@ module Charly
           consume_operator_or_assignment TokenType::Minus
         end
       when '/'
-        consume_operator_or_assignment TokenType::Divd
+        case peek_char
+        when '/'
+          read_char
+          consume_comment
+        when '*'
+          read_char
+          consume_multiline_comment
+        else
+          consume_operator_or_assignment TokenType::Divd
+        end
       when '*'
         case peek_char
         when '*'
@@ -167,7 +176,7 @@ module Charly
       when ']'
         read_char TokenType::RightBracket
       when '#'
-        consume_comment
+        consume_comment # TODO: Deprecate this in a future patch
       when '@'
         read_char TokenType::AtSign
       when 'b'
@@ -853,6 +862,27 @@ module Charly
             break
           else
             unexpected_char
+          end
+        else
+          # Nothing to do
+        end
+      end
+
+      @token.value = @reader.frame.to_s[0..-2]
+    end
+
+    def consume_multiline_comment
+      @token.type = TokenType::Comment
+
+      loop do
+        case read_char
+        when '*'
+          case read_char
+          when '/'
+            read_char # Advance one more position
+            break
+          else
+            # Nothing to do
           end
         else
           # Nothing to do

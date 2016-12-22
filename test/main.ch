@@ -18,4 +18,5 @@ io.exit(UnitTest("Charly").begin(func(describe) {
   describe("Magic constants",                     require("./magic-constants.ch"))
   describe("References",                          require("./references.ch"))
   describe("Primitives",                          require("./primitives.ch"))
+  describe("Comments",                            require("./comments.ch"))
 }))
