@@ -510,12 +510,12 @@ module Charly
 
     private def visit_function_literal(node : FunctionLiteral, scope, context)
       TFunc.new(
-        node.name || "",
+        node.name,
         node.argumentlist,
         node.block,
         scope
       ).tap do |func|
-        func.data.replace("name", TString.new(node.name || ""), Flag::INIT | Flag::IGNORE_PARENT | Flag::CONSTANT)
+        func.data.replace("name", TString.new(node.name), Flag::INIT | Flag::IGNORE_PARENT | Flag::CONSTANT)
       end
     end
 

@@ -940,7 +940,7 @@ module Charly
       if identifier.is_a? IdentifierLiteral
         FunctionLiteral.new(identifier.name, arguments, block).at(start_location, block.location_end)
       else
-        FunctionLiteral.new(nil, arguments, block).at(start_location, block.location_end)
+        FunctionLiteral.new("", arguments, block).at(start_location, block.location_end)
       end
     end
 
@@ -973,7 +973,7 @@ module Charly
         block.at(expression)
       end
 
-      return FunctionLiteral.new(nil, argumentlist, block).at(start_location, block.location_end)
+      return FunctionLiteral.new("", argumentlist, block).at(start_location, block.location_end)
     end
 
     private def parse_class_literal

@@ -317,7 +317,7 @@ module Charly::AST
   ast_node ArrayLiteral
 
   ast_node FunctionLiteral,
-    name : String?,
+    name : String,
     argumentlist : IdentifierList,
     block : Block
 
