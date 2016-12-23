@@ -174,7 +174,7 @@ module Charly
 
         return TReference.new(reference)
       when .is_a? NumericLiteral
-        return TNumeric.new(node.value.to_f64)
+        return TNumeric.new(node.value)
       when .is_a? StringLiteral
         return TString.new(node.value)
       when .is_a? BooleanLiteral
