@@ -1,12 +1,12 @@
-# Require some stuff
+// Require some stuff
 const EventEmitter = require("./event-emitter.ch")
 const myEmitter = EventEmitter()
 
-# Register the main events
+// Register the main events
 myEmitter.add_event("data")
 myEmitter.add_event("exit")
 
-# Event handlers
+// Event handlers
 myEmitter.add_handler("data", func(data) {
   print("Got data: " + data)
 })
@@ -16,7 +16,7 @@ myEmitter.add_handler("exit", func(code) {
   exit(code)
 })
 
-# Main event loop
+// Main event loop
 let input
 while (true) {
   input = "> ".prompt().trim()

@@ -13,29 +13,29 @@ class Game {
     @width = width
     @height = height
 
-    # Construct the raster
+    // Construct the raster
     @raster = Array.of_size(@height, null).map(func() {
       Array.of_size(@width, " ")
     })
 
-    # Insert the player
+    // Insert the player
     @raster[@playerY][@playerX] = "#"
   }
 
   func set_pos(x, y) {
 
-    # Normalize the coordinates
+    // Normalize the coordinates
     x = x.min(@width - 1).max(0)
     y = y.min(@height - 1).max(0)
 
-    # Reset the current location
+    // Reset the current location
     @raster[@playerY][@playerX] = " "
 
-    # Update the position
+    // Update the position
     @playerX = x
     @playerY = y
 
-    # Draw the next location
+    // Draw the next location
     @raster[y][x] = "#"
   }
 

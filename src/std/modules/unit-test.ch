@@ -76,10 +76,10 @@ export = class UnitTest {
 
   func begin(callback) {
 
-    # Get the current time for statistics later on
+    // Get the current time for statistics later on
     const start_time = io.time_ms()
 
-    # Run all tests
+    // Run all tests
     callback(func describe(description, callback) {
       const current_suite = Suite(description)
 
@@ -112,13 +112,13 @@ export = class UnitTest {
       print("Took: " + (io.time_ms() - start) + "ms")
       print("")
 
-      # Add the current_suite to the suites array
+      // Add the current_suite to the suites array
       @suites.push(current_suite)
 
       null
     })
 
-    # Gather some statistics
+    // Gather some statistics
     let passed = true
 
     let suites_run = 0
@@ -126,7 +126,7 @@ export = class UnitTest {
     let assertions_run = 0
     let total_time = io.time_ms() - start_time
 
-    # Extract the data
+    // Extract the data
     @suites.each(func(suite, s_index) {
 
       suites_run += 1
@@ -147,13 +147,13 @@ export = class UnitTest {
       })
     })
 
-    # Show the statistics
+    // Show the statistics
     if (passed) {
       print("All test-suites have passed!".colorize(32))
     } else {
       print("Some test-suites have failed!".colorize(31))
 
-      # Show all failed assertions in a nice graph
+      // Show all failed assertions in a nice graph
       @failed().each(func(suite) {
 
         print("- " + suite.title.colorize(33))
@@ -178,8 +178,8 @@ export = class UnitTest {
     print("Ran " + assertions_run.colorize(33) + " Assertions")
     print("Total time: " + total_time.colorize(33) + " miliseconds")
 
-    # Return 0 if all tests passed
-    # 1 if at least one failed
+    // Return 0 if all tests passed
+    // 1 if at least one failed
     if (passed) {
       0
     } else {

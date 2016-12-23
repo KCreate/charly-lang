@@ -1,9 +1,15 @@
-# Require
+// Require
 const require_no_prelude = __internal__method("require_no_prelude")
 const require = __internal__method("require")
 require.resolve = __internal__method("require_resolve")
 
-# Primitives
+/*
+ * Primitive classes
+ *
+ * These modules export primitive classes.
+ * If you were to replace the prelude with your own file,
+ * make sure to include replacements for the following classes.
+ * */
 const Object =            require("./primitives/object.ch")
 const Class =             require("./primitives/class.ch")
 const PrimitiveClass =    require("./primitives/primitive-class.ch")
@@ -15,7 +21,7 @@ const Boolean =           require("./primitives/boolean.ch")
 const Null =              require("./primitives/null.ch")
 const Reference =         require("./primitives/reference.ch")
 
-# IO related stuff
+// Anything IO related and some global bindings to commonly used methods
 const io = require("./io.ch")
 const print = io.stdout.print
 const write = io.stdout.write
@@ -23,7 +29,7 @@ const gets = io.stdin.gets
 const getc = io.stdin.getc
 const exit = io.exit
 
-# Base exception class
+// Base class for all Exceptions
 class Exception {
   property message
 
@@ -32,6 +38,6 @@ class Exception {
   }
 
   func to_s() {
-    "Uncaught " + @instanceof().name + ": " + @message
+    @instanceof().name + ": " + @message
   }
 }

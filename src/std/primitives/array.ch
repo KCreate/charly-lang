@@ -5,12 +5,20 @@ const _length = __internal__method("length")
 
 export = primitive class Array {
 
-  # Return a copy of this array
+  /*
+   * Return a copy of this array
+   * */
   func copy() {
     @map(func(e) { e })
   }
 
-  # Calls the callback with each element and the index
+  /*
+   * Calls the callback with each value inside this array
+   * The index is passed as the second argument
+   * The size of the array is passed as the third argument
+   *
+   * This is non-mutating
+   * */
   func each(callback) {
     let i = 0
     let size = _length(self)
@@ -21,8 +29,13 @@ export = primitive class Array {
     self
   }
 
-  # Calls the callback with each element and the index
-  # The return value is an array of return values from the callback
+  /*
+   * Calls the callback with each value inside this array
+   * The index is passed as the second argument
+   * The size of the array is passed as the third argument
+   *
+   * This returns a new array filled with the values returned by the callback
+   * */
   func map(callback) {
     let i = 0
     let size = _length(self)
@@ -34,8 +47,10 @@ export = primitive class Array {
     new
   }
 
-  # Returns a new array whichs contains all
-  # elements for which the passed block returned a truthy value
+  /*
+   * Returns a new array which contains all the values
+   * for which the callback returned a truthy value
+   * */
   func filter(callback) {
     let new = []
     let i = 0
@@ -51,57 +66,89 @@ export = primitive class Array {
     new
   }
 
-  # Returns true if this array is empty
+  /*
+   * Returns true if this array is empty (length is 0)
+   * */
   func empty() {
     _length(self) == 0
   }
 
-  # Returns an array where all children are turned into strings
+  /*
+   * Returns a new array where all the values are turned into strings
+   * */
   func all_to_s() {
     @map(func(e) {
       e.to_s()
     })
   }
 
-  # Append an item to the end of this array
+  /*
+   * Appends an item to the end of this array
+   *
+   * This is mutating
+   * */
   func push(item) {
     array_insert(self, item, _length(self))
     self
   }
 
-  # Returns and removes the last element of the array
+  /*
+   * Removes and returns the last value of this array
+   *
+   * This is mutating
+   * */
   func pop() {
     const item = @last()
     @delete(@length() - 1)
     item
   }
 
-  # Append an item to the beginning of this array
+  /*
+   * Prepends an item to the beginning of this array
+   *
+   * This is mutating
+   * */
   func unshift(item) {
     array_insert(self, item, 0)
     self
   }
 
-  # Returns and removes the first element of the array
+  /*
+   * Removes and returns the first value of this array
+   *
+   * This is mutating
+   * */
   func shift() {
     const item = @first()
     @delete(0)
     item
   }
 
-  # Inserts *item* at *index*
+  /*
+   * Inserts *item* at *index* inside this array
+   *
+   * If the index is smaller than 0, this behaves the same as unshift
+   * If the index is bigger than the size of the array, this behaves the same as push
+   * */
   func insert(index, item) {
     array_insert(self, item, index)
     self
   }
 
-  # Deletes the item at *index*
+  /*
+   * Removes the element at *index*
+   *
+   * If the index is smaller than 0, the first element is removed
+   * If the index is bigger than the size of the array, the last element is removed
+   * */
   func delete(index) {
     array_delete(self, index)
     self
   }
 
-  # Returns the string representation of this array
+  /*
+   * Renders this array as a string
+   * */
   func to_s() {
     let io = "["
     let amount = _length(self)
@@ -130,22 +177,30 @@ export = primitive class Array {
     io
   }
 
-  # Return a new array of a given size
+  /*
+   * Returns a new array of size *size* filled with *value*
+   * */
   static func of_size(size, value) {
     array_of_size(size, value)
   }
 
-  # Return the first element of this array
+  /*
+   * Returns the first element of this array
+   * */
   func first() {
     self[0]
   }
 
-  # Return the last element of this array
+  /*
+   * Returns the last element of this array
+   * */
   func last() {
     self[_length(self) - 1]
   }
 
-  # Return a reversed version of this array
+  /*
+   * Creates a copy of this array with all elements in reverse order
+   * */
   func reverse() {
     let new = []
     @each(func(e) {
@@ -154,7 +209,9 @@ export = primitive class Array {
     new
   }
 
-  # Returns a recursively flattened version of this array
+  /*
+   * Creates a new array by recursively flattening this array
+   * */
   func flatten() {
     let new = []
 
@@ -171,9 +228,11 @@ export = primitive class Array {
     new
   }
 
-  # Returns the index of *element* if found
-  # Returns -1 of not found
-  func index_of(element) {
+  /*
+   * Returns the index of the first item for which the callback
+   * returned a truthy value
+   * */
+  func index_of(element, callback) {
     let index = -1
     let i = 0
 
@@ -181,12 +240,11 @@ export = primitive class Array {
     let found = false
 
     while (i < length) {
-      if (!found) {
-        if ((self[i].typeof() == element.typeof()) && (self[i] == element)) {
-          index = i
-          found = true
-          i = length
-        }
+      if (callback(self[i])) {
+        index = i
+        found = true
+        i = length
+        break
       }
       i += 1
     }
@@ -194,7 +252,9 @@ export = primitive class Array {
     index
   }
 
-  # Join the elements of the array together
+  /*
+   * Returns a string by concatenating each value
+   * */
   func join(separator) {
     let string = ""
     let count = _length(self)
@@ -202,7 +262,7 @@ export = primitive class Array {
     @each(func(e, index) {
       string += e.to_s()
 
-      # Unless were at the last element, append the separator
+      // Unless were at the last element, append the separator
       if (index < count - 1) {
         string += separator.to_s()
       }
@@ -211,32 +271,37 @@ export = primitive class Array {
     string
   }
 
+  /*
+   * Returns a new array, containing all elements from the *start* index to the *end* index
+   * */
   func range(start, end) {
 
-    # Switch params if start is bigger
+    // Switch params if start is bigger
     if start > end {
       let tmp = end
       end = start
       start = tmp
     }
 
-    # Create the new array
+    // Create the new array
     const new = []
     const length = _length(self)
     start.upto(end, func(n) {
-      if ((n >= -1) && n < length) {
+      if (n >= 0 && n < length) {
         new.push(self[n])
       }
     })
     new
   }
 
-  # Return a new array by concatening self and element
-  # If element is an array, they will be merged
-  func __plus(element) {
+  /*
+   * Returns a new array by concatenating self and the other array
+   * If the argument is not an array, it will be appended (non-mutating)
+   * */
+  func +(element) {
     if (element.typeof() ! "Array") {
 
-      # Create a new array containing @length + 1 items
+      // Create a new array containing @length + 1 items
       let new_array = Array.of_size(@length() + 1, null)
       @each(func(v, i) {
         new_array[i] = v
@@ -245,10 +310,10 @@ export = primitive class Array {
       new_array
     } else {
 
-      # Create an array with the size of the two arrays combined
+      // Create an array with the size of the two arrays combined
       let new_array = Array.of_size(@length() + element.length(), null)
 
-      # Copy the values
+      // Copy the values
       @each(func(v, i) {
         new_array[i] = v
       })
@@ -261,23 +326,27 @@ export = primitive class Array {
     }
   }
 
-  # Compare an array to something else
-  func __equal(other) {
+  /*
+   * Returns true if this array is equal to another array or value
+   * */
+  func ==(other) {
 
-    if (other.typeof() == "Boolean") {
+    const other_type = other.typeof()
+
+    if (other_type == "Boolean") {
       return other
     }
 
-    if (other.typeof() ! @typeof()) {
+    if (other_type ! @typeof()) {
       return false
     }
 
-    # Check the length
+    // Check the length
     if (other.length() ! @length()) {
       return false
     }
 
-    # Iterate over the contents
+    // Iterate over the contents
     let equal = true
     other.each(func(e, i) {
       if (equal) {
@@ -287,12 +356,20 @@ export = primitive class Array {
     equal
   }
 
-  # Same as Array#__equal but negated
-  func __not(other) {
+  /*
+   * Same as == but negated
+   * */
+  func !(other) {
     !@__equal(other)
   }
 
-  # Sort an array
+  /*
+   * Returns a sorted copy of this array
+   * The callback receives two values to compare.
+   * A truthy value means the the left side is bigger than the right side
+   *
+   * This uses the bubble-sort algorithm
+   * */
   func sort(sort_function) {
     let sorted = @copy()
 

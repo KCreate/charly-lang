@@ -1,8 +1,6 @@
 const math = __internal__method("math");
 
 export = {
-
-  # Constants
   const PI = 3.14159265358979323846
   const E = 2.7182818284590451
   const LOG2 = 0.69314718055994529

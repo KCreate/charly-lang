@@ -5,7 +5,7 @@ const stderr_write = __internal__method("stderr_write")
 
 export = {
 
-  # Raw bindings to the output methods
+  // Raw bindings to the output methods
   const raw = {
     const stdout = {
       const print = stdout_print
@@ -18,7 +18,7 @@ export = {
     }
   }
 
-  # Various bindings to STDOUT
+  // Various bindings to STDOUT
   const stdout = {
     func print() {
       arguments.each(func(arg) {
@@ -35,7 +35,7 @@ export = {
     }
   }
 
-  # Various bindings to STDERR
+  // Various bindings to STDERR
   const stderr = {
     func print() {
       arguments.each(func(arg) {
@@ -52,24 +52,24 @@ export = {
     }
   }
 
-  # Various bindings to STDIN
+  // Various bindings to STDIN
   const stdin = {
     const gets = __internal__method("stdin_gets")
     const getc = __internal__method("stdin_getc")
   }
 
-  # Sleep for some miliseconds
+  // Sleep for some miliseconds
   const sleep = __internal__method("sleep")
 
-  # Immediately exit the program
+  // Immediately exit the program
   const exit = __internal__method("exit")
 
-  # Returns the current scope visualized as a table
+  // Returns the current scope visualized as a table
   const stackdump = __internal__method("stackdump")
 
-  # Get the current timestamp in miliseconds
+  // Get the current timestamp in miliseconds
   const time_ms = __internal__method("time_ms");
 
-  # Eval
+  // Eval
   const eval = __internal__method("eval");
 }

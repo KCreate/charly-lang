@@ -1,7 +1,9 @@
 export = primitive class Numeric {
 
-  # Call the callback n times
-  # The callback receives the index
+  /*
+   * Calls the callback *self* times, passing the current iteration count
+   * as the first argument
+   * */
   func times(callback) {
     let i = 0
     while (i < self) {
@@ -12,14 +14,14 @@ export = primitive class Numeric {
     self
   }
 
-  # Call the callback with values from n down to *num*
-  #
-  # 5.downto(2, func(i) {})
-  # will receive: 5, 4, 3, 2
+  /*
+   * Calls the callback with each number from *self* down to *num*
+   * self is inclusive, num isn't
+   * */
   func downto(num, callback) {
     if (self > num) {
       let i = self
-      while (i ! num) {
+      while (i > num) {
         callback(i)
         i -= 1
       }
@@ -28,14 +30,14 @@ export = primitive class Numeric {
     self
   }
 
-  # Call the callback with values from n up to *num*
-  #
-  # 5.upto(10, func(i) {})
-  # will receive: 5, 6, 7, 8, 9, 10
+  /*
+   * Calls the callback with each number from *self* up to *num*
+   * self is inclusive, num isn't
+   * */
   func upto(num, callback) {
     if (self < num) {
       let i = self
-      while (i ! num) {
+      while (i < num) {
         callback(i)
         i += 1
       }
@@ -44,7 +46,9 @@ export = primitive class Numeric {
     self
   }
 
-  # Returns the absolute value of this number
+  /*
+   * Returns the absolute value of this number
+   * */
   func abs() {
     if (self < 0) {
       -self
@@ -53,7 +57,22 @@ export = primitive class Numeric {
     }
   }
 
-  # Returns the biggest of two numbers
+  /*
+   * Returns the sign of this number
+   * */
+  func sign() {
+    if self < 0 {
+      -1
+    } else if self > 0 {
+      1
+    } else {
+      0
+    }
+  }
+
+  /*
+   * Returns the bigger one of self or *other*
+   * */
   func max(other) {
     if (self < other) {
       other
@@ -62,7 +81,9 @@ export = primitive class Numeric {
     }
   }
 
-  # Returns the smaller of two numbers
+  /*
+   * Returns the smaller one of self or *other*
+   * */
   func min(other) {
     if (self > other) {
       other
@@ -71,7 +92,9 @@ export = primitive class Numeric {
     }
   }
 
-  # Returns true if self is in delta range of expect
+  /*
+   * Returns true if self is close to *expect* considering a given *delta* value
+   * */
   func close_to(expect, delta) {
     (self - expect).abs() <= delta
   }
@@ -90,6 +113,14 @@ export = primitive class Numeric {
 
   func hours() {
     self * 1000 * 60 * 60
+  }
+
+  func days() {
+    self * 1000 * 60 * 60 * 24
+  }
+
+  func weeks() {
+    self * 1000 * 60 * 60 * 24 * 7
   }
 
   func to_n() {

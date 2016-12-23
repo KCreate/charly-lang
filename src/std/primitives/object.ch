@@ -7,13 +7,30 @@ const _isolate_object = __internal__method("_isolate_object")
 
 export = primitive class Object {
 
-  # Returns a reference to self
-  #
-  # If self is already a reference, this will dereference it
+  /*
+   * Returns a reference to self
+   *
+   * If self is already a reference, this will dereference it
+   * */
   func reference() {
     &self
   }
 
+  /*
+   * Returns the length of this value
+   *
+   * If self is a string, the amount of characters (not bytes) is returned
+   * If self is an array, the amount of items inside is returned
+   * If self is a numeric, itself is returned
+   * Anything else will result in 0
+   *
+   * ```
+   * "hello".length() // => 5
+   * [1, 2, 3].length() // => 3
+   * 5.length() // => 5
+   * {}.length() // => 0
+   * ```
+   * */
   func length() {
     length(self)
   }
@@ -74,43 +91,60 @@ export = primitive class Object {
     }
   }
 
+  /*
+   * Calls to_s on self and colorizes it with the given *code*
+   * This will wrap the string in bash color escape codes
+   *
+   * TODO: Find a way to generalize this?
+   * */
   func colorize(code) {
     _colorize(@to_s(), code)
   }
 
+  /*
+   * Returns the type of a variable as a string
+   *
+   * ```
+   * 5.typeof() // => "Numeric"
+   * "hello world".typeof() // => "String"
+   * {}.typeof() // => "Object"
+   * MyClass().typeof() // => "Object"
+   * ```
+   * */
   func typeof() {
     typeof(self)
   }
 
+  /*
+   * If self is an object, this returns the class it was constructed from
+   * If self wasn't created from a class (via a container literal for example), null is returned
+   * */
   func instanceof() {
     instanceof(self)
   }
 
-  # Pipes self into *other*
-  # Other has to be a function
-  func call(other) {
-    if (other.typeof() == "Function") {
-      other(self)
-    }
-  }
-
-  # Passes self to the callback
-  # Returns self
+  /*
+   * Calls the callback with self and returns self
+   *
+   * ```
+   * return 5.tap(->(value) { value + 5 }) // This will return 10
+   * ```
+   * */
   func tap(callback) {
     callback(self)
     self
   }
 
+  /*
+   * Calls each argument with self
+   * Only functions are allowed as argument types
+   * */
   func pipe() {
     const pipes = arguments
 
-    if pipes.typeof() ! "Array" {
-      raise Exception("pipe expected argument to be of type Array, got: " + pipes.typeof())
-    }
-
     pipes.each(func(pipe) {
       if pipe.typeof() ! "Function" {
-        raise Exception("pipe expected an array of Functions, got: " + pipe.typeof())
+        throw Exception("pipe expected an array of Functions, got: " + pipe.typeof())
       }
 
       pipe(self)
@@ -119,17 +153,17 @@ export = primitive class Object {
     self
   }
 
+  /*
+   * Same as pipe, but instead replaces self with the value returned by each callback
+   * This is non-mutating
+   * */
   func transform() {
     const pipes = arguments
-
-    if pipes.typeof() ! "Array" {
-      raise Exception("transform expected argument to be of type Array, got: " + pipes.typeof())
-    }
 
     let result = self
     pipes.each(func(pipe) {
       if pipe.typeof() ! "Function" {
-        raise Exception("transform expected an array of Functions, got: " + pipe.typeof())
+        throw Exception("transform expected an array of Functions, got: " + pipe.typeof())
       }
 
       result = pipe(result)
@@ -138,6 +172,9 @@ export = primitive class Object {
     result
   }
 
+  /*
+   * Returns all keys inside an object
+   * */
   static func keys(object) {
     if object.typeof() ! "Object" {
       throw Exception("Expected object, got " + object.typeof())
@@ -146,6 +183,27 @@ export = primitive class Object {
     _object_keys(object)
   }
 
+  /*
+   * Isolates this object from it's parent stack
+   * This is mostly used in combination with eval to create an interpreter session
+   * that doesn't have access to your current scope
+   *
+   * ```
+   * let value = 25
+   *
+   * let box = {
+   *   func foo() {
+   *     return value
+   *   }
+   * }
+   *
+   * print(box.foo()) // => 25
+   *
+   * box.isolate()
+   *
+   * print(box.foo()) // => RunTimeError: value doesn't exist
+   * ```
+   * */
   static func isolate(object) {
     if object.typeof() ! "Object" {
       throw Exception("Expected object, got " + object.typeof())

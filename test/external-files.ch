@@ -9,7 +9,7 @@ export = func(it) {
 
     assert(require("./external.ch").num, 50)
 
-    # Reset for further tests
+    // Reset for further tests
     external.num = 25
   })
 
@@ -20,7 +20,7 @@ export = func(it) {
     assert(require("./external.ch") == external, true)
     assert(require("./external.ch").num, 50)
 
-    # Reset for further tests
+    // Reset for further tests
     external.num = 25
   })
 

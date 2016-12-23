@@ -47,7 +47,6 @@ export = ->(it) {
       &value
     }
 
-    # get the reference
     let value = counter()
 
     &value += 10
@@ -62,7 +61,6 @@ export = ->(it) {
       &value
     }
 
-    # get the reference
     let value = counter()
 
     counter = null
@@ -124,7 +122,6 @@ export = ->(it) {
     const num = 25
     let ref = &num
 
-    # We have to catch since this should throw
     try {
       &ref = 30
     } catch(e) {

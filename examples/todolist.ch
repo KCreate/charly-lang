@@ -41,27 +41,27 @@ class TodoList {
 
 const myList = TodoList()
 
-# input loop
+// input loop
 let done = false
 let input
 while (!done) {
 
-  # Render the todolist
+  // Render the todolist
   print("Your Todos:")
   myList.todos.each(func(todo, index) {
 
-    # Get the correct icon
+    // Get the correct icon
     let icon = "✓".colorize(32)
     if (!todo.complete) {
       icon = "✗".colorize(31)
     }
 
-    # Print the todo
+    // Print the todo
     print(index.colorize(34) + ": " + icon + " " + todo.title)
   })
   print("")
 
-  # Show the menu
+  // Show the menu
   print("
 1. Add todo
 2. Toggle todo
@@ -69,7 +69,7 @@ while (!done) {
 4. Quit application
   ".trim())
 
-  # Get user input
+  // Get user input
   input = "> ".promptc().to_n()
   write("   ", "\r")
 

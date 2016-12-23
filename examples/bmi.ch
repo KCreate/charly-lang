@@ -1,4 +1,4 @@
-# Initialize some vars
+// Initialize some vars
 let weight = 0
 let height = 0
 let bmi = 0
