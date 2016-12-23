@@ -55,7 +55,7 @@ module Charly
       message = "Uncaught #{payload}"
 
       if payload.is_a?(DataType) && payload.data.contains "message"
-        message += ": #{payload.data.get("message").to_s}"
+        message += ": #{payload.data.get("message")}"
       end
 
       io << RunTimeError.new(@origin, @context, message)
@@ -981,7 +981,7 @@ module Charly
           return ({identifier, TNull.new})
         end
 
-        return ({identifier, TString.new(identifier.value[argument].to_s)})
+        return ({identifier, TString.new("#{identifier.value[argument]}")})
       when .is_a? TObject
         # Check that the first argument is a string
         unless argument.is_a? TString
@@ -1158,7 +1158,7 @@ module Charly
         # Extract the trace entries
         trace_entries = [] of BaseType
         context.trace.map { |entry|
-          trace_entries << TString.new(entry.to_s)
+          trace_entries << TString.new("#{entry}")
         }
 
         # Reset the trace position

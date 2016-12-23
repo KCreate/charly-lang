@@ -4,7 +4,7 @@ require "../**"
 module Charly::Internals
   charly_api "stdout_print", variadic: true do
     arguments.each do |arg|
-      STDOUT.puts arg.to_s
+      STDOUT.puts arg
       STDOUT.flush
     end
     return TNull.new
@@ -12,7 +12,7 @@ module Charly::Internals
 
   charly_api "stdout_write", variadic: true do
     arguments.each do |arg|
-      STDOUT.print arg.to_s
+      STDOUT.print arg
       STDOUT.flush
     end
     return TNull.new
@@ -20,7 +20,7 @@ module Charly::Internals
 
   charly_api "stderr_print", variadic: true do
     arguments.each do |arg|
-      STDERR.puts arg.to_s
+      STDERR.puts arg
       STDERR.flush
     end
     return TNull.new
@@ -28,7 +28,7 @@ module Charly::Internals
 
   charly_api "stderr_write", variadic: true do
     arguments.each do |arg|
-      STDERR.print arg.to_s
+      STDERR.print arg
       STDERR.flush
     end
     return TNull.new
@@ -37,7 +37,7 @@ module Charly::Internals
   # Reads a single char from STDIN (without the need of pressing return)
   charly_api "stdin_getc" do
     char = STDIN.raw &.read_char
-    return TString.new(char.to_s)
+    return TString.new("#{char}")
   end
 
   # Read a string (return terminated) from STDIN
@@ -55,7 +55,7 @@ module Charly::Internals
 
   # Returns the current scope rendered as a string
   charly_api "stackdump" do
-    return TString.new(scope.to_s)
+    return TString.new("#{scope}")
   end
 
   # Returns the current timestamp in miliseconds
