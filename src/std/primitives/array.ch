@@ -229,10 +229,9 @@ export = primitive class Array {
   }
 
   /*
-   * Returns the index of the first item for which the callback
-   * returned a truthy value
+   * Returns the index of the first item that is equal to *element* and has the same type
    * */
-  func index_of(element, callback) {
+  func index_of(element) {
     let index = -1
     let i = 0
 
@@ -240,7 +239,8 @@ export = primitive class Array {
     let found = false
 
     while (i < length) {
-      if (callback(self[i])) {
+      const self_val = self[i]
+      if self_val.typeof() == element.typeof() && self_val == element {
         index = i
         found = true
         i = length

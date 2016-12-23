@@ -1076,12 +1076,15 @@ module Charly
     private def visit_while_statement(node : WhileStatement, scope, context)
       scope = Scope.new(scope)
       last_result = TNull.new
+
       while Calculator.truthyness(visit_expression(node.test, scope, context))
         begin
           last_result = visit_block(node.consequent, scope, context)
         rescue e : BreakException
           break
         end
+
+        scope.clear
       end
 
       return last_result
@@ -1097,21 +1100,25 @@ module Charly
         rescue e : BreakException
           break
         end
+
+        scope.clear
       end
 
       return last_result
     end
 
-    private def visit_loop_statement(node : LoopStatement, scope, context)
-      scope = Scope.new(scope)
+    private def visit_loop_statement(node : LoopStatement, original_scope, context)
+      scope = Scope.new(original_scope)
       last_result = TNull.new
 
       loop do
-        begin last_result = visit_block(node.consequent, scope, context)
+        begin
           last_result = visit_block(node.consequent, scope, context)
         rescue e : BreakException
           break
         end
+
+        scope.clear
       end
 
       return last_result

@@ -1,4 +1,38 @@
 export = func(it) {
+  it("while statement runs in a new scope each time", func(assert) {
+    let i = 0
+    while i < 10 {
+      let num = 0 // If the same scope is reused this would crash
+      i += 1
+    }
+
+    assert(i, 10)
+  })
+
+  it("until statement runs in a new scope each time", func(assert) {
+    let i = 0
+    until i > 9 {
+      let num = 0 // If the same scope is reused this would crash
+      i += 1
+    }
+
+    assert(i, 10)
+  })
+
+  it("loop statement runs in a new scope each time", func(assert) {
+    let i = 0
+    loop {
+      if i > 9 {
+        break
+      }
+
+      let num = 0 // If the same scope is reused this would crash
+      i += 1
+    }
+
+    assert(i, 10)
+  })
+
   it("runs for the specified count", func(assert) {
     let sum = 0
     let index = 0

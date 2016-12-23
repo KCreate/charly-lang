@@ -258,6 +258,11 @@ module Charly
     end
 
     # :nodoc:
+    def clear
+      @values.clear
+    end
+
+    # :nodoc:
     def to_s(io)
       table = TerminalTable.new
       table.headings = ["CID", "Key", "Value", "Flags"]
