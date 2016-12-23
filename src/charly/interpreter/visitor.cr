@@ -769,19 +769,24 @@ module Charly
       arguments = [] of BaseType
       node.argumentlist.each_with_index do |arg, index|
         value = visit_expression(arg, scope, context)
-        arguments << value
-        function_scope.replace("$#{index}", value, Flag::INIT | Flag::IGNORE_PARENT)
-      end
 
-      # Insert the arguments
-      i = 0
-      target.argumentlist.each do |arg|
-        unless arg.is_a? IdentifierLiteral
-          raise RunTimeError.new(arg, context, "#{arg} is not an identifier. You've found a bug in the interpreter.")
+        # Retrieve the name for the argument
+        label = target.argumentlist[index]?
+
+        # Insert quick access identifier and append to argument array
+        arguments << value
+        unless function_scope.contains "$#{index}"
+          function_scope.replace("$#{index}", value, Flag::INIT | Flag::IGNORE_PARENT)
         end
 
-        function_scope.replace(arg.name, arguments[i], Flag::INIT | Flag::IGNORE_PARENT)
-        i += 1
+        case label
+        when .is_a? IdentifierLiteral
+          function_scope.replace(label.name, value, Flag::INIT | Flag::IGNORE_PARENT)
+        when .is_a? Nil
+          # Just ignore
+        else
+          raise RunTimeError.new(arg, context, "#{label} is not an identifier. You've found a bug in the interpreter.")
+        end
       end
 
       # If an identifier is given, assign it to the self keyword
@@ -795,8 +800,7 @@ module Charly
       end
 
       # Execute the functions block inside the function_scope
-      target_name = target.name
-      if target_name.size == 0
+      unless (target_name = target.name).is_a? TString
         target_name = "anonymous"
       end
 

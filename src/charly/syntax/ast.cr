@@ -55,6 +55,7 @@ module Charly::AST
     delegate "<<", to: @children
     delegate "[]", to: @children
     delegate "[]=", to: @children
+    delegate "[]?", to: @children
     delegate "each", to: @children
     delegate "each_with_index", to: @children
     delegate "size", to: @children
