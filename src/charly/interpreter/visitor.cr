@@ -841,7 +841,7 @@ module Charly
         name = method.name
         if name.is_a? String
           # Check if such a method was already registered
-          unless object_scope.contains(name, Flag::IGNORE_PARENT)
+          unless object_scope.contains(name)
             object_scope.init(name, method, true)
 
             if name == "constructor"
