@@ -3,10 +3,14 @@
 Your syntax files need to be encoded in UTF-8.
 
 ## Comments
-Comments start with the sharp `#` character. Only one-line comments are currently supported.
+Singleline comments start with `//`. Multiline comments are created via `/*` and `*/`
 
 ```javascript
-# This is a comment
+// I'm a comment
+
+/*
+  I'm a multiline comment
+*/
 ```
 
 ## Variables
@@ -17,7 +21,7 @@ Variables are defined via the `let` keyword. If you try to access a variable tha
 let myVar = 25
 let myOtherVariable = 50
 
-myVar + myOtherVariable # => 75
+myVar + myOtherVariable // => 75
 ```
 
 ## Constants
@@ -25,9 +29,9 @@ myVar + myOtherVariable # => 75
 Constants are declared the same way as variables. They can't be changed, hence the name constant. You need to initialize them in the declaration.
 
 ```javascript
-const myconst # => syntax error
+const myconst // => syntax error
 const myOtherConst = 25
-myOtherConst = 30 # => runtime exception
+myOtherConst = 30 // => runtime exception
 ```
 
 ## Literals
@@ -72,7 +76,7 @@ Numeric literals, just like any other expression in the language, can be prefixe
 Underscores can be used to make some numbers more readable:
 
 ```javascript
-1_000_000 # better than 1000000
+1_000_000 // better than 1000000
 ```
 
 Floats are created using the `.` character.
@@ -101,21 +105,21 @@ You can create it using `"` characters.
 A backslash can be used to denote various special characters inside the string:
 
 ```javascript
-"\"" # double quote
-"\\" # backslash
-"\e" # escape
-"\f" # form feed
-"\n" # newline
-"\r" # carriage return
-"\t" # tab
-"\v" # vertical tab
+"\"" // double quote
+"\\" // backslash
+"\e" // escape
+"\f" // form feed
+"\n" // newline
+"\r" // carriage return
+"\t" // tab
+"\v" // vertical tab
 ```
 
 A string can span multiple lines:
 
 ```javascript
 "hello
-      word" # same as "hello\n     world"
+      word" // same as "hello\n     world"
 ```
 
 ### Array
@@ -134,20 +138,20 @@ nums.push(0)
 nums.push(1)
 nums.push(2)
 
-nums # => [0, 1, 2]
+nums // => [0, 1, 2]
 ```
 
 You can concat two arrays together via the `+` operator:
 
 ```javascript
-[1, 2] + [3, 4] # => [1, 2, 3, 4]
+[1, 2] + [3, 4] // => [1, 2, 3, 4]
 ```
 
 You can compare two arrays using the `==` operator:
 
 ```javascript
-[1, 2, 3, 4] == [1, 2, 3, 4] # => true
-[1, 2] == [3, 4] # => false
+[1, 2, 3, 4] == [1, 2, 3, 4] // => true
+[1, 2] == [3, 4] // => false
 ```
 
 ### Objects
@@ -162,8 +166,8 @@ let Box = {
   let age = 200
 }
 
-Box.name # => "charly"
-Box.age # => 200
+Box.name // => "charly"
+Box.age // => 200
 ```
 
 This can be compared to the javascript equivalent of using `new Function()`:
@@ -185,7 +189,7 @@ let Box = {
   let name = "mybox"
 }
 
-Box["name"] # => "mybox"
+Box["name"] // => "mybox"
 ```
 
 ### Functions
@@ -213,7 +217,7 @@ func foo() {
   25
 }
 
-foo() # => 25
+foo() // => 25
 ```
 
 You can also do explicit returns
@@ -227,7 +231,7 @@ func foo() {
   return false
 }
 
-foo() # => true
+foo() // => true
 ```
 
 If you only need the function literal, you can use anonymous function literals:
@@ -238,7 +242,7 @@ func foo(callback) {
 }
 
 foo(func(arg) {
-  print(arg) # => 42
+  print(arg) // => 42
 })
 ```
 
@@ -257,15 +261,17 @@ Of course you could also pass the print method directly, this would however resu
 ```javascript
 [1, 2, 3].map(print)
 
-# 1
-# 0
-# 3
-# 2
-# 1
-# 3
-# 3
-# 2
-# 3
+/*
+  1
+  0
+  3
+  2
+  1
+  3
+  3
+  2
+  3
+*/
 ```
 
 Because `Array#map` passes the value, index and size of the array to the callback, print will write all these values to the console.
@@ -292,6 +298,12 @@ foo(func() {
 })
 ```
 
+All arguments are also inserted via a quick access identifier.
+
+```javascript
+[1, 2, 3].map(->$0 * 2) // => [2, 4, 6]
+```
+
 ### Classes
 
 Classes in Charly can inherit from multiple other classes.
@@ -315,18 +327,20 @@ class Person {
   func greet() {
     print("My name is " + @name)
     print("I am " + @age + " years old")
-    print("I am " + @height + " cm tall")
+    print("I am " + @height + " meters tall")
   }
 }
 
 let John = Person("John", 21, 1.85)
 John.greet()
 
-# Will print
-#
-# My name is John
-# I am 21 years old
-# I am 1.85 cm tall
+/*
+  Will print:
+
+  My name is John
+  I am 21 years old
+  I am 1.85 meters tall
+*/
 ```
 
 You define properties via the `property` keyword followed by an identifier.
@@ -343,7 +357,7 @@ class Box {
 }
 Box.count = 0
 
-Box.foo() # => "class method"
+Box.foo() // => "class method"
 ```
 
 To inherit from other classes, you use the `extends` keyword.
@@ -368,9 +382,9 @@ class Baz extends Foo, Bar {
 }
 
 let myBaz = Baz()
-myBaz.foo() # => "foo method"
-myBaz.bar() # => "bar method"
-myBaz.baz() # => "baz method"
+myBaz.foo() // => "foo method"
+myBaz.bar() // => "bar method"
+myBaz.baz() // => "baz method"
 ```
 
 Static properties and methods are also copied to the child classes. The values of static properties are copied by value. They are not references.
@@ -387,12 +401,12 @@ Foo.foo = "test"
 
 class Bar extends Foo {}
 
-Bar.what() # => "static what"
-Bar.foo # => "test"
+Bar.what() // => "static what"
+Bar.foo // => "test"
 
 Foo.foo = "hello world"
 
-Bar.foo # => "test"
+Bar.foo // => "test"
 ```
 
 ## self reference
@@ -411,7 +425,7 @@ let myBox = {
 }
 
 myBox.name = "box"
-myBox.foo() # => "box"
+myBox.foo() // => "box"
 ```
 
 If you directly call a method `foo()`, `self` is set to whatever it what in the context where the method is defined. Think of it like Arrow Funtions in JavaScript.
@@ -428,7 +442,7 @@ let Box = {
 }
 
 let method = Box.foo()
-method() # => "box"
+method() // => "box"
 ```
 
 ## Assignments
@@ -436,13 +450,13 @@ method() # => "box"
 Assignment is done with the `=` character.
 
 ```javascript
-# assigns to a local variable
+// assigns to a local variable
 local = 1
 
-# assigns to the current self variable
+// assigns to the current self variable
 @instance = 2
 
-# The above is simply rewritten to
+// The above is simply rewritten to
 self.instance = 2
 ```
 
@@ -461,8 +475,8 @@ func foo(arg) {
   }
 }
 
-foo(10) # => true
-foo(40) # => false
+foo(10) // => true
+foo(40) // => false
 ```
 
 ### Truthy and falsey values
@@ -552,9 +566,9 @@ func foo(a, b, c) {
   return true
 }
 
-foo(1, 2, 3) # => true
-foo(1, 2, 3, 4) # => true
-foo(1, 2) # => runtime exception
+foo(1, 2, 3) // => true
+foo(1, 2, 3, 4) // => true
+foo(1, 2) // => runtime exception
 ```
 
 ### Operators
@@ -571,17 +585,17 @@ class Vector2 {
     @y = y
   }
 
-  # Override plus operator
+  // Override plus operator
   func +(other) {
     Vector2(@x + other.x, @y + other.y)
   }
 
-  # Override minus operator
+  // Override minus operator
   func -(other) {
     Vector2(@x - other.x, @y - other.y)
   }
 
-  # Override unary minus operator
+  // Override unary minus operator
   func -@() {
     Vector2(-@x, -@y)
   }
@@ -589,9 +603,9 @@ class Vector2 {
 
 const v1 = Vector2(1, 2)
 const v2 = Vector2(3, 4)
-v1 + v2 # => Vector2(@x=4, @y=6)
-v1 - v2 # => Vector2(@x=-2, @y=-2)
--v1 # => Vector2(@x=-1, @y=-2)
+v1 + v2 // => Vector2(@x=4, @y=6)
+v1 - v2 // => Vector2(@x=-2, @y=-2)
+-v1 // => Vector2(@x=-1, @y=-2)
 ```
 
 Under the hood, the operators in the method definitions get swapped out with an identifier.
@@ -656,8 +670,8 @@ __main.ch__
 
 ```javascript
 let external = require("./external.ch")
-print(external.message) # "hello world"
-print(external.foo(1, 2)) # 3
+print(external.message) // "hello world"
+print(external.foo(1, 2)) // 3
 ```
 
 __external.ch__
@@ -683,9 +697,9 @@ let external = require("./external.ch")
 external.message = "it changed"
 
 let external_second = require("./external.ch")
-print(external_second.message) # => "it changed"
+print(external_second.message) // => "it changed"
 
-external == external_second # => true
+external == external_second // => true
 ```
 
 __external.ch__
@@ -725,9 +739,9 @@ charly input.ch hello -f tokens world 25 25 --foo -b
 ```
 
 ```javascript
-ARGV # => ["hello", "world", 25, 25, "--foo", "-b"]
-IFLAGS # => ["tokens"]
-ENV["TERM"] # => xterm-256color
+ARGV // => ["hello", "world", 25, 25, "--foo", "-b"]
+IFLAGS // => ["tokens"]
+ENV["TERM"] // => xterm-256color
 ```
 
 You can see the license and a list of contributors via the following commands
@@ -821,10 +835,12 @@ You can now indent strings via the `String#indent` method.
 ```javascript
 "hello\nworld\nwhats\nup".indent(2, "-")
 
-# --hello
-# --world
-# --whats
-# --up
+/*
+  --hello
+  --world
+  --whats
+  --up
+*/
 ```
 
 ## Unit-testing
@@ -893,27 +909,27 @@ Charly currently has bindings to STDOUT, STDERR and STDIN. Everything IO related
 
 ```javascript
 
-# Using the IO object
-io.stdout.print("hello world") # same as puts in ruby
-io.stdout.write("hello world") # same as print in ruby
+// Using the IO object
+io.stdout.print("hello world") // same as puts in ruby
+io.stdout.write("hello world") // same as print in ruby
 
 io.stderr.print("hello world")
 io.stderr.write("hello world")
 
-io.stdin.gets("> ", false) # uses the GNU ReadLine library to read a line from STDIN
-io.stdin.getc() # Read a single char from STDIN
+io.stdin.gets("> ", false) // uses the GNU ReadLine library to read a line from STDIN
+io.stdin.getc() // Read a single char from STDIN
 
-io.sleep(200) # sleep for 200 miliseconds
+io.sleep(200) // sleep for 200 miliseconds
 
-io.exit(1) # exit the program with status code 1
+io.exit(1) // exit the program with status code 1
 
-io.stackdump() # returns the current scope in a nicely formated table
+io.stackdump() // returns the current scope in a nicely formated table
 
-io.time_ms() # returns the current unix timestamp in miliseconds
+io.time_ms() // returns the current unix timestamp in miliseconds
 
-io.eval("2 + 2", self) # Execute "2 + 2", using self as the context. This call will return 4
+io.eval("2 + 2", self) // Execute "2 + 2", using self as the context. This call will return 4
 
-# The prelude contains direct bindings for the following methods:
+// The prelude contains direct bindings for the following methods:
 print()
 write()
 gets()
@@ -952,7 +968,7 @@ end
 ```javascript
 const mymethod = __internal__method("mymethod")
 
-print(mymethod("Hello World")) # => You said: Hello World
+print(mymethod("Hello World")) // => You said: Hello World
 ```
 
 5. Finished!
