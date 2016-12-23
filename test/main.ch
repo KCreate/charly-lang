@@ -11,7 +11,6 @@ io.exit(UnitTest("Charly").begin(func(describe) {
   describe("Classes",                             require("./classes.ch"))
   describe("Objects",                             require("./objects.ch"))
   describe("Loops",                               require("./loops.ch"))
-  describe("Misc. standard library functions",    require("./misc-std.ch"))
   describe("CLI",                                 require("./cli.ch"))
   describe("Math",                                require("./math.ch"))
   describe("try & catch",                         require("./exceptions.ch"))
