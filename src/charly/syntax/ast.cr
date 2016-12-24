@@ -77,6 +77,8 @@ module Charly::AST
           elsif line.size > 0
             io << line.indent(1, "┃ ")
           end
+
+          io << "\n"
         end
       end
     end
