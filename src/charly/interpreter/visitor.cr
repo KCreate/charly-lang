@@ -12,7 +12,7 @@ module Charly
   alias Scope = Container(BaseType)
 
   # Single trace entry for callstacks
-  private class Trace
+  class Trace
     property name : String
     property node : ASTNode
 
@@ -28,7 +28,7 @@ module Charly
   end
 
   # Exception used to return prematurely from functions
-  private class ReturnException < Exception
+  class ReturnException < Exception
     property payload : BaseType
 
     def initialize(@payload)
@@ -36,11 +36,11 @@ module Charly
   end
 
   # Exception used to return prematurely from while loops
-  private class BreakException < Exception
+  class BreakException < Exception
   end
 
   # An exception as thrown by the user
-  private class UserException < Exception
+  class UserException < Exception
     property payload : BaseType
     property trace : Array(Trace)
     property origin : ASTNode
@@ -104,7 +104,7 @@ module Charly
     end
 
     #  :nodoc:
-    private def render_trace(io)
+    def render_trace(io)
       @trace.reverse.each do |entry|
         io << entry
         io << '\n'
@@ -128,7 +128,7 @@ module Charly
       visit_block(program.tree, scope, context)
     end
 
-    private def visit_block(block : Block, scope, context)
+    def visit_block(block : Block, scope, context)
       last_result = TNull.new
       block.each do |statement|
         last_result = visit_expression(statement, scope, context)
@@ -136,7 +136,7 @@ module Charly
       last_result
     end
 
-    private def visit_expression(node : ASTNode | BaseType, scope, context)
+    def visit_expression(node : ASTNode | BaseType, scope, context)
       case node
       when .is_a? BaseType
         return node
@@ -246,7 +246,7 @@ module Charly
       raise RunTimeError.new(node, context, "Unexpected node #{node.class.name.split("::").last}")
     end
 
-    private def visit_initialisation(node : ASTNode, scope, context)
+    def visit_initialisation(node : ASTNode, scope, context)
       # Check if this is a disallowed variable name
       if DISALLOWED_VARS.includes? node.identifier.name
         raise RunTimeError.new(node.identifier, context, "Can't use #{node.identifier.name} as an identifier. It's a reserved keyword")
@@ -277,7 +277,7 @@ module Charly
       return expression
     end
 
-    private def visit_assignment(node : VariableAssignment, scope, context)
+    def visit_assignment(node : VariableAssignment, scope, context)
       # Resolve the expression
       expression = visit_expression(node.expression, scope, context)
 
@@ -391,7 +391,7 @@ module Charly
       end
     end
 
-    private def visit_unary_expression(node : UnaryExpression, scope, context)
+    def visit_unary_expression(node : UnaryExpression, scope, context)
       # Resolve the right side
       operator = node.operator
       right = visit_expression(node.right, scope, context)
@@ -425,7 +425,7 @@ module Charly
       return Calculator.visit_unary node.operator, right
     end
 
-    private def visit_binary_expression(node : BinaryExpression, scope, context)
+    def visit_binary_expression(node : BinaryExpression, scope, context)
       # Resolve the left side
       operator = node.operator
       left = visit_expression(node.left, scope, context)
@@ -461,7 +461,7 @@ module Charly
       return Calculator.visit operator, left, right
     end
 
-    private def visit_comparison_expression(node : ComparisonExpression, scope, context)
+    def visit_comparison_expression(node : ComparisonExpression, scope, context)
       # Resolve the left side
       operator = node.operator
       left = visit_expression(node.left, scope, context)
@@ -498,7 +498,7 @@ module Charly
       return Calculator.visit operator, left, right
     end
 
-    private def visit_array_literal(node : ArrayLiteral, scope, context)
+    def visit_array_literal(node : ArrayLiteral, scope, context)
       content = [] of BaseType
 
       node.each do |item|
@@ -508,7 +508,7 @@ module Charly
       return TArray.new(content)
     end
 
-    private def visit_function_literal(node : FunctionLiteral, scope, context)
+    def visit_function_literal(node : FunctionLiteral, scope, context)
       TFunc.new(
         node.name,
         node.argumentlist,
@@ -519,7 +519,7 @@ module Charly
       end
     end
 
-    private def visit_class_literal(node : ClassLiteral, scope, context)
+    def visit_class_literal(node : ClassLiteral, scope, context)
       # Check if parent classes exist
       parents = [] of TClass
       node.parents.each do |parent|
@@ -611,7 +611,7 @@ module Charly
       }
     end
 
-    private def visit_primitive_class_literal(node : PrimitiveClassLiteral, scope, context)
+    def visit_primitive_class_literal(node : PrimitiveClassLiteral, scope, context)
       # The scope in which we run
       scope = Scope.new(scope)
 
@@ -674,7 +674,7 @@ module Charly
       return primclass
     end
 
-    private def visit_call_expression(node : CallExpression, scope, context)
+    def visit_call_expression(node : CallExpression, scope, context)
       # If the identifier is a IdentifierLiteral we check if it is "__internal__method"
       # Similarly if the identifier is a member expression, we need that to resolve that seperately too
       identifier = node.identifier
@@ -746,7 +746,7 @@ module Charly
       end
     end
 
-    private def visit_function_call(target : TFunc, node : CallExpression, identifier : BaseType?, scope, context)
+    def visit_function_call(target : TFunc, node : CallExpression, identifier : BaseType?, scope, context)
       # The scope in which the function will run
       function_scope = Scope.new(target.parent_scope)
 
@@ -815,7 +815,7 @@ module Charly
       return result
     end
 
-    private def visit_class_call(target : TClass, node : CallExpression, scope, context)
+    def visit_class_call(target : TClass, node : CallExpression, scope, context)
       # Initialize an empty object
       object = TObject.new(target)
       object_scope = Scope.new(target.parent_scope)
@@ -873,7 +873,7 @@ module Charly
       return object
     end
 
-    private def get_class_props(target : TClass)
+    def get_class_props(target : TClass)
       properties = [] of String
       if target.parents.size > 0
         target.parents.each do |parent|
@@ -890,7 +890,7 @@ module Charly
       properties
     end
 
-    private def get_class_methods(target : TClass, context)
+    def get_class_methods(target : TClass, context)
       methods = [] of TFunc
       if target.parents.size > 0
         target.parents.each do |parent|
@@ -907,11 +907,11 @@ module Charly
       methods
     end
 
-    private def visit_member_expression(node : MemberExpression, scope, context)
+    def visit_member_expression(node : MemberExpression, scope, context)
       return visit_get_member_expression_pairs(node, scope, context)[1]
     end
 
-    private def visit_get_member_expression_pairs(node : MemberExpression, scope, context)
+    def visit_get_member_expression_pairs(node : MemberExpression, scope, context)
       # Resolve the left side
       identifier = visit_expression(node.identifier, scope, context)
 
@@ -923,7 +923,7 @@ module Charly
       return visit_get_member_expression_pairs_via_name(identifier, node.member.name, scope, context)
     end
 
-    private def visit_get_member_expression_pairs_via_name(identifier : BaseType, member : String, scope, context)
+    def visit_get_member_expression_pairs_via_name(identifier : BaseType, member : String, scope, context)
       # Check if the member name is allowed
       if DISALLOWED_VARS.includes? member
         raise Exception.new("#{member} is not allowed as a member name. This error message doesn't have a location associated with it because of the way it is imlpemented internally")
@@ -943,11 +943,11 @@ module Charly
       return ({identifier, TNull.new})
     end
 
-    private def visit_index_expression(node : IndexExpression, scope, context)
+    def visit_index_expression(node : IndexExpression, scope, context)
       return visit_get_index_expression_pairs(node, scope, context)[1]
     end
 
-    private def visit_get_index_expression_pairs(node : IndexExpression, scope, context)
+    def visit_get_index_expression_pairs(node : IndexExpression, scope, context)
       # Resolve the left side
       identifier = visit_expression(node.identifier, scope, context)
 
@@ -994,11 +994,11 @@ module Charly
       end
     end
 
-    private def get_primitive_method(type : BaseType, methodname : String, scope, context)
+    def get_primitive_method(type : BaseType, methodname : String, scope, context)
       get_primitive_method(type.class, methodname, scope, context)
     end
 
-    private def get_primitive_method(type, methodname, scope, context)
+    def get_primitive_method(type, methodname, scope, context)
       # This is defined in CLASS_MAPPING
       classname = CLASS_MAPPING[type]
       entry = scope.get(classname)
@@ -1024,7 +1024,7 @@ module Charly
       return TNull.new
     end
 
-    private def visit_if_statement(node : IfStatement, scope, context)
+    def visit_if_statement(node : IfStatement, scope, context)
       scope = Scope.new(scope)
 
       # Resolve the expression first
@@ -1045,7 +1045,7 @@ module Charly
       end
     end
 
-    private def visit_unless_statement(node : UnlessStatement, scope, context)
+    def visit_unless_statement(node : UnlessStatement, scope, context)
       scope = Scope.new(scope)
 
       # Resolve the expression first
@@ -1063,7 +1063,7 @@ module Charly
       end
     end
 
-    private def visit_guard_statement(node : GuardStatement, scope, context)
+    def visit_guard_statement(node : GuardStatement, scope, context)
       scope = Scope.new(scope)
 
       # Resolve the expression first
@@ -1077,7 +1077,7 @@ module Charly
       end
     end
 
-    private def visit_while_statement(node : WhileStatement, scope, context)
+    def visit_while_statement(node : WhileStatement, scope, context)
       scope = Scope.new(scope)
       last_result = TNull.new
 
@@ -1094,7 +1094,7 @@ module Charly
       return last_result
     end
 
-    private def visit_until_statement(node : UntilStatement, scope, context)
+    def visit_until_statement(node : UntilStatement, scope, context)
       scope = Scope.new(scope)
       last_result = TNull.new
 
@@ -1111,7 +1111,7 @@ module Charly
       return last_result
     end
 
-    private def visit_loop_statement(node : LoopStatement, original_scope, context)
+    def visit_loop_statement(node : LoopStatement, original_scope, context)
       scope = Scope.new(original_scope)
       last_result = TNull.new
 
@@ -1128,7 +1128,7 @@ module Charly
       return last_result
     end
 
-    private def visit_container_literal(node : ContainerLiteral, scope, context)
+    def visit_container_literal(node : ContainerLiteral, scope, context)
       # Create the object
       object = TObject.new
       object_data = Scope.new(scope)
@@ -1142,7 +1142,7 @@ module Charly
       return object
     end
 
-    private def visit_try_catch_statement(node : TryCatchStatement, scope, context)
+    def visit_try_catch_statement(node : TryCatchStatement, scope, context)
       scope = Scope.new(scope)
       trace_position = context.trace.size
 
@@ -1176,7 +1176,7 @@ module Charly
       end
     end
 
-    private def visit_throw_statement(node : ThrowStatement, scope, context)
+    def visit_throw_statement(node : ThrowStatement, scope, context)
       expression = visit_expression(node.expression, scope, context)
       raise UserException.new(expression, @trace.dup, node, context)
     end
