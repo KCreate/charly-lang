@@ -228,14 +228,10 @@ export = func(it) {
 
   it("tap method", ->(assert) {
     let a = 25
-
-    let check = [false, false, false]
-
-    let c1 = ->check[0] = $0
-    let c2 = ->check[1] = $0
-    let c3 = ->check[2] = $0
-
-    a.tap(c1, c2, c3)
+    let check
+    let c1 = ->check = $0
+    a.tap(c1)
+    assert(check, 25)
   })
 
   it("returns the type() of a variable", func(assert) {
