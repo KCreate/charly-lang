@@ -62,7 +62,6 @@ module Charly
       io << "\n"
 
       # Print the source highlight
-      loc_start, loc_end = nil, nil
       if (source = @source).is_a? String
         # They both might be set to null, so check first
         loc_start, loc_end = @location_start, @location_end
@@ -76,7 +75,6 @@ module Charly
       @trace.each do |entry|
         io << "#{entry.colorize(:green)}\n"
       end
-      io << "at #{loc_start}\n".colorize(:green)
     end
   end
 
