@@ -34,15 +34,6 @@ describe Container do
     end
   end
 
-  it "Overwrites constants" do
-    c = Container(Int32).new
-
-    c.init("a", 25, true)
-    c["a", Flag::OVERWRITE_CONSTANT] = 50
-
-    c["a"].should eq 50
-  end
-
   it "Stores multiple data types" do
     c = Container(Int32 | String | Bool).new
 

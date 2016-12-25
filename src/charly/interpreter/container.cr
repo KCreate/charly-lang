@@ -12,10 +12,7 @@ module Charly
   enum Flag
     INIT
     CONSTANT
-    OVERWRITE_CONSTANT
     IGNORE_PARENT
-    NONREADABLE
-    FORCEREAD
   end
 
   # :nodoc:
@@ -28,10 +25,6 @@ module Charly
 
     def is_constant
       @flags.includes? Flag::CONSTANT
-    end
-
-    def ===(other : V)
-      @value == other
     end
 
     def to_s(io)
@@ -109,7 +102,7 @@ module Charly
       if contains key
         # Check if the value is a constant
         entry = @values[key]
-        if !flags.includes?(Flag::OVERWRITE_CONSTANT) && entry.is_constant
+        if entry.is_constant
           raise ContainerReferenceError.new("#{key} is a constant")
         end
 
@@ -157,12 +150,6 @@ module Charly
     def get_reference(key : String, flags : Flag = Flag::None) : Entry(V)
       if contains key
         entry = @values[key]
-
-        # Check if the value is readable
-        if entry.flags.includes?(Flag::NONREADABLE) && !flags.includes?(Flag::FORCEREAD)
-          raise ContainerReferenceError.new("#{key} is not defined")
-        end
-
         return entry
       elsif !flags.includes?(Flag::IGNORE_PARENT) && (parent = @parent).is_a? Container(V)
         return parent.get_reference(key, flags)
@@ -225,19 +212,7 @@ module Charly
 
     # Checks if the current container contains *key*
     def contains(key : String, flags : Flag = Flag::None) : Bool
-      @values.has_key? key
-
-      if @values.has_key? key
-        entry = @values[key]
-
-        if entry.flags.includes?(Flag::NONREADABLE) && !flags.includes?(Flag::FORCEREAD)
-          return false
-        end
-
-        return true
-      end
-
-      return false
+      return @values.has_key? key
     end
 
     # Checks if the current container _or_ any of the parent containers
