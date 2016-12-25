@@ -2,10 +2,8 @@ require "./types.cr"
 
 module Charly
   class Calculator
-
     # Visit a regular operation
     def self.visit(operator : TokenType, left : BaseType, right : BaseType)
-
       case operator
 
       # Arithmetic operators
@@ -40,7 +38,7 @@ module Charly
       return TNumeric.new(Float64::NAN)
     end
 
-    # Visit a unary operation
+    # Unary Operations
     def self.visit_unary(operator : TokenType, right : BaseType)
       case operator
       when TokenType::Plus
@@ -54,7 +52,7 @@ module Charly
       return TNumeric.new(Float64::NAN)
     end
 
-    # Add two values
+    # Addition
     private def self.add(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TNumeric.new(left.value + right.value)
@@ -67,7 +65,7 @@ module Charly
       return TNumeric.new(Float64::NAN)
     end
 
-    # Subtract two values
+    # Subtraction
     private def self.sub(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TNumeric.new(left.value - right.value)
@@ -76,7 +74,7 @@ module Charly
       return TNumeric.new(Float64::NAN)
     end
 
-    # Multiply two values
+    # Multiplication
     private def self.mul(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         if left.value == 0 || right.value == 0
@@ -96,7 +94,7 @@ module Charly
       return TNumeric.new(Float64::NAN)
     end
 
-    # Divide two values
+    # Division
     private def self.div(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         if left.value != 0 && right.value != 0
@@ -107,7 +105,7 @@ module Charly
       return TNumeric.new(Float64::NAN)
     end
 
-    # Perform modulus on two values
+    # Modulus
     private def self.mod(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         if right.value == 0
@@ -119,7 +117,7 @@ module Charly
       return TNumeric.new(Float64::NAN)
     end
 
-    # Perform exponentation on two values
+    # Exponentation
     private def self.pow(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TNumeric.new(left.value ** right.value)
@@ -128,7 +126,7 @@ module Charly
       return TNumeric.new(Float64::NAN)
     end
 
-    # Less than
+    # Less than
     private def self.lt(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TBoolean.new(left.value < right.value)
@@ -183,7 +181,6 @@ module Charly
     # Equal
     private def self.eq(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
-
         if left.value.nan? && right.value.nan?
           return TBoolean.new true
         end
@@ -312,7 +309,7 @@ module Charly
       TBoolean.new !truthyness right
     end
 
-    # Unary sub
+    # Unary subtraction
     private def self.usub(right : BaseType)
       if right.is_a? TNumeric
         return TNumeric.new(-right.value)
@@ -321,7 +318,7 @@ module Charly
       return TNumeric.new(Float64::NAN)
     end
 
-    # Unary add
+    # Unary addition
     private def self.uadd(right : BaseType)
       right
     end

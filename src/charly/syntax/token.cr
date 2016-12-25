@@ -1,7 +1,6 @@
 require "./location.cr"
 
 module Charly
-
   # Mapping between operators and function names you use to override them
   OPERATOR_MAPPING = {
 
@@ -38,7 +37,6 @@ module Charly
     TokenType::ModAssignment   => TokenType::Mod,
     TokenType::PowAssignment   => TokenType::Pow,
   }
-
 
   enum TokenType
     # Literals

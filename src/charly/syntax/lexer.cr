@@ -3,7 +3,6 @@ require "./reader.cr"
 require "../exception.cr"
 
 module Charly
-
   # The `Lexer` turns a sequence of chars into a list of tokens
   class Lexer
     property reader : FramedReader

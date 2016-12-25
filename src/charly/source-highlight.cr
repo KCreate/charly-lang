@@ -4,12 +4,12 @@ require "./syntax/location.cr"
 module Charly
   # Highlight a part of a file
   class SourceHighlight
-    LOOKBACK_ROW            = 5
-    LOOKFORWARD_ROW         = 2
-    COLOR_HIGHLIGHT         = :white
-    COLOR_HIGHLIGHT_BACK    = :red
-    COLOR_LINENR            = :white
-    ERROR_POINTER           = "-> "
+    LOOKBACK_ROW         = 5
+    LOOKFORWARD_ROW      = 2
+    COLOR_HIGHLIGHT      = :white
+    COLOR_HIGHLIGHT_BACK = :red
+    COLOR_LINENR         = :white
+    ERROR_POINTER        = "-> "
 
     property location_start : Location
     property location_end : Location

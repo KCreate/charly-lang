@@ -5,7 +5,6 @@ module Charly
   class ConstantFoldingTransformation < Transformation
     def visit_post_order(node : ASTNode)
       if node.is_a? BinaryExpression
-
         operator = node.operator
         left = node.children[0]
         right = node.children[1]

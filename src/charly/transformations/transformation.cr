@@ -45,4 +45,3 @@ module Charly
     end
   end
 end
-

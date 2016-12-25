@@ -4,20 +4,19 @@ require "./location.cr"
 require "../interpreter/types.cr"
 
 module Charly::AST
-
   # Returns true if a given node represents a primitive value
   #
   # ```
-  # AST.is_primitive(IfStatement.new) # => false
+  # AST.is_primitive(IfStatement.new)    # => false
   # AST.is_primitive(NumericLiteral.new) # => true
   # ```
   def self.is_primitive(node : ASTNode)
     node.is_a?(NumericLiteral) ||
-    node.is_a?(StringLiteral) ||
-    node.is_a?(BooleanLiteral) ||
-    node.is_a?(NullLiteral) ||
-    node.is_a?(NANLiteral) ||
-    node.is_a?(PrecalculatedValue)
+      node.is_a?(StringLiteral) ||
+      node.is_a?(BooleanLiteral) ||
+      node.is_a?(NullLiteral) ||
+      node.is_a?(NANLiteral) ||
+      node.is_a?(PrecalculatedValue)
   end
 
   # The `AST` is the result of the parsing step, holding all variable names

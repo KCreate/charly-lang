@@ -248,5 +248,4 @@ module Charly
       io << "Reference"
     end
   end
-
 end

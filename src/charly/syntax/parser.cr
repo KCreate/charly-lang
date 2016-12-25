@@ -666,7 +666,6 @@ module Charly
         expect TokenType::Colon
         right = parse_ternary_if
 
-
         # Wrap the elements in blocks as required by the IfStatement
         left_block = Block.new([] of ASTNode).at(left)
         left_block << left

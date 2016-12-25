@@ -84,7 +84,7 @@ module Charly
       TFunc           => "Function",
       TInternalFunc   => "Function",
       TNull           => "Null",
-      TReference      => "Reference"
+      TReference      => "Reference",
     }
 
     # Creates a new Interpreter inside *top*
@@ -156,7 +156,6 @@ module Charly
 
         return scope.get(node.name)
       when .is_a? ReferenceIdentifier
-
         # Check if the identifier exists
         unless scope.defined node.identifier.name
           raise RunTimeError.new(node, context, "#{node.identifier.name} is not defined")
@@ -361,7 +360,6 @@ module Charly
           raise RunTimeError.new(identifier, context, "Expected array or object, got #{target.class}")
         end
       when ReferenceIdentifier
-
         # Check that the variable exists
         unless scope.defined identifier.identifier.name
           raise RunTimeError.new(identifier, context, "#{identifier.identifier.name} is not defined")
@@ -406,7 +404,6 @@ module Charly
         end
 
         if method.is_a? TFunc
-
           # Create a fake call expression
           callex = CallExpression.new(
             MemberExpression.new(

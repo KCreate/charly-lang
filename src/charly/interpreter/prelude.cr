@@ -1,5 +1,4 @@
 module Charly
-
   # The path at which the prelude is located
   PRELUDE_PATH = File.real_path(ENV["CHARLYDIR"] + "/src/std/prelude.ch")
 
