@@ -211,11 +211,11 @@ module Charly
     end
 
     # Checks if the current container contains *key*
-    def contains(key : String, flags : Flag = Flag::None) : Bool
+    def contains(key : String) : Bool
       return @values.has_key? key
     end
 
-    # Checks if the current container _or_ any of the parent containers
+    # Checks if the current container or any of the parent containers
     # contain *key*
     def defined(key : String) : Bool
       if contains key
@@ -224,6 +224,16 @@ module Charly
         parent.defined key
       else
         false
+      end
+    end
+
+    # Checks if a given key is a constant
+    # Returns true or false
+    def key_is_constant(key : String, flags : Flag = Flag::None) : Bool
+      begin
+        return get_reference(key, flags).is_constant
+      rescue e : ContainerReferenceError
+        return false
       end
     end
 
