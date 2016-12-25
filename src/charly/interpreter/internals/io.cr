@@ -78,7 +78,12 @@ module Charly::Internals
 
     prelude = visitor.prelude
     visitor = Visitor.new context.data, prelude
-    return visitor.visit_program(program, context.data)
+
+    backup_parent = context.data.parent
+    context.data.parent = prelude
+    result = visitor.visit_program(program, context.data)
+    context.data.parent = backup_parent
+    return result
   end
 
   charly_api "file_get_contents", path : TString do
