@@ -226,25 +226,6 @@ export = func(it) {
     assert(keys, ["name", "data"])
   })
 
-  it("isolates objects", func(assert) {
-    let object = {}
-    let a = 2
-
-    let result1 = io.eval("a", object)
-    assert(result1, 2)
-
-    Object.isolate(object)
-
-    try {
-      io.eval("a", object)
-    } catch(e) {
-      assert(true, true)
-      return
-    }
-
-    assert(false, true)
-  })
-
   it("tap method", ->(assert) {
     let a = 25
 
