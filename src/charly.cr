@@ -10,6 +10,14 @@ def missing_file(filename)
   exit 1
 end
 
+def print_license
+  if File.exists?(ENV["CHARLYDIR"] + "/LICENSE") && File.readable?(ENV["CHARLYDIR"] + "/LICENSE")
+    puts File.read(ENV["CHARLYDIR"] + "/LICENSE")
+  else
+    puts "Couldn't find local license file. See the license at: https://github.com/KCreate/charly-lang/blob/master/LICENSE"
+  end
+end
+
 module Charly
   arguments = [] of String
   flags = [] of String
@@ -53,16 +61,7 @@ module Charly
     }
 
     opts.on("--license", "Prints the license") {
-      if File.exists?(ENV["CHARLYDIR"] + "/LICENSE") && File.readable?(ENV["CHARLYDIR"] + "/LICENSE")
-        puts File.read(ENV["CHARLYDIR"] + "/LICENSE")
-      end
-      exit
-    }
-
-    opts.on("--contributors", "Prints the contributors") {
-      if File.exists?(ENV["CHARLYDIR"] + "/CONTRIBUTORS.md") && File.readable?(ENV["CHARLYDIR"] + "/CONTRIBUTORS.md")
-        puts File.read(ENV["CHARLYDIR"] + "/CONTRIBUTORS.md")
-      end
+      print_license
       exit
     }
 
@@ -79,6 +78,7 @@ module Charly
       # If the filename is repl, expand the path to the repl.ch file
       if filename == "repl"
         filename = ENV["CHARLYDIR"] + "/src/std/repl.ch"
+        print_license
       end
     end
   end
