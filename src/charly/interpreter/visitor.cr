@@ -127,9 +127,22 @@ module Charly
     end
 
     def visit_block(block : Block, scope, context)
+      i = 0
+      children = block.children
+      size = children.size
+      last_index = size - 1
       last_result = TNull.new
-      block.each do |statement|
-        last_result = visit_expression(statement, scope, context)
+      while i < size
+
+        statement = children.unsafe_at(i)
+
+        if i == last_index
+          last_result = visit_expression(statement, scope, context)
+        else
+          visit_expression(statement, scope, context)
+        end
+
+        i += 1
       end
       last_result
     end
@@ -138,8 +151,10 @@ module Charly
       case node
       when .is_a? BaseType
         return node
-      when .is_a?(VariableInitialisation), .is_a?(ConstantInitialisation)
-        return visit_initialisation(node, scope, context)
+      when .is_a? VariableInitialisation
+        return visit_initialisation(node, scope, context, false)
+      when .is_a? ConstantInitialisation
+        return visit_initialisation(node, scope, context, true)
       when .is_a? VariableAssignment
         return visit_assignment(node, scope, context)
       when .is_a? UnaryExpression
@@ -243,7 +258,7 @@ module Charly
       raise RunTimeError.new(node, context, "Unexpected node #{node.class.name.split("::").last}")
     end
 
-    def visit_initialisation(node : ASTNode, scope, context)
+    def visit_initialisation(node : ASTNode, scope, context, constant : Bool)
       # Check if this is a disallowed variable name
       if DISALLOWED_VARS.includes? node.identifier.name
         raise RunTimeError.new(node.identifier, context, "Can't use #{node.identifier.name} as an identifier. It's a reserved keyword")
@@ -265,7 +280,7 @@ module Charly
       end
 
       # Check if we have to assign a constant or not
-      if node.is_a? VariableInitialisation
+      unless constant
         scope.init(node.identifier.name, expression)
       else
         scope.init(node.identifier.name, expression, true)
@@ -292,7 +307,7 @@ module Charly
         end
 
         # Check if the identifier is a constant
-        if scope.get_reference(identifier.name).is_constant
+        if scope.key_is_constant(identifier.name)
           raise RunTimeError.new(identifier, context, "Can't assign to #{identifier.name}, it's a constant")
         end
 
@@ -302,30 +317,33 @@ module Charly
       when MemberExpression
         # Manually resolve the member expression
         member = identifier.member
-        identifier = identifier.identifier
+        left_side = identifier.identifier
 
         # Resolve the identifier
-        _identifier = visit_expression(identifier, scope, context)
+        _identifier = visit_expression(left_side, scope, context)
 
         # Write to the data field of the value
         if _identifier.is_a?(DataType)
           if _identifier.data.contains(member.name)
+            if _identifier.data.key_is_constant(member.name)
+              raise RunTimeError.new(identifier, context, "Can't assign to #{member.name}, it's a constant")
+            end
             _identifier.data.write(member.name, expression, Flag::None)
           else
             _identifier.data.init(member.name, expression)
           end
         else
-          raise RunTimeError.new(identifier, context, "Can't write to non-object")
+          raise RunTimeError.new(left_side, context, "Can't write to non-object")
         end
 
         return expression
       when IndexExpression
         # Manually resolve the index expression
         argument = identifier.argument
-        identifier = identifier.identifier
+        left_side = identifier.identifier
 
         # Resolve the identifier
-        target = visit_expression(identifier, scope, context)
+        target = visit_expression(left_side, scope, context)
 
         # Resolve the argument
         argument = visit_expression(argument, scope, context)
@@ -334,12 +352,12 @@ module Charly
         when .is_a? TArray
           # Typecheck the argument
           unless argument.is_a? TNumeric
-            raise RunTimeError.new(identifier, context, "Expected number, got #{target.class}")
+            raise RunTimeError.new(identifier.argument, context, "Expected number, got #{target.class}")
           end
 
           # Out of bounds check
           if argument.value < 0 || argument.value > target.value.size - 1
-            raise RunTimeError.new(identifier, context, "Index out of bounds. Size is #{target.value.size}, index is #{argument.value}")
+            raise RunTimeError.new(identifier.argument, context, "Index out of bounds. Size is #{target.value.size}, index is #{argument.value}")
           end
 
           # Write to the index
@@ -348,16 +366,19 @@ module Charly
         when .is_a? TObject
           # Typecheck the argument
           unless argument.is_a? TString
-            raise RunTimeError.new(identifier, context, "Expected string, got #{target.class}")
+            raise RunTimeError.new(identifier.argument, context, "Expected string, got #{target.class}")
           end
 
           if target.data.contains(argument.value)
+            if target.data.key_is_constant(argument.value)
+              raise RunTimeError.new(identifier.argument, context, "Can't assign to #{argument.value}, it's a constant")
+            end
             target.data.write(argument.value, expression, Flag::None)
           else
             target.data.init(argument.value, expression)
           end
         else
-          raise RunTimeError.new(identifier, context, "Expected array or object, got #{target.class}")
+          raise RunTimeError.new(left_side, context, "Expected array or object, got #{target.class}")
         end
       when ReferenceIdentifier
         # Check that the variable exists
