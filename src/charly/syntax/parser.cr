@@ -55,14 +55,12 @@ module Charly
     end
 
     # Advance to the next token, skipping any tokens we don't care about
-    @[AlwaysInline]
     private def advance
       while SKIP_TOKENS.includes? read_token.type
       end
       @token
     end
 
-    @[AlwaysInline]
     private def advance_to_token(type : TokenType)
       token_char = [] of TokenType
       until @token.type == type && token_char.size == 0
@@ -98,7 +96,6 @@ module Charly
     end
 
     # :nodoc:
-    @[AlwaysInline]
     private def unexpected_token(expected : TokenType? = nil, value : String? = nil)
       unless @token.type == TokenType::EOF
         if expected && value
@@ -122,7 +119,6 @@ module Charly
     end
 
     # :nodoc:
-    @[AlwaysInline]
     private def unallowed_token
       error_message = "You are not allowed to use #{@token.value} at this location"
 
@@ -130,7 +126,6 @@ module Charly
     end
 
     # :nodoc:
-    @[AlwaysInline]
     private def assert_token(type : TokenType)
       unless @token.type == type
         unexpected_token type
@@ -140,7 +135,6 @@ module Charly
     end
 
     # :nodoc:
-    @[AlwaysInline]
     private def assert_token(type : TokenType, value : String)
       unless @token.type == type && @token.value == value
         unexpected_token type, value
@@ -150,7 +144,6 @@ module Charly
     end
 
     # :nodoc:
-    @[AlwaysInline]
     private def expect(type : TokenType)
       unless @token.type == type
         unexpected_token type
@@ -160,7 +153,6 @@ module Charly
     end
 
     # :nodoc:
-    @[AlwaysInline]
     private def expect(type : TokenType, value : String)
       unless @token.type == type && @token.value == value
         unexpected_token type, value
@@ -170,25 +162,21 @@ module Charly
     end
 
     # :nodoc:
-    @[AlwaysInline]
     private def skip(type : TokenType)
       advance if @token.type == type
     end
 
     # :nodoc:
-    @[AlwaysInline]
     private def skip(type : TokenType, value : String)
       advance if @token.type == type && @token.value == value
     end
 
     # :nodoc:
-    @[AlwaysInline]
     private def if_token(type : TokenType)
       yield if @token.type == type
     end
 
     # :nodoc:
-    @[AlwaysInline]
     private def if_token(type : TokenType, value : String)
       yield if @token.type == type && @token.value == value
     end
