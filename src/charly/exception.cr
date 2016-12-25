@@ -85,4 +85,19 @@ module Charly
   # A `InvalidNode` describes unexpected nodes in a parse tree
   class RunTimeError < LocalException
   end
+
+  # A `UnlocatedRunTimeError` happens on a RunTimeError when there is no
+  #  location information to associate with it
+  class UnlocatedRunTimeError < BaseException
+    property trace : Array(Trace)
+
+    def initialize(@message : String, @trace)
+    end
+
+    private def meta(io)
+      @trace.each do |entry|
+        io << "#{entry.colorize(:green)}\n"
+      end
+    end
+  end
 end

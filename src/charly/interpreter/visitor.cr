@@ -742,66 +742,87 @@ module Charly
     end
 
     def visit_function_call(target : TFunc, node : CallExpression, identifier : BaseType?, scope, context)
-      # The scope in which the function will run
-      function_scope = Scope.new(target.parent_scope)
+      # Resolve the arguments
+      arguments = [] of BaseType
+      node.argumentlist.each_with_index do |arg, index|
+        value = visit_expression(arg, scope, context)
+        arguments << value
 
-      # Check if enough arguments were supplied
-      if node.argumentlist.size < target.argumentlist.size
+        label = target.argumentlist[index]?
+        if label && !label.is_a? IdentifierLiteral
+          raise RunTimeError.new(arg, context, "#{label} is not an identifier. You've found a bug in the interpreter.")
+        end
+      end
+
+      # Check if there are enough arguments
+      unless target.argumentlist.size <= arguments.size
         if target.argumentlist.size == 1
-          error_message = "Method expected 1 argument, got #{node.argumentlist.size}"
+          error_message = "Method expected 1 argument, got #{arguments.size}"
         else
-          error_message = "Method expected #{target.argumentlist.size} arguments, got #{node.argumentlist.size}"
+          error_message = "Method expected #{target.argumentlist.size} arguments, got #{arguments.size}"
         end
 
         raise RunTimeError.new(
-          node.identifier,
+          node,
           context,
           error_message
         )
       end
 
-      # Resolve the arguments
-      arguments = [] of BaseType
-      node.argumentlist.each_with_index do |arg, index|
-        value = visit_expression(arg, scope, context)
+      return run_function_call(target, arguments, identifier, scope, context)
+    end
 
-        # Retrieve the name for the argument
-        label = target.argumentlist[index]?
+    def run_function_call(target : TFunc, arguments : Array(BaseType), identifier : BaseType?, scope, context)
+      # The scope in which the function will run in
+      function_scope = Scope.new(target.parent_scope)
 
-        # Insert quick access identifier and append to argument array
-        arguments << value
-        unless function_scope.contains "$#{index}"
-          function_scope.replace("$#{index}", value, Flag::INIT | Flag::IGNORE_PARENT)
-        end
-
-        case label
-        when .is_a? IdentifierLiteral
-          function_scope.replace(label.name, value, Flag::INIT | Flag::IGNORE_PARENT)
-        when .is_a? Nil
-          # Just ignore
+      # Check if there are enough arguments
+      unless target.argumentlist.size <= arguments.size
+        if target.argumentlist.size == 1
+          error_message = "Method expected 1 argument, got #{arguments.size}"
         else
-          raise RunTimeError.new(arg, context, "#{label} is not an identifier. You've found a bug in the interpreter.")
+          error_message = "Method expected #{target.argumentlist.size} arguments, got #{arguments.size}"
+        end
+
+        raise UnlocatedRunTimeError.new(error_message, context.trace)
+      end
+
+      function_scope.init("arguments", TArray.new(arguments))
+
+      # Insert arguments
+      arguments.each_with_index do |arg, index|
+        unless function_scope.contains "$#{index}"
+          function_scope.replace("$#{index}", arg, Flag::INIT | Flag::IGNORE_PARENT)
+        end
+
+        if index < target.argumentlist.size
+          label = target.argumentlist[index]
+
+          if label.is_a? IdentifierLiteral
+            if DISALLOWED_VARS.includes? label.name
+              raise RunTimeError.new(
+                label,
+                context,
+                "#{label.name} is a reserved keyword"
+              )
+            end
+
+            function_scope.replace(label.name, arg, Flag::INIT | Flag::IGNORE_PARENT)
+          end
         end
       end
 
-      # If an identifier is given, assign it to the self keyword
-      if identifier.is_a? BaseType
-        function_scope.init("self", identifier, true)
+      function_scope.init("self", identifier, true) if identifier
+
+      # The name of the function for the trace entry
+      target_name = "anonymous"
+      if target.name.size > 0
+        target_name = target.name
       end
 
-      # Insert the arguments
-      unless function_scope.contains("arguments")
-        function_scope.init("arguments", TArray.new(arguments))
-      end
-
-      # Execute the functions block inside the function_scope
-      unless (target_name = target.name).is_a? TString
-        target_name = "anonymous"
-      end
-
-      filename = node.location_start.filename
-      location = node.location_start.loc_to_s
-
+      # Run the function
+      filename = "foo"
+      location = target.block.location_start.loc_to_s
       @trace << Trace.new(target_name, filename, location)
       begin
         result = visit_block(target.block, function_scope, context)

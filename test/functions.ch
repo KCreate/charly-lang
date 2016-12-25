@@ -354,4 +354,19 @@ export = func(it) {
     assert(result, [3, 2, 1])
   })
 
+  it("throws when disallowed names are used as a argument name", func(assert) {
+    func foo(self, __internal__method) {
+      print(self, __internal__method)
+    }
+
+    try {
+      foo(25)
+    } catch(e) {
+      assert(true, true)
+      return
+    }
+
+    assert(false, true)
+  })
+
 }
