@@ -14,16 +14,14 @@ module Charly
   # Single trace entry for callstacks
   class Trace
     property name : String
-    property node : ASTNode
+    property filename : String
+    property location : String
 
-    def initialize(@name, @node)
+    def initialize(@name, @filename, @location)
     end
 
     def to_s(io)
-      filename = File.basename(@node.location_start.filename)
-      io << "at #{@name} (#{filename}:"
-      io << @node.location_start.to_s.split(":").last(3).join(":")
-      io << ")"
+      io << "at #{@name} (#{@filename}:#{@location})"
     end
   end
 
@@ -804,7 +802,10 @@ module Charly
         target_name = "anonymous"
       end
 
-      @trace << Trace.new(target_name, node)
+      filename = node.location_start.filename
+      location = node.location_start.loc_to_s
+
+      @trace << Trace.new(target_name, filename, location)
       begin
         result = visit_block(target.block, function_scope, context)
       rescue e : ReturnException
@@ -863,7 +864,9 @@ module Charly
         ).at(node.location_start, node.location_end)
 
         # Execute the constructor function inside the object_scope
-        @trace << Trace.new("#{target.name}:constructor", node)
+        filename = node.location_start.filename
+        location = node.location_start.loc_to_s
+        @trace << Trace.new("#{target.name}:constructor", filename, location)
         visit_function_call(constructor, callex, object, scope, context)
         @trace.pop
       end
