@@ -1188,8 +1188,25 @@ module Charly
         # Create the exception object
         exc = TObject.new
         exc.data = Scope.new
-        exc.data.init("message", TString.new(e.message || "RunTimeError"))
-        exc.data.init("trace", TArray.new(trace_entries))
+        exc.data.init("message", TString.new(e.message || "RunTimeError"), true)
+        exc.data.init("trace", TArray.new(trace_entries), true)
+        exc.data.init("filename", TString.new(e.filename), true)
+
+        # Objects that will contain the location information
+        obj_loc_start = TObject.new
+        obj_loc_end = TObject.new
+
+        exc.data.init("loc_start", obj_loc_start, true)
+        exc.data.init("loc_end", obj_loc_end, true)
+
+        # Insert location information
+        obj_loc_start.data.init("row", TNumeric.new(e.location_start.row + 1), true)
+        obj_loc_start.data.init("column", TNumeric.new(e.location_start.column + 1), true)
+        obj_loc_start.data.init("length", TNumeric.new(e.location_start.length), true)
+
+        obj_loc_end.data.init("row", TNumeric.new(e.location_end.row + 1), true)
+        obj_loc_end.data.init("column", TNumeric.new(e.location_end.column + 1), true)
+        obj_loc_end.data.init("length", TNumeric.new(e.location_end.length), true)
 
         # Insert into the catch block
         scope.init(node.exception_name.name, exc)
