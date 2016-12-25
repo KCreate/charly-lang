@@ -1,13 +1,18 @@
-const context = {
+const context = Object.isolate({
   let $
   let echo = true
   const context = self
   const history = []
-}
+})
 
 let input
 
-while ((input = "> ".prompt()) ! ".exit") {
+loop {
+  input = "> ".prompt()
+
+  if input == ".exit" {
+    break
+  }
 
   try {
     context.$ = io.eval(input, context)
