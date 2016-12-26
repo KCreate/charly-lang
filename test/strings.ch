@@ -153,4 +153,25 @@ export = func(it) {
     assert(string, "--okay\n--what\n--test")
   })
 
+  it("checks if a string is a digit", func(assert) {
+    assert("".digit(), false)
+    assert("hello".digit(), false)
+    assert("-".digit(), false)
+    assert(" ".digit(), false)
+    assert("25".digit(), true)
+    assert("2".digit(), true)
+    assert("+".digit(), false)
+
+    assert("0".digit(), true)
+    assert("1".digit(), true)
+    assert("2".digit(), true)
+    assert("3".digit(), true)
+    assert("4".digit(), true)
+    assert("5".digit(), true)
+    assert("6".digit(), true)
+    assert("7".digit(), true)
+    assert("8".digit(), true)
+    assert("9".digit(), true)
+  })
+
 }

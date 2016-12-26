@@ -262,4 +262,26 @@ export = primitive class String {
   func pretty_print() {
     ("\"" + self + "\"").colorize(32)
   }
+
+  /*
+   * Returns true if the first char in this string is a digit
+   * */
+  func digit() {
+    unless @length() > 0 {
+      return false
+    }
+
+    return (
+      self[0] == "0" ||
+      self[0] == "1" ||
+      self[0] == "2" ||
+      self[0] == "3" ||
+      self[0] == "4" ||
+      self[0] == "5" ||
+      self[0] == "6" ||
+      self[0] == "7" ||
+      self[0] == "8" ||
+      self[0] == "9"
+    )
+  }
 }
