@@ -15,6 +15,13 @@ export = primitive class Numeric {
   }
 
   /*
+   * Same as times, but shorter
+   * */
+  func n(callback) {
+    @times(callback)
+  }
+
+  /*
    * Calls the callback with each number from *self* down to *num*
    * self is inclusive, num isn't
    * */
