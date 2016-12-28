@@ -3,6 +3,7 @@ const context = Object.isolate({
   let echo = true
 
   const charly = require("charly")
+  const Math = require("math")
 
   const context = self
   const history = []
