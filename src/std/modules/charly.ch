@@ -5,4 +5,5 @@ export = {
   const VERSION         = CONFIG("VERSION")
   const COMPILE_COMMIT  = CONFIG("COMPILE_COMMIT")
   const COMPILE_DATE    = CONFIG("COMPILE_DATE")
+  const CHARLYDIR       = ENV["CHARLYDIR"]
 }
