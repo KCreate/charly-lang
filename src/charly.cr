@@ -2,6 +2,7 @@ require "./charly/syntax/parser.cr"
 require "./charly/interpreter/visitor.cr"
 require "./charly/interpreter/prelude.cr"
 require "./charly/gc_warning.cr"
+require "./charly/config.cr"
 require "option_parser"
 
 # :nodoc:
@@ -56,7 +57,7 @@ module Charly
     }
 
     opts.on("-v", "--version", "Prints the version number") {
-      puts "0.0.1"
+      puts Config.description
       exit
     }
 
