@@ -71,7 +71,6 @@ module Charly
       # If the filename is repl, expand the path to the repl.ch file
       if filename == "repl"
         filename = ENV["CHARLYDIR"] + "/src/std/repl.ch"
-        puts Config::LICENSE
       end
     end
   end

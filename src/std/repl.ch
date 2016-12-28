@@ -1,9 +1,14 @@
 const context = Object.isolate({
   let $
   let echo = true
+
+  const charly = require("charly")
+
   const context = self
   const history = []
 })
+
+print(context.charly.LICENSE)
 
 let input
 
