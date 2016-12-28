@@ -128,6 +128,14 @@ class Parser {
     @pos = -1
   }
 
+  func parse_error(expected, real) {
+    if real.typeof() == "Null" {
+      throw "Expected " + expected + " but reached end of input"
+    }
+
+    throw "Expected " + expected + " but got " + real.type
+  }
+
   func setup(source) {
     @pos = -1
     @tokens = @lexer.tokenize(source)
@@ -210,11 +218,11 @@ class Parser {
         @advance()
         return node
       } else {
-        throw "Unexpected token: " + @token.type
+        @parse_error(")", @token)
       }
     }
 
-    throw "Expected literal, got " + @token.type
+    @parse_error("literal", @token)
   }
 }
 
@@ -257,8 +265,13 @@ const parser = Parser()
 const visitor = Visitor()
 
 loop {
-  const input = "> ".prompt()
-  const tree = parser.parse(input)
-  const result = visitor.execute(tree)
-  print(result.pretty_print())
+  try {
+    const input = "> ".prompt()
+    const tree = parser.parse(input)
+    const result = visitor.execute(tree)
+    print(result.pretty_print())
+  } catch(e) {
+    print("Error:".colorize(31))
+    print(e.colorize(31))
+  }
 }
