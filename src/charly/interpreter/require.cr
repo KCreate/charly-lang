@@ -18,6 +18,7 @@ module Charly::Require
   CORE_MODULES = [
     "unit-test",
     "math",
+    "charly",
   ] of String
 
   # Loads *filename* and returns the value of the export variable
