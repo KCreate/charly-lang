@@ -721,7 +721,7 @@ module Charly
 
           # Check if the method exists
           unless Internals::METHODS.has_key? name.value
-            raise RunTimeError.new(node.argumentlist.children[0], context, "__internal__method doesn't know this method")
+            raise RunTimeError.new(node.argumentlist.children[0], context, "There is no internal method called #{name.value}")
           end
 
           # Create the mapping between the methods
