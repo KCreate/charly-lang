@@ -100,8 +100,5 @@ module Charly
   rescue e : UserException
     puts e
     exit 1
-  rescue e : Exception
-    puts e
-    exit 1
   end
 end

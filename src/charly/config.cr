@@ -52,9 +52,20 @@ module Charly
         return
       end
 
-      _, _, sha = git_version.split("-")
-      sha = sha[1..-1] # Remove the g from the beginning
-      return sha
+      parts = git_version.split("-")
+
+      unless parts.size == 3
+        return
+      end
+
+      sha = parts[2]
+
+      if sha.size > 0
+        sha = sha[1..-1] # Remove the g from the beginning
+        return sha
+      else
+        return
+      end
     end
   end
 
