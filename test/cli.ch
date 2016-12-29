@@ -20,15 +20,21 @@ export = func(it) {
 
     assert(CHARLY.VERSION.typeof(), "String")
     assert(CHARLY.LICENSE.typeof(), "String")
-    assert(CHARLY.COMPILE_COMMIT.typeof(), "String")
     assert(CHARLY.COMPILE_DATE.typeof(), "String")
 
     assert(CHARLY.VERSION.length() > 0, true)
     assert(CHARLY.LICENSE.length() > 0, true)
-    assert(CHARLY.COMPILE_COMMIT.length() > 0, true)
     assert(CHARLY.COMPILE_DATE.length() > 0, true)
 
     assert(CHARLY.LICENSE.index_of("MIT", 0) ! -1, true)
+  })
+
+  it("maybe it has a commit sha", ->(assert) {
+    const CHARLY = require("charly")
+
+    if CHARLY.COMPILE_COMMIT.typeof() == "String" {
+      assert(CHARLY.COMPILE_COMMIT.length(), 7)
+    }
   })
 
 }
