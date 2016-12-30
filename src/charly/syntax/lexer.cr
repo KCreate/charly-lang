@@ -8,13 +8,14 @@ module Charly
     property reader : FramedReader
     property filename : String
     property token : Token
+    property tokens : Array(Token)
     property row : Int32
     property column : Int32
     property last_char : Char
-    property print_tokens : Bool
 
-    def initialize(source : IO, @filename : String, @print_tokens : Bool = false)
+    def initialize(source : IO, @filename : String)
       @token = Token.new
+      @tokens = [] of Token
       @reader = FramedReader.new(source)
 
       @row = 0
@@ -759,9 +760,7 @@ module Charly
       @reader.reset
       @reader.frame << current_char
 
-      if @print_tokens
-        puts @token
-      end
+      @tokens << @token
       @token
     end
 

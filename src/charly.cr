@@ -88,7 +88,13 @@ module Charly
 
   begin
     # Parse the userfile
-    user_program = Parser.create(File.open(filename), filename, print_tokens: flags.includes? "tokens")
+    user_program = Parser.create(File.open(filename), filename)
+
+    if flags.includes? "tokens"
+      user_program.tokens.each do |token|
+        puts token
+      end
+    end
 
     if flags.includes? "ast"
       puts user_program.tree
