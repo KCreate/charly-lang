@@ -517,7 +517,7 @@ module Charly
     def visit_array_literal(node : ArrayLiteral, scope, context)
       content = [] of BaseType
 
-      node.each do |item|
+      node.children.each do |item|
         content << visit_expression(item, scope, context)
       end
 
@@ -538,7 +538,7 @@ module Charly
     def visit_class_literal(node : ClassLiteral, scope, context)
       # Check if parent classes exist
       parents = [] of TClass
-      node.parents.each do |parent|
+      node.parents.children.each do |parent|
         # Sanity check
         unless parent.is_a? IdentifierLiteral
           raise RunTimeError.new(parent, context, "Node is not an identifier. You've found a bug in the interpreter.")
@@ -575,7 +575,7 @@ module Charly
         end
       end
 
-      node.block.each do |child|
+      node.block.children.each do |child|
         case child
         when .is_a? PropertyDeclaration
           properties << child.identifier
@@ -638,7 +638,7 @@ module Charly
       end
 
       # Append the primitive classes own methods
-      node.block.each do |statement|
+      node.block.children.each do |statement|
         case statement
         when .is_a? FunctionLiteral
           methods << visit_function_literal(statement, scope, context)
@@ -696,7 +696,7 @@ module Charly
         else
           # Resolve all arguments
           arguments = [] of BaseType
-          node.argumentlist.each do |expression|
+          node.argumentlist.children.each do |expression|
             arguments << visit_expression(expression, scope, context)
           end
 
@@ -730,7 +730,7 @@ module Charly
       elsif target.is_a? TInternalFunc
         # Resolve the arguments
         arguments = [] of BaseType
-        node.argumentlist.each do |expression|
+        node.argumentlist.children.each do |expression|
           arguments << visit_expression(expression, scope, context)
         end
 
@@ -759,22 +759,22 @@ module Charly
     def visit_function_call(target : TFunc, node : CallExpression, identifier : BaseType?, scope, context)
       # Resolve the arguments
       arguments = [] of BaseType
-      node.argumentlist.each_with_index do |arg, index|
+      node.argumentlist.children.each_with_index do |arg, index|
         value = visit_expression(arg, scope, context)
         arguments << value
 
-        label = target.argumentlist[index]?
+        label = target.argumentlist.children[index]?
         if label && !label.is_a? IdentifierLiteral
           raise RunTimeError.new(arg, context, "#{label} is not an identifier. You've found a bug in the interpreter.")
         end
       end
 
       # Check if there are enough arguments
-      unless target.argumentlist.size <= arguments.size
-        if target.argumentlist.size == 1
+      unless target.argumentlist.children.size <= arguments.size
+        if target.argumentlist.children.size == 1
           error_message = "Method expected 1 argument, got #{arguments.size}"
         else
-          error_message = "Method expected #{target.argumentlist.size} arguments, got #{arguments.size}"
+          error_message = "Method expected #{target.argumentlist.children.size} arguments, got #{arguments.size}"
         end
 
         raise RunTimeError.new(
@@ -792,11 +792,11 @@ module Charly
       function_scope = Scope.new(target.parent_scope)
 
       # Check if there are enough arguments
-      unless target.argumentlist.size <= arguments.size
-        if target.argumentlist.size == 1
+      unless target.argumentlist.children.size <= arguments.size
+        if target.argumentlist.children.size == 1
           error_message = "Method expected 1 argument, got #{arguments.size}"
         else
-          error_message = "Method expected #{target.argumentlist.size} arguments, got #{arguments.size}"
+          error_message = "Method expected #{target.argumentlist.children.size} arguments, got #{arguments.size}"
         end
 
         raise UnlocatedRunTimeError.new(error_message, context.trace)
@@ -810,8 +810,8 @@ module Charly
           function_scope.replace("$#{index}", arg, Flag::INIT | Flag::IGNORE_PARENT)
         end
 
-        if index < target.argumentlist.size
-          label = target.argumentlist[index]
+        if index < target.argumentlist.children.size
+          label = target.argumentlist.children[index]
 
           if label.is_a? IdentifierLiteral
             if DISALLOWED_VARS.includes? label.name

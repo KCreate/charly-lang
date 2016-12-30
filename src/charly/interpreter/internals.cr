@@ -37,7 +37,7 @@ module Charly::Internals
           arg{{index}} = arguments[{{index}}]
 
           if !arg{{index}}.is_a?({{type.type}})
-            raise RunTimeError.new(call.argumentlist[{{index}}], "#{{{name}}} expected argument #{{{index + 1}}} to be of type #{{{type.type}}}, got #{arguments[{{index}}].class}")
+            raise RunTimeError.new(call.argumentlist.children[{{index}}], "#{{{name}}} expected argument #{{{index + 1}}} to be of type #{{{type.type}}}, got #{arguments[{{index}}].class}")
           end
 
           {{type.var}} = arg{{index}}

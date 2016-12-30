@@ -656,13 +656,13 @@ module Charly
 
         # Wrap the elements in blocks as required by the IfStatement
         left_block = Block.new([] of ASTNode).at(left)
-        left_block << left
+        left_block.children << left
 
         right_block = right
 
         unless right.is_a? IfStatement
           right_block = Block.new([] of ASTNode).at(right)
-          right_block << right
+          right_block.children << right
         end
 
         return IfStatement.new(condition, left_block, right_block).at(condition, right)
@@ -935,7 +935,7 @@ module Charly
       start_location = @token.location
       expect TokenType::RightArrow
 
-      argumentlist = IdentifierList.new([] of IdentifierLiteral).at(start_location)
+      argumentlist = IdentifierList.new([] of ASTNode).at(start_location)
       block = Block.new([] of ASTNode)
 
       # Parse a possible argumentlist
@@ -956,7 +956,7 @@ module Charly
         @break_allowed = backup_break_allowed
       else
         expression = parse_expression
-        block << expression
+        block.children << expression
         block.at(expression)
       end
 
@@ -968,7 +968,7 @@ module Charly
       expect TokenType::Keyword, "class"
 
       identifier = ""
-      parents = IdentifierList.new
+      parents = IdentifierList.new([] of ASTNode)
       assert_token TokenType::Identifier do
         identifier = @token.value
         advance

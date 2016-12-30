@@ -2,6 +2,7 @@ require "../helper.cr"
 require "./token.cr"
 require "./location.cr"
 require "../interpreter/types.cr"
+require "../visitors/TreeVisitor.cr"
 
 module Charly::AST
   # Returns true if a given node represents a primitive value
@@ -22,13 +23,8 @@ module Charly::AST
   # The `AST` is the result of the parsing step, holding all variable names
   # function declarations and language constructs.
   abstract class ASTNode
-    property children : Array(ASTNode)
-
     property! location_start : Location?
     property! location_end : Location?
-
-    def initialize(@children = [] of ASTNode)
-    end
 
     # Set the location_start and location_end values to *location_start*
     def at(@location_start)
@@ -51,47 +47,24 @@ module Charly::AST
       at(left.location_start, right.location_end)
     end
 
-    delegate "<<", to: @children
-    delegate "[]", to: @children
-    delegate "[]=", to: @children
-    delegate "[]?", to: @children
-    delegate "each", to: @children
-    delegate "each_with_index", to: @children
-    delegate "size", to: @children
-
-    # :nodoc:
-    def to_s(io)
-      io << "#{self.class.name.split("::").last}"
-
-      if (meta = info).size > 0
-        io << " | #{meta}"
-      end
-      io << "\n"
-
-      children.each do |child|
-        lines = child.to_s.each_line.each
-        lines.each do |line|
-          if !['┣', '┃'].includes?(line[0])
-            io << line.indent(1, "┣╸")
-          elsif line.size > 0
-            io << line.indent(1, "┃ ")
-          end
-
-          io << "\n"
-        end
-      end
+    def accept(visitor : TreeVisitor, io : IO)
+      visitor.visit self, io
     end
 
     # :nodoc:
     def inspect(io)
       io << self.class.name.split("::").last
-      io << ":"
-      io << @children.size
     end
 
-    # :nodoc:
-    def info
-      ""
+    def children
+      vars = {{ @type.instance_vars }}
+      node_vars = [] of ASTNode
+      vars.each do |node|
+        if node.is_a? ASTNode
+          node_vars << node
+        end
+      end
+      node_vars
     end
   end
 
@@ -99,53 +72,24 @@ module Charly::AST
   macro ast_node(name, *properties)
     class {{name.id}} < ASTNode
       {% for property in properties %}
-        {% if property.is_a?(Assign) %}
-          property {{property.target.id}}
-        {% elsif property.is_a?(TypeDeclaration) %}
-          property {{property.var}} : {{property.type}}
-        {% else %}
-          property :{{property.id}}
-        {% end %}
+        property {{property.var}} : {{property.type}}
       {% end %}
 
-      {% if properties.size == 0 %}
-        def initialize(@children = [] of ASTNode)
-        end
-      {% else %}
-        def initialize({{
-                         *properties.map do |field|
-                           "@#{field.id}".id
-                         end
-                       }})
-          arg = [{{
-                   *properties.map do |field|
-                     field.var
-                   end
-                 }}] of ASTNode | TokenType | String | Nil | BaseType
-
-          tmp_children = [] of ASTNode
-
-          arg.each do |field|
-            tmp_children << field if field.is_a? ASTNode
+      def initialize({{
+          *properties.map do |field|
+            "@#{field.id}".id
           end
-
-          @children = tmp_children
-        end
-      {% end %}
-
-      {{yield}}
+        }})
+      end
     end
   end
 
   ast_node PrecalculatedValue,
-    value : BaseType do
-    def info
-      "#{@value}"
-    end
-  end
+    value : BaseType
 
   ast_node Empty
-  ast_node Block
+  ast_node Block,
+    children : Array(ASTNode)
 
   ast_node IfStatement,
     test : ASTNode,
@@ -172,33 +116,19 @@ module Charly::AST
   ast_node LoopStatement,
     consequent : Block
 
-  ast_node Expression
-
   ast_node UnaryExpression,
     operator : TokenType,
-    right : ASTNode do
-    def info
-      "#{@operator}"
-    end
-  end
+    right : ASTNode
 
   ast_node BinaryExpression,
     operator : TokenType,
     left : ASTNode,
-    right : ASTNode do
-    def info
-      "#{@operator}"
-    end
-  end
+    right : ASTNode
 
   ast_node ComparisonExpression,
     operator : TokenType,
     left : ASTNode,
-    right : ASTNode do
-    def info
-      "#{@operator}"
-    end
-  end
+    right : ASTNode
 
   ast_node And,
     left : ASTNode,
@@ -232,15 +162,11 @@ module Charly::AST
     identifier : ASTNode,
     argument : ASTNode
 
-  ast_node ExpressionList
-  ast_node IdentifierList do
-    def initialize(children : Array(IdentifierLiteral))
-      @children = [] of ASTNode
-      children.each do |child|
-        @children << child
-      end
-    end
-  end
+  ast_node ExpressionList,
+    children : Array(ASTNode)
+
+  ast_node IdentifierList,
+    children : Array(ASTNode)
 
   ast_node ReturnStatement,
     expression : ASTNode
@@ -258,64 +184,25 @@ module Charly::AST
   ast_node NullLiteral
   ast_node NANLiteral
   ast_node IdentifierLiteral,
-    name : String do
-    def initialize(@name : String)
-      @children = [] of ASTNode
-    end
-
-    def info
-      "#{@name}"
-    end
-  end
+    name : String
 
   ast_node ReferenceIdentifier,
     identifier : IdentifierLiteral
 
   ast_node StringLiteral,
-    value : String do
-    def initialize(@value : String)
-      @children = [] of ASTNode
-    end
-
-    def info
-      "#{@value}"
-    end
-  end
+    value : String
 
   ast_node NumericLiteral,
-    value : Float64 do
-    def initialize(@value : Float64)
-      @children = [] of ASTNode
-    end
-
-    def info
-      "#{@value}"
-    end
-  end
+    value : Float64
 
   ast_node KeywordLiteral,
-    name : String do
-    def initialize(@name : String)
-      @children = [] of ASTNode
-    end
-
-    def info
-      "#{@name}"
-    end
-  end
+    name : String
 
   ast_node BooleanLiteral,
-    value : Bool do
-    def initialize(@value : Bool)
-      @children = [] of ASTNode
-    end
+    value : Bool
 
-    def info
-      "#{@value}"
-    end
-  end
-
-  ast_node ArrayLiteral
+  ast_node ArrayLiteral,
+    children : Array(ASTNode)
 
   ast_node FunctionLiteral,
     name : String,

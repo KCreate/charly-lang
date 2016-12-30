@@ -3,6 +3,7 @@ require "./charly/interpreter/visitor.cr"
 require "./charly/interpreter/prelude.cr"
 require "./charly/gc_warning.cr"
 require "./charly/config.cr"
+require "./charly/visitors/DumpVisitor.cr"
 require "option_parser"
 
 # :nodoc:
@@ -97,7 +98,8 @@ module Charly
     end
 
     if flags.includes? "ast"
-      puts user_program.tree
+      dump_visitor = DumpVisitor.new
+      user_program.tree.accept dump_visitor, STDOUT
     end
 
     prelude_scope = PreludeLoader.load(PRELUDE_PATH, arguments, flags)

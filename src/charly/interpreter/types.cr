@@ -208,7 +208,7 @@ module Charly
     end
 
     def name(io)
-      io << "Function:#{@argumentlist.size}"
+      io << "Function:#{@argumentlist.children.size}"
     end
 
     def self.name(io)

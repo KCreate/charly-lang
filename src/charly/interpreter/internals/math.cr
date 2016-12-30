@@ -24,6 +24,6 @@ module Charly::Internals
       return TNumeric.new(rand)
     end
 
-    raise RunTimeError.new(call.argumentlist[0], "Unknown math method")
+    raise RunTimeError.new(call.argumentlist.children[0], "Unknown math method")
   end
 end
