@@ -4,6 +4,7 @@ require "./charly/interpreter/prelude.cr"
 require "./charly/gc_warning.cr"
 require "./charly/config.cr"
 require "./charly/visitors/DumpVisitor.cr"
+require "./charly/visitors/DotDumpVisitor.cr"
 require "option_parser"
 
 # :nodoc:
@@ -102,6 +103,12 @@ module Charly
       output = IO::Memory.new
       user_program.tree.accept dump_visitor, output
       STDOUT.puts output.to_s.strip
+    end
+
+    if flags.includes? "dotdump"
+      dot_dump_visitor = DotDumpVisitor.new
+      user_program.tree.accept dot_dump_visitor, dot_dump_visitor.content
+      dot_dump_visitor.render STDOUT
     end
 
     prelude_scope = PreludeLoader.load(PRELUDE_PATH, arguments, flags)
