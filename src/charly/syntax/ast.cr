@@ -56,6 +56,7 @@ module Charly::AST
       io << self.class.name.split("::").last
     end
 
+    @[AlwaysInline]
     def children
       vars = {{ @type.instance_vars }}
       node_vars = [] of ASTNode
