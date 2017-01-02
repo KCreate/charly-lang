@@ -1,7 +1,3 @@
-
-# Reset the terminal
-clear
-
 mkdir -p bin
 
 # Build the interpreter
