@@ -120,7 +120,7 @@ module Charly
       visitor.visit_program prelude_program, prelude_scope
       visitor.visit_program user_program, user_scope
     end
-  rescue e : UserException
+  rescue e : Exception
     puts e
     exit 1
   end
