@@ -99,7 +99,9 @@ module Charly
 
     if flags.includes? "ast"
       dump_visitor = DumpVisitor.new
-      user_program.tree.accept dump_visitor, STDOUT
+      output = IO::Memory.new
+      user_program.tree.accept dump_visitor, output
+      STDOUT.puts output.to_s.strip
     end
 
     prelude_scope = PreludeLoader.load(PRELUDE_PATH, arguments, flags)
