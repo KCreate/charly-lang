@@ -369,4 +369,12 @@ export = func(it) {
     assert(false, true)
   })
 
+  it("doesn't save methods without a name", func(assert) {
+    let box = {
+      func() {}
+    }
+
+    assert(box[""].typeof(), "Null")
+  })
+
 }

@@ -351,9 +351,9 @@ module Charly
           node = parse_expression
 
           if node.is_a?(FunctionLiteral)
-            if (name = node.name).is_a?(String)
+            if node.name.size > 0
               node = VariableInitialisation.new(
-                IdentifierLiteral.new(name).at(node),
+                IdentifierLiteral.new(node.name).at(node),
                 node
               ).at(node)
             end
