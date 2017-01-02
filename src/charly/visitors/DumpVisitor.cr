@@ -17,7 +17,7 @@ module Charly::AST
       io.puts "\"#{node.value}\""
     end
 
-    visit PrecalculatedValue, NumericLiteral, BooleanLiteral do
+    visit NumericLiteral, BooleanLiteral do
       io << name node
       io << " | "
       io.puts node.value

@@ -16,8 +16,7 @@ module Charly::AST
       node.is_a?(StringLiteral) ||
       node.is_a?(BooleanLiteral) ||
       node.is_a?(NullLiteral) ||
-      node.is_a?(NANLiteral) ||
-      node.is_a?(PrecalculatedValue)
+      node.is_a?(NANLiteral)
   end
 
   # The `AST` is the result of the parsing step, holding all variable names
@@ -84,9 +83,6 @@ module Charly::AST
       end
     end
   end
-
-  ast_node PrecalculatedValue,
-    value : BaseType
 
   ast_node Empty
   ast_node Block,

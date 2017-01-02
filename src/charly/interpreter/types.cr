@@ -39,8 +39,6 @@ module Charly
         return TNull.new
       when NANLiteral
         return TNumeric.new Float64::NAN
-      when PrecalculatedValue
-        return node.value
       else
         raise "#{node.class} not implemented in BaseType#from"
       end
