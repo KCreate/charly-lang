@@ -106,9 +106,7 @@ module Charly
     end
 
     if flags.includes? "dotdump"
-      dot_dump_visitor = DotDumpVisitor.new
-      user_program.tree.accept dot_dump_visitor, dot_dump_visitor.content
-      dot_dump_visitor.render STDOUT
+      DotDumpVisitor.new.render(user_program.tree, STDOUT)
     end
 
     prelude_scope = PreludeLoader.load(PRELUDE_PATH, arguments, flags)
