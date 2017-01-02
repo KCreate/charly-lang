@@ -70,6 +70,8 @@ module Charly::AST
           io << "\n"
         end
       end
+
+      io << "\n"
     end
 
   end
