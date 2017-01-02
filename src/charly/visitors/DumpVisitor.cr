@@ -23,6 +23,20 @@ module Charly::AST
       io.puts node.value
     end
 
+    visit IdentifierLiteral, FunctionLiteral, ClassLiteral, PrimitiveClassLiteral do
+      io << name node
+      io << " | "
+      io.puts "\"#{node.name}\""
+      rest children
+    end
+
+    visit UnaryExpression, BinaryExpression, ComparisonExpression do
+      io << name node
+      io << " | "
+      io.puts node.operator
+      rest children
+    end
+
     macro rest(children)
       {{children}}.each_with_index do |child, index|
 
