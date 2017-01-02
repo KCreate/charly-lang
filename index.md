@@ -1,4 +1,4 @@
-# Charly Language Guide (v0.0.1)
+# Charly Language Guide (v0.2.0)
 
 Your syntax files need to be encoded in UTF-8.
 
