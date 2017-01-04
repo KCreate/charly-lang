@@ -8,12 +8,17 @@ class TestVisitor {
   }
 
   func on_root(node) {
-    @print((node.title + " Graph").colorize(35))
+    @print((node.title).colorize(33))
   }
 
   func on_node(node, depth, callback) {
-    @print(("- " + node.title.colorize(33)).indent(depth - 1, " "))
     callback()
+
+    if node.passed() {
+      @write(".".colorize(32))
+    } else {
+      @write("F".colorize(31))
+    }
   }
 
   func on_assertion(index, assertion, depth) {}
