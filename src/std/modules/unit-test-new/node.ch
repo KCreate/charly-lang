@@ -18,15 +18,18 @@ class Node {
   property title
   property children
   property type
+  property index
 
   func constructor(title, type) {
     @id = get_node_id()
     @title = title
     @type = type
     @children = []
+    @index = 0
   }
 
   func push(node, depth) {
+    node.index = @children.length()
     @children.push(node)
     self
   }

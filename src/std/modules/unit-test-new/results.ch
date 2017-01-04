@@ -1,5 +1,9 @@
 export = ->(results, callback) {
 
+  // Print another newline to avoid conflicting with
+  // the previous visitor
+  print("\n")
+
   # Print if the session passed or not
   const status = results.passed()
 
@@ -8,10 +12,29 @@ export = ->(results, callback) {
   } else {
     print("Some test suites have failed".colorize(31))
 
+    const failed_tests = {}
+
+    let index = 1
     results.deep_failed(->(nodes) {
-      nodes.each(->(node, depth) {
-        print(node.title.indent(depth, " ") + " - " + node.id.colorize(32))
-      })
+
+      // Extract the title of the failed test case
+      const title = nodes.filter(->$1 > 0)
+        .map(->$0.title)
+        .join(" ")
+      const fnode = nodes.last() // The actual assertion that failed
+
+      write((index + ") ").colorize(31))
+      print(title.colorize(31))
+
+      write([
+        ("Assertion #" + (fnode.index + 1)).colorize(34),
+        "Expected: " + fnode.expected.pretty_print(),
+        "Got: " + fnode.real.pretty_print()
+      ].join("\n").indent(" ", 2))
+
+      print("")
+
+      index += 1
     })
   }
 
