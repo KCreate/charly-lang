@@ -1,24 +1,37 @@
-let UnitTest = require("unit-test")
-io.exit(UnitTest("Charly").begin(func(describe) {
-  describe("Including external files",            require("./external-files.ch"))
-  describe("Variables",                           require("./variables.ch"))
-  describe("Arithmetic operations",               require("./arithmetic.ch"))
-  describe("Comparisons",                         require("./comparisons.ch"))
-  describe("Arrays",                              require("./arrays.ch"))
-  describe("Numerics",                            require("./numerics.ch"))
-  describe("Strings",                             require("./strings.ch"))
-  describe("Functions",                           require("./functions.ch"))
-  describe("Classes",                             require("./classes.ch"))
-  describe("Objects",                             require("./objects.ch"))
-  describe("Loops",                               require("./loops.ch"))
-  describe("CLI",                                 require("./cli.ch"))
-  describe("Math",                                require("./math.ch"))
-  describe("try & catch",                         require("./exceptions.ch"))
-  describe("Magic constants",                     require("./magic-constants.ch"))
-  describe("References",                          require("./references.ch"))
-  describe("Primitives",                          require("./primitives.ch"))
-  describe("Unless statement",                    require("./unless.ch"))
-  describe("Guard statement",                     require("./guard.ch"))
-  describe("Ternary statements",                  require("./ternary.ch"))
-  describe("Comments",                            require("./comments.ch"))
-}))
+const UnitTest = require("unit-test")
+const result = UnitTest(->(describe, it, assert, context) {
+
+  const testcases = [
+    // ["Including external files",    "./external-files.ch"],
+    // ["Variables",                   "./variables.ch"],
+    // ["Arithmetic operations",       "./arithmetic.ch"],
+    // ["Comparisons",                 "./comparisons.ch"],
+    ["Arrays",                      "./std/arrays.ch"],
+    // ["Numerics",                    "./numerics.ch"],
+    ["Strings",                     "./std/strings.ch"]
+    // ["Functions",                   "./functions.ch"],
+    // ["Classes",                     "./classes.ch"],
+    // ["Objects",                     "./objects.ch"],
+    // ["Loops",                       "./loops.ch"],
+    // ["CLI",                         "./cli.ch"],
+    // ["Math",                        "./math.ch"],
+    // ["try & catch",                 "./exceptions.ch"],
+    // ["Magic constants",             "./magic-constants.ch"],
+    // ["References",                  "./references.ch"],
+    // ["Primitives",                  "./primitives.ch"],
+    // ["Unless statement",            "./unless.ch"],
+    // ["Guard statement",             "./guard.ch"],
+    // ["Ternary statements",          "./ternary.ch"],
+    // ["Comments",                    "./comments.ch"]
+  ]
+
+  // Loads and runs all the test cases sequentially
+  testcases.each(->(test) {
+    const module = require(test[1])
+    describe(test[0], ->{
+      module(describe, it, assert, context)
+    })
+  })
+})
+
+UnitTest.display_result(result, io.exit)
