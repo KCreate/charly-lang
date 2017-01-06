@@ -69,7 +69,7 @@ class Assertion extends Node {
   property real
   property has_passed
 
-  func constructor(expected, real) {
+  func constructor(real, expected) {
     @id = get_node_id()
     @title = ""
     @children = []

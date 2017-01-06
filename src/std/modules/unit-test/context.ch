@@ -59,7 +59,7 @@ class Context {
   }
 
   func catch_exception(e) {
-    @assert("No exception to be thrown", e)
+    @assert(e, "No exception to be thrown")
   }
 }
 
