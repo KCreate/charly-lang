@@ -272,26 +272,22 @@ export = primitive class Array {
   }
 
   /*
-   * Returns a new array, containing all elements from the *start* index to the *end* index
+   * Returns a new array, containing *amount* elements from the *start*
    * */
-  func range(start, end) {
+  func range(start, amount) {
+    const items = []
+    const size = @length()
 
-    // Switch params if start is bigger
-    if start > end {
-      let tmp = end
-      end = start
-      start = tmp
-    }
+    if start >= size { return [] }
+    if amount == 0 { return [] }
+    if size == 0 { return [] }
 
-    // Create the new array
-    const new = []
-    const length = _length(self)
-    start.upto(end, func(n) {
-      if (n >= 0 && n < length) {
-        new.push(self[n])
+    start.upto(start + amount, ->(index) {
+      if index < size {
+        items.push(self[index])
       }
     })
-    new
+    items
   }
 
   /*
