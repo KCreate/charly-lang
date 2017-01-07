@@ -1,6 +1,6 @@
-export = func(it) {
+export = ->(describe, it, assert) {
 
-  it("throws an exception", func(assert) {
+  it("throws an exception", ->{
     try {
       throw Exception("Something failed")
     } catch (e) {
@@ -8,7 +8,7 @@ export = func(it) {
     }
   })
 
-  it("throws primitive values", func(assert) {
+  it("throws primitive values", ->{
     try {
       throw 2
     } catch (e) {
@@ -17,7 +17,7 @@ export = func(it) {
     }
   })
 
-  it("stops execution of the block", func(assert) {
+  it("stops execution of the block", ->{
     try {
       throw 2
       assert(true, false)
@@ -26,7 +26,7 @@ export = func(it) {
     }
   })
 
-  it("throws exceptions beyond functions", func(assert) {
+  it("throws exceptions beyond functions", ->{
     func foo() {
       throw Exception("lol")
     }
@@ -38,7 +38,7 @@ export = func(it) {
     }
   })
 
-  it("throws exceptions inside object constructors", func(assert) {
+  it("throws exceptions inside object constructors", ->{
     class Foo {
       func constructor() {
         throw 2
@@ -52,7 +52,7 @@ export = func(it) {
     }
   })
 
-  it("assigns RunTimeErrors a message property", func(assert) {
+  it("assigns RunTimeErrors a message property", ->{
     try {
       const a = 2
       a = 3
@@ -64,7 +64,7 @@ export = func(it) {
     assert(true, false)
   })
 
-  it("assigns RunTimeErrors a trace property", func(assert) {
+  it("assigns RunTimeErrors a trace property", ->{
     try {
       const a = 2
       a = 3
