@@ -10,7 +10,7 @@ const result = UnitTest(->(describe, it, assert, context) {
     ["Numerics",                    "./std/numerics.ch"],
     ["Strings",                     "./std/strings.ch"],
     // ["Functions",                   "./functions.ch"],
-    // ["Classes",                     "./classes.ch"],
+    ["Classes",                     "./interpreter/classes.ch"],
     // ["Objects",                     "./objects.ch"],
     // ["Loops",                       "./loops.ch"],
     // ["CLI",                         "./cli.ch"],
