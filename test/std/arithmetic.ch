@@ -1,6 +1,6 @@
-export = func(it) {
+export = ->(describe, it, assert) {
 
-  it("adds numbers", func(assert) {
+  it("adds numbers", ->{
     assert(2 + 2, 4)
     assert(10 + -50, -40)
     assert(2.5 + 9.7, 12.2)
@@ -8,7 +8,7 @@ export = func(it) {
     assert(999.999 + 999.999, 1999.998)
   })
 
-  it("subtracts numbers", func(assert) {
+  it("subtracts numbers", ->{
     assert(20 - 5, 15)
     assert(3 - 3, 0)
     assert(-5 - 9, -14)
@@ -16,7 +16,7 @@ export = func(it) {
     assert(-20 - -90, 70)
   })
 
-  it("multiplies numbers", func(assert) {
+  it("multiplies numbers", ->{
     assert(2 * 0, 0)
     assert(2 * 5, 10)
     assert(3 * 25, 75)
@@ -24,7 +24,7 @@ export = func(it) {
     assert(0.5 * 5, 2.5)
   })
 
-  it("divides numbers", func(assert) {
+  it("divides numbers", ->{
     assert(5 / 0, NAN)
     assert(5 / -2, -2.5)
     assert(10 / 4, 2.5)
@@ -32,7 +32,7 @@ export = func(it) {
     assert(1 / 2, 0.5)
   })
 
-  it("modulus operator", func(assert) {
+  it("modulus operator", ->{
     assert(6 % 3, 0)
     assert(0 % 0, NAN)
     assert(177 % 34, 7)
@@ -40,7 +40,7 @@ export = func(it) {
     assert(20 % 3, 2)
   })
 
-  it("pow operator", func(assert) {
+  it("pow operator", ->{
     assert(2**8, 256)
     assert(50**3, 125000)
     assert(2**4, 16)
@@ -48,7 +48,7 @@ export = func(it) {
     assert(50**0, 1)
   })
 
-  it("does AND assignments", func(assert) {
+  it("does AND assignments", ->{
     let a = 20
 
     a += 1
