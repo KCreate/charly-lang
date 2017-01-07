@@ -1,5 +1,6 @@
-export = ->(it) {
-  it("runs the consequent block", ->(assert) {
+export = ->(describe, it, assert) {
+
+  it("runs the consequent block", ->{
     let test = false
     let result = false
 
@@ -10,7 +11,7 @@ export = ->(it) {
     assert(result, true)
   })
 
-  it("runs the alternate block", ->(assert) {
+  it("runs the alternate block", ->{
     let test = true
     let result = false
 
@@ -23,7 +24,7 @@ export = ->(it) {
     assert(result, 30)
   })
 
-  it("returns a value", ->(assert) {
+  it("returns a value", ->{
     func foo() {
       unless false { 25 } else { 30 }
     }
@@ -35,4 +36,5 @@ export = ->(it) {
     assert(foo(), 25)
     assert(bar(), 30)
   })
+
 }
