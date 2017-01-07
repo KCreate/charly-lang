@@ -2,6 +2,7 @@ const Lib = require("./node.ch")
 const NodeType = Lib.NodeType
 const Node = Lib.Node
 const Assertion = Lib.Assertion
+const Charly = require("charly")
 
 class Context {
   property tree
@@ -12,7 +13,10 @@ class Context {
   func constructor(visitor) {
     @visitor = visitor
     @depth = 0
-    @current = Node("Charly Unit Test Framework", NodeType.Root)
+
+    const title = "Charly [" + Charly.COMPILE_COMMIT + "] Unit Testing Framework"
+
+    @current = Node(title, NodeType.Root)
     @tree = @current
 
     @visitor.on_root(@current)
