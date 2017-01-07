@@ -10,7 +10,7 @@ const result = UnitTest(->(describe, it, assert, context) {
     ["Functions",                   "./interpreter/functions.ch"],
     ["Classes",                     "./interpreter/classes.ch"],
     ["Including external files",    "./interpreter/external-files.ch"],
-    // ["Objects",                     "./objects.ch"],
+    ["Objects",                     "./interpreter/objects.ch"],
     ["Loops",                       "./interpreter/loops.ch"],
     ["Exceptions",                  "./interpreter/exceptions.ch"],
     ["Magic constants",             "./interpreter/magic-constants.ch"],
