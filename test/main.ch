@@ -3,8 +3,8 @@ const result = UnitTest(->(describe, it, assert, context) {
 
   const testcases = [
     // ["Including external files",    "./external-files.ch"],
-    // ["Variables",                   "./variables.ch"],
-    ["Arithmetic operations",       "./std/arithmetic.ch"],
+    ["Variables",                   "./interpreter/variables.ch"],
+    ["Arithmetic operations",       "./interpreter/arithmetic.ch"],
     // ["Comparisons",                 "./comparisons.ch"],
     ["Arrays",                      "./std/arrays.ch"],
     ["Numerics",                    "./std/numerics.ch"],
