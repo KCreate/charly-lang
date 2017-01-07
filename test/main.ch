@@ -18,7 +18,7 @@ const result = UnitTest(->(describe, it, assert, context) {
     // ["Unless statement",            "./unless.ch"],
     // ["Guard statement",             "./guard.ch"],
     // ["Ternary statements",          "./ternary.ch"],
-    // ["Comments",                    "./comments.ch"]
+    ["Comments",                    "./interpreter/comments.ch"],
 
     // This is commented out because of #142
     // ["References",                  "./interpreter/references.ch"],
