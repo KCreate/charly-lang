@@ -1,30 +1,32 @@
-export = ->(it) {
-  it("added methods have access to the self identifier", ->(assert) {
-    Numeric.methods.cube = ->() {
-      self * self * self
-    }
+export = ->(describe, it, assert) {
 
-    assert(5.cube(), 125)
+  describe("self identifier", ->{
+
+    it("inserts the self identifier", ->{
+      Numeric.methods.cube = ->self ** 3
+      assert(5.cube(), 125)
+    })
+
+    it("has access to the parent scope", ->{
+      let count = 0
+      Numeric.methods.bar = ->() {
+        count += 1
+      }
+
+      1.bar()
+      1.bar()
+      1.bar()
+      1.bar()
+      1.bar()
+      1.bar()
+      1.bar()
+
+      assert(count, 7)
+    })
+
   })
 
-  it("runs in the correct scope", ->(assert) {
-    let count = 0
-    Numeric.methods.bar = ->() {
-      count += 1
-    }
-
-    1.bar()
-    1.bar()
-    1.bar()
-    1.bar()
-    1.bar()
-    1.bar()
-    1.bar()
-
-    assert(count, 7)
-  })
-
-  it("adds methods to primitive types", ->(assert) {
+  it("adds methods to primitive types", ->{
     Numeric.methods.add = ->(arg) {
       self + arg
     }
@@ -32,13 +34,13 @@ export = ->(it) {
     assert(5.add(10), 15)
   })
 
-  it("adds values to primitive types", ->(assert) {
+  it("adds values to primitive types", ->{
     Numeric.methods.foo = 2
 
     assert(5.foo, 2)
   })
 
-  it("extends a primitive type", func(assert) {
+  it("extends a primitive type", ->{
     Array.methods.foo = ->"overridden"
     Boolean.methods.foo = ->"overridden"
     Class.methods.foo = ->"overridden"
@@ -60,14 +62,7 @@ export = ->(it) {
     assert("lol".foo(), "overridden")
   })
 
-  it("can overwrite static methods", func(assert) {
-    let backup_size_of = Array.size_of
-    Array.size_of = ->"hello world"
-    assert(Array.size_of(), "hello world")
-    Array.size_of = backup_size_of
-  })
-
-  it("gives primitive classes the name object", func(assert) {
+  it("gives primitive classes the name property", ->{
     assert(Array.name, "Array")
     assert(Boolean.name, "Boolean")
     assert(Class.name, "Class")
@@ -79,7 +74,7 @@ export = ->(it) {
     assert(String.name, "String")
   })
 
-  it("gives primitive classes the methods object", func(assert) {
+  it("gives primitive classes the methods object", ->{
     assert(Array.methods.typeof(), "Object")
     assert(Boolean.methods.typeof(), "Object")
     assert(Class.methods.typeof(), "Object")
@@ -91,12 +86,4 @@ export = ->(it) {
     assert(String.methods.typeof(), "Object")
   })
 
-  it("can give references as a variable", func(assert) {
-    let num = 25
-
-    Numeric.methods.bar = &num
-
-    assert(5.bar.value(), 25)
-    assert(5.bar.typeof(), "Reference")
-  })
 }
