@@ -370,11 +370,6 @@ export = primitive class Array {
    * are more Quicksort is used.
    * */
   func sort() {
-
-    if arguments.length() > 0 {
-      throw "don't use the sort function"
-    }
-
     const array = @copy()
 
     if array.length() < 20 {
