@@ -9,7 +9,7 @@ const result = UnitTest(->(describe, it, assert, context) {
     ["Comparisons",                 "./interpreter/comparisons.ch"],
     ["Functions",                   "./interpreter/functions.ch"],
     ["Classes",                     "./interpreter/classes.ch"],
-    // ["Including external files",    "./external-files.ch"],
+    ["Including external files",    "./interpreter/external-files.ch"],
     // ["Objects",                     "./objects.ch"],
     // ["Loops",                       "./loops.ch"],
     // ["try & catch",                 "./exceptions.ch"],

@@ -1,6 +1,6 @@
-export = func(it) {
+export = ->(describe, it, assert) {
 
-  it("requires a file", func(assert) {
+  it("requires a file", ->{
     assert(require("./external.ch").num, 25)
     assert(require("./external.ch").num, 25)
 
@@ -13,7 +13,7 @@ export = func(it) {
     external.num = 25
   })
 
-  it("includes a file that's already required", func(assert) {
+  it("includes a file that's already required", ->{
     let external = require("./external.ch")
     external.num = 50
 
