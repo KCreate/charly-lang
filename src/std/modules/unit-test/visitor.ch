@@ -13,15 +13,14 @@ class TestVisitor {
 
   func on_node(node, depth, callback) {
     callback()
-  }
-
-  func on_assertion(index, assertion, depth) {
-    if assertion.passed() {
+    if node.passed() {
       @write(".".colorize(32))
     } else {
       @write("F".colorize(31))
     }
   }
+
+  func on_assertion(index, assertion, depth) {}
 }
 
 export = TestVisitor
