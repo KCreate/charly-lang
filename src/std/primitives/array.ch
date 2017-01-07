@@ -3,6 +3,9 @@ const array_delete = __internal__method("array_delete")
 const array_of_size = __internal__method("array_of_size")
 const _length = __internal__method("length")
 
+// Collection of sorting algorithms
+const Sort = require("../sort.ch")
+
 export = primitive class Array {
 
   /*
@@ -361,31 +364,25 @@ export = primitive class Array {
 
   /*
    * Returns a sorted copy of this array
-   * The callback receives two values to compare.
-   * A truthy value means the the left side is bigger than the right side
    *
-   * This uses the bubble-sort algorithm
+   * If the array contains less than 20 elements
+   * the Bubblesort algorithm is chosen, if there
+   * are more Quicksort is used.
    * */
-  func sort(sort_function) {
-    const sorted = @copy()
+  func sort() {
 
-    let left
-    let right
+    if arguments.length() > 0 {
+      throw "don't use the sort function"
+    }
 
-    @length().times(->(i) {
-      (@length() - 1).times(->(y) {
+    const array = @copy()
 
-        left = sorted[i]
-        right = sorted[y]
+    if array.length() < 20 {
+      Sort.Bubblesort(array)
+    } else {
+      Sort.Quicksort(array)
+    }
 
-        if (sort_function(left, right)) {
-          sorted[i] = right
-          sorted[y] = left
-        }
-
-      })
-    })
-
-    sorted
+    return array
   }
 }

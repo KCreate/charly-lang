@@ -1,3 +1,5 @@
+const Math = require("math")
+
 export = ->(describe, it, assert) {
 
   describe("member expressions", ->{
@@ -433,7 +435,7 @@ export = ->(describe, it, assert) {
 
     it("sorts an array of numbers", ->{
       let nums = [20, -20, 8, 8.1, 200]
-      let sorted = nums.sort(->(left, right) left < right)
+      let sorted = nums.sort()
 
       assert(sorted, [-20, 8, 8.1, 20, 200])
     })
@@ -447,16 +449,38 @@ export = ->(describe, it, assert) {
         "John"
       ]
 
-      let sorted = names.sort(->(left, right) left.length() < right.length())
+      let sorted = names.sort()
 
       assert(sorted, ["Bob", "John", "Peter", "Alice", "Charly"])
     })
 
     it("sorts an empty array", ->{
       let empty = []
-      let sorted = empty.sort(->(left, right) left < right)
+      let sorted = empty.sort()
 
       assert(sorted, [])
+    })
+
+    // Arrays larger than 20 elements are sorted using quick-sort
+    // generate some fake numbers and check if they are being correctly
+    // sorted
+    it("sorts using quick-sort", ->{
+      let nums = Array.of_size(100, null)
+      nums = nums.map(Math.rand)
+
+      nums = nums.sort()
+
+      let invalid = false
+
+      nums.each(->(item, index) {
+        const next = nums[index + 1]
+
+        if item > next && !invalid {
+          invalid = true
+        }
+      })
+
+      assert(invalid, false)
     })
 
   })

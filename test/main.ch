@@ -34,4 +34,6 @@ const result = UnitTest(->(describe, it, assert, context) {
   })
 })
 
-UnitTest.display_result(result, io.exit)
+UnitTest.display_result(result, ->(code) {
+  exit(code)
+})
