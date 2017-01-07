@@ -5,7 +5,7 @@ const result = UnitTest(->(describe, it, assert, context) {
     // ["Including external files",    "./external-files.ch"],
     ["Variables",                   "./interpreter/variables.ch"],
     ["Arithmetic operations",       "./interpreter/arithmetic.ch"],
-    // ["Comparisons",                 "./comparisons.ch"],
+    ["Comparisons",                 "./interpreter/comparisons.ch"],
     ["Arrays",                      "./std/arrays.ch"],
     ["Numerics",                    "./std/numerics.ch"],
     ["Strings",                     "./std/strings.ch"],

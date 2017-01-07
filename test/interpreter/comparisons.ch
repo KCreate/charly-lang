@@ -1,6 +1,6 @@
-export = func(it) {
+export = ->(describe, it, assert) {
 
-  it("compares numerics", func(assert) {
+  it("compares numerics", ->{
     assert(2 == 2, true)
     assert(20 == 20, true)
     assert(-200 == -200, true)
@@ -10,7 +10,7 @@ export = func(it) {
     assert(-0 == 0, true)
   })
 
-  it("compares booleans", func(assert) {
+  it("compares booleans", ->{
     assert(false == false, true)
     assert(false == true, false)
     assert(true == false, false)
@@ -29,7 +29,7 @@ export = func(it) {
     assert(class Test {} == true, true)
   })
 
-  it("compares strings", func(assert) {
+  it("compares strings", ->{
     assert("test" == "test", true)
     assert("" == "", true)
     assert("leeöäüp" == "leeöäüp", true)
@@ -37,7 +37,7 @@ export = func(it) {
     assert("asdlkasd" == "asdlkasd", true)
   })
 
-  it("compares objects", func(assert) {
+  it("compares objects", ->{
     assert({} == {}, false)
     assert({ let a = 1 } == {}, false)
     assert({} == { let a = 1 }, false)
@@ -51,14 +51,14 @@ export = func(it) {
     assert(me.name == me.name, true)
   })
 
-  it("compares functions", func(assert) {
+  it("compares functions", ->{
     assert(func() {} == func() {}, false)
     assert(func(arg) {} == func(arg) {}, false)
     assert(func(arg) { arg + 1 } == func(arg) { arg + 1 }, false)
     assert(func() { 2 } == func(){ 2 }, false)
   })
 
-  it("compares arrays", func(assert) {
+  it("compares arrays", ->{
     assert([1, 2, 3] == [1, 2, 3], true)
     assert([] == [], true)
     assert([false] == [false], true)
@@ -70,12 +70,7 @@ export = func(it) {
     assert([""] == [""], true)
   })
 
-  it("does misc. comparisons", func(assert) {
-    assert(null == null, true)
-    assert(null ! null, false)
-  })
-
-  it("compares non equals", func(assert) {
+  it("returns false if two values are not equal", ->{
     assert(2 == 4, false)
     assert(10 == 20, false)
     assert(2.5 == 2.499999, false)
@@ -89,7 +84,7 @@ export = func(it) {
     assert(2 ! 20, true)
   })
 
-  it("compares using >", func(assert) {
+  describe("> operator", ->{
     assert(2 > 5, false)
     assert(10 > 10, false)
     assert(20 > -20, true)
@@ -108,7 +103,7 @@ export = func(it) {
     assert(null > "lol", false)
   })
 
-  it("compares using <", func(assert) {
+  describe("< operator", ->{
     assert(2 < 5, true)
     assert(10 < 10, false)
     assert(20 < -20, false)
@@ -127,7 +122,7 @@ export = func(it) {
     assert(null < "lol", false)
   })
 
-  it("compares using >=", func(assert) {
+  describe(">= operator", ->{
     assert(5 >= 2, true)
     assert(10 >= 10, true)
     assert(20 >= 20, true)
@@ -141,7 +136,7 @@ export = func(it) {
     assert("small" >= "reaaalllybiiig", false)
   })
 
-  it("compares using <=", func(assert) {
+  describe("<= operator", ->{
     assert(2 <= 5, true)
     assert(10 <= 10, true)
     assert(20 <= -20, false)
@@ -155,29 +150,34 @@ export = func(it) {
     assert("small" <= "reaaalllybiiig", true)
   })
 
-  it("not operator inverts a value", func(assert) {
-    assert(!false, true)
-    assert(!true, false)
-    assert(!0, false)
-    assert(!25, false)
-    assert(!"test", false)
+  describe("not operator", ->{
+
+
+    it("inverts a value", ->{
+      assert(!false, true)
+      assert(!true, false)
+      assert(!0, false)
+      assert(!25, false)
+      assert(!"test", false)
+    })
+
   })
 
-  it("does AND comparison", func(assert) {
+  describe("AND comparison", ->{
     assert(true && true, true)
     assert(true && false, false)
     assert(false && true, false)
     assert(false && false, false)
   })
 
-  it("does OR comparison", func(assert) {
+  describe("OR comparison", ->{
     assert(true || true, true)
     assert(true || false, true)
     assert(false || true, true)
     assert(false || false, false)
   })
 
-  it("does conditional assignment", func(assert) {
+  describe("conditional assignment", ->{
     let a = 25
     let b = null
     let c = false
@@ -197,7 +197,7 @@ export = func(it) {
     assert(d.typeof(), "Null")
   })
 
-  it("compares with null values", func(assert) {
+  describe("null values", ->{
     assert(25 ! null, true)
     assert(null ! null, false)
     assert(null == null, true)
