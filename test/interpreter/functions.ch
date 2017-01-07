@@ -15,6 +15,14 @@ export = ->(describe, it, assert) {
     it("gives anonymous functions the name of the property they were assigned to", ->{
       let foo = func() {}
       assert(foo.name, "foo")
+
+      let bar = func qux() {}
+      assert(bar.name, "qux")
+
+      func abc() {}
+      let asdf = abc
+      assert(abc.name, "abc")
+      assert(asdf.name, "abc")
     })
 
     it("gives anonymous functions an empty string as a name if they are not assigned", ->{
