@@ -2,19 +2,16 @@ const UnitTest = require("unit-test")
 const result = UnitTest(->(describe, it, assert, context) {
 
   const testcases = [
-    // ["Including external files",    "./external-files.ch"],
+
+    // Interpreter specs
     ["Variables",                   "./interpreter/variables.ch"],
     ["Arithmetic operations",       "./interpreter/arithmetic.ch"],
     ["Comparisons",                 "./interpreter/comparisons.ch"],
-    ["Arrays",                      "./std/arrays.ch"],
-    ["Numerics",                    "./std/numerics.ch"],
-    ["Strings",                     "./std/strings.ch"],
-    // ["Functions",                   "./functions.ch"],
+    ["Functions",                   "./interpreter/functions.ch"],
     ["Classes",                     "./interpreter/classes.ch"],
+    // ["Including external files",    "./external-files.ch"],
     // ["Objects",                     "./objects.ch"],
     // ["Loops",                       "./loops.ch"],
-    // ["CLI",                         "./cli.ch"],
-    ["Math",                        "./std/math.ch"]
     // ["try & catch",                 "./exceptions.ch"],
     // ["Magic constants",             "./magic-constants.ch"],
     // ["References",                  "./references.ch"],
@@ -23,6 +20,13 @@ const result = UnitTest(->(describe, it, assert, context) {
     // ["Guard statement",             "./guard.ch"],
     // ["Ternary statements",          "./ternary.ch"],
     // ["Comments",                    "./comments.ch"]
+
+    // Standard Library Specs
+    ["Arrays",                      "./std/arrays.ch"],
+    ["Numerics",                    "./std/numerics.ch"],
+    ["Strings",                     "./std/strings.ch"],
+    // ["CLI",                         "./cli.ch"],
+    ["Math",                        "./std/math.ch"]
   ]
 
   // Loads and runs all the test cases sequentially
