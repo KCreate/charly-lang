@@ -7,7 +7,7 @@ const result = UnitTest(->(describe, it, assert, context) {
     // ["Arithmetic operations",       "./arithmetic.ch"],
     // ["Comparisons",                 "./comparisons.ch"],
     ["Arrays",                      "./std/arrays.ch"],
-    // ["Numerics",                    "./numerics.ch"],
+    ["Numerics",                    "./std/numerics.ch"],
     ["Strings",                     "./std/strings.ch"]
     // ["Functions",                   "./functions.ch"],
     // ["Classes",                     "./classes.ch"],
