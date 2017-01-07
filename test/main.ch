@@ -16,7 +16,7 @@ const result = UnitTest(->(describe, it, assert, context) {
     ["Magic constants",             "./interpreter/magic-constants.ch"],
     ["Primitives",                  "./interpreter/primitives.ch"],
     // ["Unless statement",            "./unless.ch"],
-    // ["Guard statement",             "./guard.ch"],
+    ["Guard statement",             "./interpreter/guard.ch"],
     ["Ternary statements",          "./interpreter/ternary.ch"],
     ["Comments",                    "./interpreter/comments.ch"],
 

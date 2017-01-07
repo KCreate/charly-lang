@@ -1,5 +1,6 @@
-export = ->(it) {
-  it("runs the alternate block", ->(assert) {
+export = ->(describe, it, assert) {
+
+  it("runs the alternate block", ->{
     let value = 20
 
     guard value > 50 {
@@ -10,7 +11,7 @@ export = ->(it) {
     assert(false, true)
   })
 
-  it("can check for value existance", ->(assert) {
+  it("can check for value existance", ->{
     let box = {}
     box.name = "leonard"
 
@@ -18,10 +19,16 @@ export = ->(it) {
       assert(false, true)
     }
 
-    assert(true, true)
+    guard box.age {
+      assert(true, true)
+      return
+    }
+
+    // If this is reached, something went wrong
+    assert(false, true)
   })
 
-  it("returns a value", ->(assert) {
+  it("returns a value", ->{
     func foo() {
       guard false {
         30
@@ -30,4 +37,5 @@ export = ->(it) {
 
     assert(foo(), 30)
   })
+
 }
