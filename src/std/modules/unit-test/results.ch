@@ -38,6 +38,6 @@ export = ->(results, callback) {
     })
   }
 
-  callback(status ? 1 : 0)
+  callback(status ? 0 : 1)
   return status
 }
