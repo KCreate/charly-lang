@@ -1,21 +1,21 @@
-export = func(it) {
+export = ->(describe, it, assert) {
 
-  it("receives an argument called ARGV", func(assert) {
+  it("receives an argument called ARGV", ->{
     assert(ARGV.typeof(), "Array")
     assert(ARGV.length(), 0)
   })
 
-  it("receives an argument called IFLAGS", func(assert) {
+  it("receives an argument called IFLAGS", ->{
     assert(IFLAGS.typeof(), "Array")
     assert(IFLAGS.length(), 0)
   })
 
-  it("receives an argument called ENV", func(assert) {
+  it("receives an argument called ENV", ->{
     assert(ENV.typeof(), "Object")
     assert(ENV.CHARLYDIR.typeof(), "String")
   })
 
-  it("has access to compile statistics", ->(assert) {
+  it("has access to compile statistics", ->{
     const CHARLY = require("charly")
 
     assert(CHARLY.VERSION.typeof(), "String")
@@ -29,7 +29,7 @@ export = func(it) {
     assert(CHARLY.LICENSE.index_of("MIT", 0) ! -1, true)
   })
 
-  it("maybe it has a commit sha", ->(assert) {
+  it("maybe it has a commit sha", ->{
     const CHARLY = require("charly")
 
     if CHARLY.COMPILE_COMMIT.typeof() == "String" {

@@ -14,18 +14,20 @@ const result = UnitTest(->(describe, it, assert, context) {
     ["Loops",                       "./interpreter/loops.ch"],
     ["Exceptions",                  "./interpreter/exceptions.ch"],
     ["Magic constants",             "./interpreter/magic-constants.ch"],
-    // ["References",                  "./references.ch"],
     // ["Primitives",                  "./primitives.ch"],
     // ["Unless statement",            "./unless.ch"],
     // ["Guard statement",             "./guard.ch"],
     // ["Ternary statements",          "./ternary.ch"],
     // ["Comments",                    "./comments.ch"]
 
+    // This is commented out because of #142
+    // ["References",                  "./interpreter/references.ch"],
+
     // Standard Library Specs
     ["Arrays",                      "./std/arrays.ch"],
     ["Numerics",                    "./std/numerics.ch"],
     ["Strings",                     "./std/strings.ch"],
-    // ["CLI",                         "./cli.ch"],
+    ["CLI",                         "./std/cli.ch"],
     ["Math",                        "./std/math.ch"]
   ]
 
