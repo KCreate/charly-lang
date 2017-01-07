@@ -272,6 +272,11 @@ module Charly
             when TokenType::Assignment
               advance
               value = parse_expression
+
+              if value.is_a?(FunctionLiteral) && value.name == ""
+                value.name = identifier.name
+              end
+
               end_location = value.location_end
               skip TokenType::Semicolon
               return VariableInitialisation.new(identifier, value).at(start_location, end_location)
