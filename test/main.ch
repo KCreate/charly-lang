@@ -8,13 +8,13 @@ const result = UnitTest(->(describe, it, assert, context) {
     // ["Comparisons",                 "./comparisons.ch"],
     ["Arrays",                      "./std/arrays.ch"],
     ["Numerics",                    "./std/numerics.ch"],
-    ["Strings",                     "./std/strings.ch"]
+    ["Strings",                     "./std/strings.ch"],
     // ["Functions",                   "./functions.ch"],
     // ["Classes",                     "./classes.ch"],
     // ["Objects",                     "./objects.ch"],
     // ["Loops",                       "./loops.ch"],
     // ["CLI",                         "./cli.ch"],
-    // ["Math",                        "./math.ch"],
+    ["Math",                        "./std/math.ch"]
     // ["try & catch",                 "./exceptions.ch"],
     // ["Magic constants",             "./magic-constants.ch"],
     // ["References",                  "./references.ch"],
