@@ -13,7 +13,7 @@ const result = UnitTest(->(describe, it, assert, context) {
     // ["Objects",                     "./objects.ch"],
     ["Loops",                       "./interpreter/loops.ch"],
     ["Exceptions",                  "./interpreter/exceptions.ch"],
-    // ["Magic constants",             "./magic-constants.ch"],
+    ["Magic constants",             "./interpreter/magic-constants.ch"],
     // ["References",                  "./references.ch"],
     // ["Primitives",                  "./primitives.ch"],
     // ["Unless statement",            "./unless.ch"],
