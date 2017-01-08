@@ -872,43 +872,19 @@ You can now indent strings via the `String#indent` method.
 ## Unit-testing
 
 Charly provides a built-in unit-testing library.
+Create a file containing the code below and update the testcases array with
+the paths to your test files.
+
+You can then run the test cases with this command: `charly main.ch`.
 
 ```javascript
 const UnitTest = require("unit-test")
-const result = UnitTest("myTests").begin(->(describe) {
 
-  describe("some behaviour", ->(it) {
-
-    it("should do something", ->(assert) {
-      assert(25 + 25, 50)
-      assert(true, true)
-      assert("hello", "hello")
-    })
-
-    it("does something else", ->(assert) {
-      assert(true, false)
-    })
-
-  })
-
-})
-```
-
-Running this file will output the following:
-
-![unit-test sample screenshot](images/unit-test.png)
-
-If you have a lot of test cases, you can put them into another file and require them.
-
-__main.ch__
-
-```javascript
-const UnitTest = require("unit-test")
 const result = UnitTest(->(describe, it, assert, context) {
 
   const testcases = [
-    ["My Test", "./mytest.ch"],
-    ["My other Tests", "./othertest.ch"]
+    ["My test suite", "./mytest.ch"],
+    ["My other test suite", "./myothertest.ch"]
   ]
 
   // Loads and runs all the test cases sequentially
@@ -921,14 +897,32 @@ const result = UnitTest(->(describe, it, assert, context) {
 })
 
 UnitTest.display_result(result, ->(code) {
-  /*
-    Code will be either 0 or 1
-    1 - Suite passed
-    0 - Suite failed
-  */
   io.exit(code)
 })
 ```
+
+Running this file will output the following:
+
+```bash
+$ charly main.ch
+Charly [4f4e1bc] Unit Testing Framework
+.FFFF.......
+
+Some test suites have failed
+1) some behaviour does something else
+  Assertion #1
+  Expected: false
+  Got: true
+2) some behaviour some more extended test cases does something
+  Assertion #1
+  Expected: 4
+  Got: 6
+```
+
+You can also run a single file directly with the following command: `charly test mytest.ch`
+
+Every file exporting a function taking three arguments can be run as a
+test suite. The only pre-requisite is that it follows the schema below:
 
 __mytest.ch__
 
@@ -950,7 +944,7 @@ export = ->(describe, it, assert) {
     describe("some more extended test cases", ->{
 
       it("does something", ->{
-        assert(2 + 2, 4)
+        assert(2 + 4, 4)
       })
 
     })
@@ -958,12 +952,6 @@ export = ->(describe, it, assert) {
   })
 
 }
-```
-
-You can run single test files using the `test` subcommand.
-
-```bash
-$ charly test mytest.ch
 ```
 
 ## IO
