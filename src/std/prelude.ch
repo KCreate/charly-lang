@@ -29,15 +29,7 @@ const gets = io.stdin.gets
 const getc = io.stdin.getc
 const exit = io.exit
 
-// Base class for all Exceptions
-class Exception {
-  property message
-
-  func constructor(message) {
-    @message = message
-  }
-
-  func to_s() {
-    @instanceof().name + ": " + @message
-  }
-}
+const ExceptionClasses = require("./exceptions.ch")
+const Exception = ExceptionClasses.Exception
+const ArgumentError = ExceptionClasses.ArgumentError
+const TypeError = ExceptionClasses.TypeError
