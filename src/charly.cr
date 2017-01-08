@@ -80,6 +80,10 @@ module Charly
       if filename == "repl"
         filename = ENV["CHARLYDIR"] + "/src/std/repl.ch"
       end
+
+      if filename == "test"
+        filename = ENV["CHARLYDIR"] + "/src/std/test.ch"
+      end
     end
   end
 
