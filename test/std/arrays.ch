@@ -56,7 +56,7 @@ export = ->(describe, it, assert) {
       try {
         nums[200] = 5
       } catch(e) {
-        assert(e.message, "Index out of bounds. Size is 4, index is 200.0")
+        assert(e.message, "Index out of bounds. Size is 4, index is 200")
         return
       }
 
