@@ -3,10 +3,12 @@
 Your syntax files need to be encoded in UTF-8.
 
 ## Comments
-Singleline comments start with `//`. Multiline comments are created via `/*` and `*/`
+Singleline comments start with `//` or `#`. Multiline comments are created via `/*` and `*/`
 
 ```javascript
 // I'm a comment
+
+# I'm also a comment
 
 /*
   I'm a multiline comment
@@ -15,7 +17,8 @@ Singleline comments start with `//`. Multiline comments are created via `/*` and
 
 ## Variables
 
-Variables are defined via the `let` keyword. If you try to access a variable that wasn't initialized before, a runtime exception is thrown.
+Variables are defined via the `let` keyword.
+If you try to access a variable that wasn't initialized before, a runtime exception is thrown.
 
 ```javascript
 let myVar = 25
@@ -26,7 +29,8 @@ myVar + myOtherVariable // => 75
 
 ## Constants
 
-Constants are declared the same way as variables. They can't be changed, hence the name constant. You need to initialize them in the declaration.
+Constants are declared the same way as variables. They can't be changed, hence the name constant.
+You need to initialize them in the declaration.
 
 ```javascript
 const myconst // => syntax error
@@ -36,7 +40,8 @@ myOtherConst = 30 // => runtime exception
 
 ## Literals
 
-Charly has a total of 10 primitive types. Not all can be constructed directly. For example the `TInternalFunction` can only be gathered from a call to `__internal__method`
+Charly has a total of 10 primitive types. Not all can be constructed directly.
+For example the `TInternalFunction` can only be gathered from a call to `__internal__method`
 
 | Literal                 | Type     |
 |-------------------------|----------|
@@ -85,7 +90,8 @@ Floats are created using the `.` character.
 123_456.456_789
 ```
 
-A Numeric will silently overflow if you pass the lower or upper limit of `Float64`. The following REPL session elaborates this:
+A Numeric will silently overflow if you pass the lower or upper limit of `Float64`.
+The following REPL session elaborates this:
 
 ![Numeric literal overflowing](images/overflow.png)
 
@@ -274,7 +280,8 @@ Of course you could also pass the print method directly, this would however resu
 */
 ```
 
-Because `Array#map` passes the value, index and size of the array to the callback, print will write all these values to the console.
+Because `Array#map` passes the value, index and size of the array to the callback,
+print will write all these values to the console.
 
 When you write a lambda function without parenthesis or curly braces, it will wrap the expression inside a block.
 
@@ -387,7 +394,8 @@ myBaz.bar() // => "bar method"
 myBaz.baz() // => "baz method"
 ```
 
-Static properties and methods are also copied to the child classes. The values of static properties are copied by value. They are not references.
+Static properties and methods are also copied to the child classes. The values of static properties are copied by value.
+They are not references.
 
 ```javascript
 class Foo {
@@ -428,7 +436,8 @@ myBox.name = "box"
 myBox.foo() // => "box"
 ```
 
-If you directly call a method `foo()`, `self` is set to whatever it what in the context where the method is defined. Think of it like Arrow Funtions in JavaScript.
+If you directly call a method `foo()`, `self` is set to whatever it what in the context where the method is defined.
+Think of it like Arrow Funtions in JavaScript.
 
 ```javascript
 let Box = {
@@ -481,7 +490,8 @@ foo(40) // => false
 
 ### Truthy and falsey values
 
-A _truthy_ value is a value that is considered true for an `if` and `while` guard. A _falsey_ value is a value that is considered false in those places.
+A _truthy_ value is a value that is considered true for an `if` and `while` guard.
+A _falsey_ value is a value that is considered false in those places.
 
 The only falsey values are `false` and `null`. Any other value is _truthy_.
 
@@ -490,7 +500,7 @@ The only falsey values are `false` and `null`. Any other value is _truthy_.
 The parenthesis around the test expression are optional
 
 ```javascript
-if (2 < 5) {
+if 2 < 5 {
   print("Mathematics still works!")
 } else {
   print("Something's off...")
@@ -527,6 +537,12 @@ For simple loops that repeat for a fixed amount of time, you are encouraged to u
 })
 ```
 
+```javascript
+5.times(->{
+  print("hello world")
+})
+```
+
 You can break inside a while statement.
 
 ```javascript
@@ -545,17 +561,23 @@ while true {
 
 ## Types and methods
 
-The next sections will assume you know what object oriented programming is, as well as the concepts of classes and methods.
+The next sections will assume you know what object oriented programming is,
+as well as the concepts of classes and methods.
 
 ### Everything is an object
 
-Everything in Charly is an object. Not every type can have an internal state however. Only `Object`, `Class`, `PrimitiveClass` and `Array` can have an internal state.
+Everything in Charly is an object. Not every type can have an internal state however.
+Only `Object`, `Class`, `PrimitiveClass` and `Array` can have an internal state.
 
-When you write `5`, the interpreter actually treats it as a primitive. There are no funny castings or object instantiations (inside charly). All values inside charly are boxed in heap memory. When you write `5.times`, the interpreter searches for a primitive class called `Numeric` and checks if it contains a method called `times`.
+When you write `5`, the interpreter actually treats it as a primitive.
+There are no funny castings or object instantiations (inside charly).
+All values inside charly are boxed in heap memory. When you write `5.times`,
+the interpreter searches for a primitive class called `Numeric` and checks if it contains a method called `times`.
 
 This allows the interpreter to reuse the same object for all primitives of the same type.
 
-This principle applies to all language primitives. The primitive class `Array` for example, specifies a method called `push` which inserts an element into the array.
+This principle applies to all language primitives.
+The primitive class `Array` for example, specifies a method called `push` which inserts an element into the array.
 
 ### Method arguments
 
@@ -688,7 +710,8 @@ export = {
 
 If you call require on the same file twice, it will result the value returned by the very first call.
 
-If you call require on a file that was already required before, a cached version will be returned. The file won't be executed twice.
+If you call require on a file that was already required before, a cached version will be returned.
+The file won't be executed twice.
 
 __main.ch__
 
@@ -714,7 +737,8 @@ Recursive `require` call won't be catched or prevented in any way.
 
 ## Command line arguments and flags
 
-The `charly` command has the ability to receive flags. A list of these can be obtained by running `charly -h` in the command line.
+The `charly` command has the ability to receive flags.
+A list of these can be obtained by running `charly -h` in the command line.
 
 You can pass flags via the following format
 
@@ -732,7 +756,8 @@ charly input.ch hello -f tokens world 25 25 --foo -b
                       IFLAGS            ARGV
 ```
 
-You can access command line arguments and flags via the `ARGV` and `IFLAGS` constants. Current environment variables are available via `ENV`.
+You can access command line arguments and flags via the `ARGV` and `IFLAGS` constants.
+Current environment variables are available via `ENV`.
 
 ```bash
 charly input.ch hello -f tokens world 25 25 --foo -b
@@ -794,7 +819,8 @@ The REPL provides a few _magic_ variables which are specific to your current REP
 
 ## Extending primitive types
 
-Primitives in Charly can be extended as if they were regular objects. A good example of this is the `Numeric#times` method. It allows you to write really expressive code like this:
+Primitives in Charly can be extended as if they were regular objects.
+A good example of this is the `Numeric#times` method. It allows you to write really expressive code like this:
 
 ```javascript
 5.times(->{
@@ -878,34 +904,72 @@ __main.ch__
 
 ```javascript
 const UnitTest = require("unit-test")
-const result = UnitTest("myTests").begin(->(describe) {
+const result = UnitTest(->(describe, it, assert, context) {
 
-  describe("some behaviour", require("./mytest.ch"))
+  const testcases = [
+    ["My Test", "./mytest.ch"],
+    ["My other Tests", "./othertest.ch"]
+  ]
 
+  // Loads and runs all the test cases sequentially
+  testcases.each(->(test) {
+    const module = require(test[1])
+    describe(test[0], ->{
+      module(describe, it, assert, context)
+    })
+  })
+})
+
+UnitTest.display_result(result, ->(code) {
+  /*
+    Code will be either 0 or 1
+    1 - Suite passed
+    0 - Suite failed
+  */
+  io.exit(code)
 })
 ```
 
 __mytest.ch__
 
 ```javascript
-export = ->(it) {
+export = ->(describe, it, assert) {
 
-  it("should do something", ->(assert) {
-    assert(25 + 25, 50)
-    assert(true, true)
-    assert("hello", "hello")
-  })
+  describe("some behaviour", ->{
 
-  it("does something else", ->(assert) {
-    assert(true, false)
+    it("should do something", ->{
+      assert(25 + 25, 50)
+      assert(true, true)
+      assert("hello", "hello")
+    })
+
+    it("does something else", ->{
+      assert(true, false)
+    })
+
+    describe("some more extended test cases", ->{
+
+      it("does something", ->{
+        assert(2 + 2, 4)
+      })
+
+    })
+
   })
 
 }
 ```
 
+You can run single test files using the `test` subcommand.
+
+```bash
+$ charly test mytest.ch
+```
+
 ## IO
 
-Charly currently has bindings to STDOUT, STDERR and STDIN. Everything IO related will be found inside the `io` global object.
+Charly currently has bindings to STDOUT, STDERR and STDIN.
+Everything IO related will be found inside the `io` global object.
 
 ```javascript
 
@@ -975,4 +1039,4 @@ print(mymethod("Hello World")) // => You said: Hello World
 
 ___
 
-__Copyright © 2016 - present Leonard Schütz__
+* Copyright © 2016 - present Leonard Schütz
