@@ -19,6 +19,7 @@ module Charly
     # Some properties to make the parser context aware
     property return_allowed : Bool
     property break_allowed : Bool
+    property continue_allowed : Bool
 
     # Create a Program from *source* called *filename*
     def self.create(source : IO, filename : String)
@@ -40,6 +41,7 @@ module Charly
 
       @return_allowed = false
       @break_allowed = false
+      @continue_allowed = false
     end
 
     # Parses a program
@@ -341,6 +343,16 @@ module Charly
           skip TokenType::Semicolon
           advance_to_token TokenType::RightCurly
           return BreakStatement.new.at(start_location, end_location)
+        when "continue"
+          unless @continue_allowed
+            unallowed_token
+          end
+
+          advance
+          end_location = start_location
+          skip TokenType::Semicolon
+          advance_to_token TokenType::RightCurly
+          return ContinueStatement.new.at(start_location, end_location)
         when "throw"
           advance
           value = parse_expression
@@ -530,9 +542,12 @@ module Charly
       end
 
       backup_break_allowed = @break_allowed
+      backup_continue_allowed = @continue_allowed
       @break_allowed = true
+      @continue_allowed = true
       consequent = parse_block
       @break_allowed = backup_break_allowed
+      @continue_allowed = backup_continue_allowed
       return WhileStatement.new(test, consequent).at(start_location, consequent.location_end)
     end
 
@@ -550,9 +565,12 @@ module Charly
       end
 
       backup_break_allowed = @break_allowed
+      backup_continue_allowed = @continue_allowed
       @break_allowed = true
+      @continue_allowed = true
       consequent = parse_block
       @break_allowed = backup_break_allowed
+      @continue_allowed = backup_continue_allowed
       return UntilStatement.new(test, consequent).at(start_location, consequent.location_end)
     end
 
@@ -561,9 +579,12 @@ module Charly
       expect TokenType::Keyword, "loop"
 
       backup_break_allowed = @break_allowed
+      backup_continue_allowed = @continue_allowed
       @break_allowed = true
+      @continue_allowed = true
       consequent = parse_block
       @break_allowed = backup_break_allowed
+      @continue_allowed = backup_continue_allowed
       return LoopStatement.new(consequent).at(start_location, consequent.location_end)
     end
 
@@ -863,11 +884,14 @@ module Charly
     private def parse_container_literal
       backup_return_allowed = @return_allowed
       backup_break_allowed = @break_allowed
+      backup_continue_allowed = @continue_allowed
       @return_allowed = false
       @break_allowed = false
+      @continue_allowed = false
       block = parse_block
       @return_allowed = backup_return_allowed
       @break_allowed = backup_break_allowed
+      @continue_allowed = backup_continue_allowed
       return ContainerLiteral.new(block).at(block)
     end
 
@@ -908,11 +932,14 @@ module Charly
 
       backup_return_allowed = @return_allowed
       backup_break_allowed = @break_allowed
+      backup_continue_allowed = @continue_allowed
       @return_allowed = true
       @break_allowed = false
+      @continue_allowed = false
       block = parse_block
       @return_allowed = backup_return_allowed
       @break_allowed = backup_break_allowed
+      @continue_allowed = backup_continue_allowed
 
       if identifier.is_a? IdentifierLiteral
         FunctionLiteral.new(identifier.name, arguments, block).at(start_location, block.location_end)
@@ -939,11 +966,14 @@ module Charly
       when TokenType::LeftCurly
         backup_return_allowed = @return_allowed
         backup_break_allowed = @break_allowed
+        backup_continue_allowed = @continue_allowed
         @return_allowed = true
         @break_allowed = false
+        @continue_allowed = false
         block = parse_block
         @return_allowed = backup_return_allowed
         @break_allowed = backup_break_allowed
+        @continue_allowed = backup_continue_allowed
       else
         expression = parse_expression
         block.children << expression
@@ -976,11 +1006,14 @@ module Charly
 
       backup_return_allowed = @return_allowed
       backup_break_allowed = @break_allowed
+      backup_continue_allowed = @continue_allowed
       @return_allowed = false
       @break_allowed = false
+      @continue_allowed = false
       block = parse_class_block
       @return_allowed = backup_return_allowed
       @break_allowed = backup_break_allowed
+      @continue_allowed = backup_continue_allowed
 
       ClassLiteral.new(identifier, block, parents).at(start_location, block.location_end)
     end

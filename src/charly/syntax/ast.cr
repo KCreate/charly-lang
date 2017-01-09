@@ -173,6 +173,8 @@ module Charly::AST
 
   ast_node BreakStatement
 
+  ast_node ContinueStatement
+
   ast_node TryCatchStatement,
     try_block : Block,
     exception_name : IdentifierLiteral,
