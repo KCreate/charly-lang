@@ -559,6 +559,23 @@ while true {
 }
 ```
 
+`continue` is also supported.
+
+```javascript
+let i = 0
+while i < 50 {
+
+  if i % 2 == 0 {
+    i += 1
+    continue
+  }
+
+  print(i)
+
+  i += 1
+}
+```
+
 ## Types and methods
 
 The next sections will assume you know what object oriented programming is,
