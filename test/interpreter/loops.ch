@@ -67,6 +67,27 @@ export = ->(describe, it, assert) {
       assert(sum, 25)
     })
 
+    it("can be deeply nested", ->{
+      let i = 0
+      let sum = 0
+
+      while i < 50 {
+        if i > 10 {
+          if i > 20 {
+            if i > 30 {
+              i += 1
+              continue
+            }
+          }
+        }
+
+        i += 1
+        sum += 1
+      }
+
+      assert(sum, 31)
+    })
+
   })
 
   describe("until", ->{
