@@ -49,6 +49,26 @@ export = ->(describe, it, assert) {
 
   })
 
+  describe("continue", ->{
+
+    it("continues to the end of a loop", ->{
+      let i = 0
+      let sum = 0
+      while i < 50 {
+        if i % 2 == 0 {
+          i += 1
+          continue
+        }
+
+        sum += 1
+        i += 1
+      }
+
+      assert(sum, 25)
+    })
+
+  })
+
   describe("until", ->{
 
     it("until statement runs in a new scope each time", ->{

@@ -33,8 +33,12 @@ module Charly
     end
   end
 
-  # Exception used to return prematurely from while loops
+  # Exception used to return prematurely from loops
   class BreakException < Exception
+  end
+
+  # Exception used to skip to the next iteration of loops
+  class ContinueException < Exception
   end
 
   # An exception as thrown by the user
@@ -195,6 +199,8 @@ module Charly
         raise ReturnException.new(expression)
       when .is_a? BreakStatement
         raise BreakException.new
+      when .is_a? ContinueStatement
+        raise ContinueException.new
       when .is_a? IfStatement
         return visit_if_statement(node, scope, context)
       when .is_a? UnlessStatement
@@ -1106,6 +1112,8 @@ module Charly
           last_result = visit_block(node.consequent, scope, context)
         rescue e : BreakException
           break
+        rescue e : ContinueException
+          # do nothing
         end
 
         scope.clear
@@ -1123,6 +1131,8 @@ module Charly
           last_result = visit_block(node.consequent, scope, context)
         rescue e : BreakException
           break
+        rescue e : ContinueException
+          # do nothing
         end
 
         scope.clear
@@ -1140,6 +1150,8 @@ module Charly
           last_result = visit_block(node.consequent, scope, context)
         rescue e : BreakException
           break
+        rescue e : ContinueException
+          # do nothing
         end
 
         scope.clear
