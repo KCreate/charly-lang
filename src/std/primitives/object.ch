@@ -5,6 +5,16 @@ const instanceof = __internal__method("instanceof")
 const _object_keys = __internal__method("_object_keys")
 const _isolate_object = __internal__method("_isolate_object")
 
+const PrettyPrintColors = {
+  const String = 32
+  const Numeric = 33
+  const Boolean = 33
+  const Null = 90
+  const Function = 34
+  const Class = 35
+  const PrimitiveClass = 35
+}
+
 export = primitive class Object {
 
   /*
@@ -78,30 +88,6 @@ export = primitive class Object {
       return ("\"" + value + "\"").colorize(32)
     }
 
-    if type == "Numeric" {
-      return value.colorize(33)
-    }
-
-    if type == "Boolean" {
-      return value.colorize(33)
-    }
-
-    if type == "Null" {
-      return value.colorize(90)
-    }
-
-    if type == "Function" {
-      return value.colorize(34)
-    }
-
-    if type == "Class" {
-      return value.colorize(35)
-    }
-
-    if type == "PrimitiveClass" {
-      return value.colorize(35)
-    }
-
     if type == "Array" {
       return Array.pretty_print(value)
     }
@@ -130,6 +116,8 @@ export = primitive class Object {
 
       return render
     }
+
+    return value.colorize(PrettyPrintColors[type])
   }
 
   /*
