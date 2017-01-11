@@ -257,13 +257,6 @@ export = primitive class String {
   }
 
   /*
-   * Pretty prints this string
-   * */
-  func pretty_print() {
-    ("\"" + self + "\"").colorize(32)
-  }
-
-  /*
    * Returns true if the first char in this string is a digit
    * */
   func digit() {

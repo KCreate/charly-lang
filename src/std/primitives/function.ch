@@ -3,10 +3,6 @@ const function_bind = __internal__method("function_bind")
 
 export = primitive class Function {
 
-  func pretty_print() {
-    @to_s().colorize(34)
-  }
-
   /*
    * Binds given context and arguments to a function
    * This returns a copy of the function

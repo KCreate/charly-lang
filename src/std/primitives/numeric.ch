@@ -133,8 +133,4 @@ export = primitive class Numeric {
   func to_n() {
     self
   }
-
-  func pretty_print() {
-    @to_s().colorize(33)
-  }
 }

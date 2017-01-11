@@ -264,6 +264,7 @@ export = ->(describe, it, assert) {
     it("returns all keys of a primitive class", ->{
       let keys = Object.keys(Array)
       assert(keys, [
+        "pretty_print",
         "of_size",
         "name",
         "methods"

@@ -269,7 +269,7 @@ loop {
     const input = "> ".prompt()
     const tree = parser.parse(input)
     const result = visitor.execute(tree)
-    print(result.pretty_print())
+    print(Object.pretty_print(result))
   } catch(e) {
     print("Error:".colorize(31))
     print(e.colorize(31))

@@ -68,18 +68,56 @@ export = primitive class Object {
     }
   }
 
-  func pretty_print() {
-    if @typeof() == "Object" {
+  /*
+   * Pretty prints *value*
+   * */
+  static func pretty_print(value) {
+    const type = value.typeof()
+
+    if type == "String" {
+      return ("\"" + value + "\"").colorize(32)
+    }
+
+    if type == "Numeric" {
+      return value.colorize(33)
+    }
+
+    if type == "Boolean" {
+      return value.colorize(33)
+    }
+
+    if type == "Null" {
+      return value.colorize(90)
+    }
+
+    if type == "Function" {
+      return value.colorize(34)
+    }
+
+    if type == "Class" {
+      return value.colorize(35)
+    }
+
+    if type == "PrimitiveClass" {
+      return value.colorize(35)
+    }
+
+    if type == "Array" {
+      return Array.pretty_print(value)
+    }
+
+    if type == "Object" {
+
       let render = "{\n"
-
       let child_render = ""
-      Object.keys(self).each(->(key, index, size) {
-        const own_key = self[key]
 
-        if own_key == self && own_key.typeof() == @typeof() {
-          child_render += key + ": (circular)"
+      Object.keys(value).each(->(key, index, size) {
+        const own_key = value[key]
+
+        if own_key == value && own_key.typeof() == value.typeof() {
+          child_render += key + ": " + "(circular)"
         } else {
-          child_render += key + ": " + self[key].pretty_print()
+          child_render += key + ": " + Object.pretty_print(own_key)
         }
 
         if index < size - 1 {
@@ -91,8 +129,6 @@ export = primitive class Object {
       render += "\n}"
 
       return render
-    } else {
-      "" + self
     }
   }
 

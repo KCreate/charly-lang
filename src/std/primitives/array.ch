@@ -174,11 +174,16 @@ export = primitive class Array {
     io
   }
 
-  func pretty_print() {
+  static func pretty_print(value) {
+
+    unless value.typeof() == "Array" {
+      throw Exception("Expected argument to be an array, got " + value.typeof())
+    }
+
     let io = "["
-    let amount = _length(self)
-    @each(func(e, i) {
-      io += e.pretty_print()
+    let amount = value.length()
+    value.each(func(e, i) {
+      io += Object.pretty_print(e)
 
       if i ! amount - 1 {
         io += ", "

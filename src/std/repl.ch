@@ -28,7 +28,7 @@ loop {
   }
 
   if context.echo {
-    print(context.$.pretty_print())
+    Object.pretty_print(context.$).tap(print)
     context.history.push(input)
   }
 }
