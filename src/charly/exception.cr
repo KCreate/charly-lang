@@ -62,14 +62,8 @@ module Charly
       io << "\n"
 
       # Print the source highlight
-      if (source = @source).is_a? String
-        # They both might be set to null, so check first
-        loc_start, loc_end = @location_start, @location_end
-        if loc_start.is_a?(Location) && loc_end.is_a?(Location)
-          highlighter = SourceHighlight.new(loc_start, loc_end)
-          highlighter.present(source, io)
-        end
-      end
+      highlighter = SourceHighlight.new(@location_start, @location_end)
+      highlighter.present(source, io)
 
       # Print the stack trace
       @trace.each do |entry|

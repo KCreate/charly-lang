@@ -261,7 +261,7 @@ module Charly
 
       # If the expression is a TFunc and it doesn't have a name yet, give it a name
       if expression.is_a? TFunc
-        unless expression.name.is_a? String
+        unless expression.name.size > 0
           expression.name = node.identifier.name
         end
       end

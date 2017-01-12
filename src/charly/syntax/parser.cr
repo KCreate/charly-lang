@@ -275,7 +275,7 @@ module Charly
               advance
               value = parse_expression
 
-              if value.is_a?(FunctionLiteral) && value.name == ""
+              if value.is_a?(FunctionLiteral) && value.name.size == 0
                 value.name = identifier.name
               end
 
@@ -421,7 +421,7 @@ module Charly
         when "func"
           value = parse_func_literal
 
-          unless value.name.is_a? String
+          unless value.name.size > 0
             raise SyntaxError.new(value, "Missing function name")
           end
 
