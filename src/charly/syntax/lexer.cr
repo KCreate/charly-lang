@@ -912,6 +912,8 @@ module Charly
             io << "\n"
           when '"'
             io << "\""
+          when '\\'
+            io << "\\"
           when '\0'
             # Create a location for the presenter to show
             loc = Location.new
