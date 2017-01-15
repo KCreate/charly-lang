@@ -31,4 +31,8 @@ module Charly::Internals
       return TNull.new
     end
   end
+
+  charly_api "_object_id", value : BaseType do
+    return TNumeric.new value.object_id
+  end
 end

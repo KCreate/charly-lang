@@ -562,4 +562,45 @@ export = ->(describe, it, assert) {
 
   })
 
+  describe("object_id", ->{
+
+    it("returns the memory address of a value", ->{
+      let a = 25
+      let b = a
+
+      let ad1 = Object.object_id(a)
+      let ad2 = Object.object_id(b)
+
+      assert(ad1, ad2)
+    })
+
+    it("returns the memory address of function arguments", ->{
+      func foo(a, b, c) {
+        arguments.map(Object.object_id)
+      }
+
+      let a = 1
+      let b = 2
+      let c = 3
+
+      let adresses = [a, b, c].map(Object.object_id)
+
+      let argument_adresses = foo(a, b, c)
+      assert(adresses, argument_adresses)
+    })
+
+    it("returns the memory address of object properties", ->{
+      let num = 200
+
+      let box = {}
+      box.value = num
+
+      let ad1 = Object.object_id(num)
+      let ad2 = Object.object_id(box.value)
+
+      assert(ad1, ad2)
+    })
+
+  })
+
 }

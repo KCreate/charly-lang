@@ -4,6 +4,7 @@ const typeof = __internal__method("typeof")
 const instanceof = __internal__method("instanceof")
 const _object_keys = __internal__method("_object_keys")
 const _isolate_object = __internal__method("_isolate_object")
+const _object_id = __internal__method("_object_id")
 
 const PrettyPrintColors = {
   const String = 32
@@ -16,6 +17,13 @@ const PrettyPrintColors = {
 }
 
 export = primitive class Object {
+
+  /*
+   * Returns a number that uniquely identifies *value*
+   * */
+  static func object_id(value) {
+    _object_id(value)
+  }
 
   /*
    * Returns the length of this value
