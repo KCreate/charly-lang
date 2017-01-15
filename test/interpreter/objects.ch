@@ -231,6 +231,33 @@ export = ->(describe, it, assert) {
       assert(render, "{\n  name: charly\n  data: {\n    foo: okay\n    hello: world\n  }\n}")
     })
 
+    it("renders circular objects", ->{
+      let Box = {}
+      Box.box = {}
+      Box.box.box = {}
+      Box.box.box.box = Box
+
+      let render = Box.to_s()
+      let pretty_render = Object.pretty_print(Box)
+
+      assert(render, "{\n  box: {\n    box: {\n      box: (circular)\n    }\n  }\n}")
+      assert(render, "{\n  box: {\n    box: {\n      box: (circular)\n    }\n  }\n}")
+    })
+
+    it("renders circular arrays", ->{
+      let a = []
+      let b = []
+
+      a.push(b)
+      b.push(a)
+
+      let render = a.to_s()
+      let pretty_render = Array.pretty_print(a)
+
+      assert(render, "[[(circular)]]")
+      assert(render, "[[(circular)]]")
+    })
+
   })
 
   describe("keys", ->{

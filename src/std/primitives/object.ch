@@ -16,6 +16,8 @@ const PrettyPrintColors = {
   const PrimitiveClass = 35
 }
 
+const PrettyPrintHistory = []
+
 export = primitive class Object {
 
   /*
@@ -60,16 +62,18 @@ export = primitive class Object {
 
   func to_s() {
     if @typeof() == "Object" {
-      let render = "{\n"
+      PrettyPrintHistory.push(Object.object_id(self))
 
+      let render = "{\n"
       let child_render = ""
+
       Object.keys(self).each(->(key, index, size) {
         const own_key = self[key]
 
-        if own_key == self && own_key.typeof() == @typeof() {
+        if PrettyPrintHistory.includes(Object.object_id(own_key)) {
           child_render += key + ": " + "(circular)"
         } else {
-          child_render += key + ": " + self[key].to_s()
+          child_render += key + ": " + own_key.to_s()
         }
 
         if index < size - 1 {
@@ -79,6 +83,8 @@ export = primitive class Object {
 
       render += child_render.indent(2, " ")
       render += "\n}"
+
+      PrettyPrintHistory.pop()
 
       return render
     } else {
@@ -102,13 +108,15 @@ export = primitive class Object {
 
     if type == "Object" {
 
+      PrettyPrintHistory.push(Object.object_id(value))
+
       let render = "{\n"
       let child_render = ""
 
       Object.keys(value).each(->(key, index, size) {
         const own_key = value[key]
 
-        if own_key == value && own_key.typeof() == value.typeof() {
+        if PrettyPrintHistory.includes(Object.object_id(own_key)) {
           child_render += key + ": " + "(circular)"
         } else {
           child_render += key + ": " + Object.pretty_print(own_key)
@@ -121,6 +129,8 @@ export = primitive class Object {
 
       render += child_render.indent(2, " ")
       render += "\n}"
+
+      PrettyPrintHistory.pop()
 
       return render
     }

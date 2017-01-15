@@ -145,7 +145,7 @@ module Charly
       if (type = @type).is_a? TClass
         io << "Object:#{type.name}"
       else
-        io << "Object:Container"
+        io << "Object"
       end
     end
 

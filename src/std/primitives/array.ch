@@ -6,6 +6,8 @@ const _length = __internal__method("length")
 // Collection of sorting algorithms
 const Sort = require("../sort.ch")
 
+const PrettyPrintHistory = []
+
 export = primitive class Array {
 
   /*
@@ -163,14 +165,24 @@ export = primitive class Array {
   func to_s() {
     let io = "["
     let amount = _length(self)
+
+    PrettyPrintHistory.push(Object.object_id(self))
+
     @each(func(e, i) {
-      io += e.to_s()
+      if PrettyPrintHistory.includes(Object.object_id(e)) {
+        io += "(circular)"
+      } else {
+        io += e.to_s()
+      }
 
       if i ! amount - 1 {
         io += ", "
       }
     })
     io += "]"
+
+    PrettyPrintHistory.pop()
+
     io
   }
 
@@ -180,16 +192,26 @@ export = primitive class Array {
       throw Exception("Expected argument to be an array, got " + value.typeof())
     }
 
+    PrettyPrintHistory.push(Object.object_id(value))
+
     let io = "["
     let amount = value.length()
     value.each(func(e, i) {
-      io += Object.pretty_print(e)
+
+      if PrettyPrintHistory.includes(Object.object_id(e)) {
+        io += "(circular)"
+      } else {
+        io += Object.pretty_print(e)
+      }
 
       if i ! amount - 1 {
         io += ", "
       }
     })
     io += "]"
+
+    PrettyPrintHistory.pop()
+
     io
   }
 
@@ -266,6 +288,14 @@ export = primitive class Array {
     }
 
     index
+  }
+
+  /*
+   * Returns true if value is inside this array
+   * This is an alias for Array#index_of(foo) ! -1
+   * */
+  func includes(value) {
+    @index_of(value) ! -1
   }
 
   /*
