@@ -239,6 +239,9 @@ module Charly
         return visit_try_catch_statement(node, scope, context)
       when .is_a? ThrowStatement
         return visit_throw_statement(node, scope, context)
+      when .is_a? TypeofExpression
+        value = visit_expression(node.node, scope, context)
+        return TString.new("#{value.class}")
       end
 
       # Catch unknown nodes
