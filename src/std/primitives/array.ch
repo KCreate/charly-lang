@@ -188,8 +188,8 @@ export = primitive class Array {
 
   static func pretty_print(value) {
 
-    unless value.typeof() == "Array" {
-      throw Exception("Expected argument to be an array, got " + value.typeof())
+    unless typeof value == "Array" {
+      throw Exception("Expected argument to be an array, got " + typeof value)
     }
 
     PrettyPrintHistory.push(Object.object_id(value))
@@ -254,7 +254,7 @@ export = primitive class Array {
     let new = []
 
     @each(func(e) {
-      if (e.typeof() == "Array") {
+      if (typeof e == "Array") {
         e.flatten().each(func(e) {
           new.push(e)
         })
@@ -276,7 +276,7 @@ export = primitive class Array {
     let length = @length()
 
     const element_id = Object.object_id(element)
-    const element_type = element.typeof()
+    const element_type = typeof element
 
     while (i < length) {
       const self_val = self[i]
@@ -286,7 +286,7 @@ export = primitive class Array {
         break
       }
 
-      if self_val.typeof() == element_type && self_val == element {
+      if typeof self_val == element_type && self_val == element {
         index = i
         break
       }
@@ -350,7 +350,7 @@ export = primitive class Array {
   func +(element) {
 
     // Return a copy of the current array and append the item
-    if (element.typeof() ! "Array") {
+    if (typeof element ! "Array") {
       let new = @copy()
       new.push(element)
       return new
@@ -369,9 +369,9 @@ export = primitive class Array {
    * */
   func ==(other) {
 
-    const other_type = other.typeof()
+    const other_type = typeof other
 
-    if (other_type ! @typeof()) {
+    if (other_type ! typeof self) {
       return false
     }
 

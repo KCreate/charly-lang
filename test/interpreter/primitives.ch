@@ -75,15 +75,15 @@ export = ->(describe, it, assert) {
   })
 
   it("gives primitive classes the methods object", ->{
-    assert(Array.methods.typeof(), "Object")
-    assert(Boolean.methods.typeof(), "Object")
-    assert(Class.methods.typeof(), "Object")
-    assert(Function.methods.typeof(), "Object")
-    assert(Null.methods.typeof(), "Object")
-    assert(Numeric.methods.typeof(), "Object")
-    assert(Object.methods.typeof(), "Object")
-    assert(PrimitiveClass.methods.typeof(), "Object")
-    assert(String.methods.typeof(), "Object")
+    assert(typeof Array.methods, "Object")
+    assert(typeof Boolean.methods, "Object")
+    assert(typeof Class.methods, "Object")
+    assert(typeof Function.methods, "Object")
+    assert(typeof Null.methods, "Object")
+    assert(typeof Numeric.methods, "Object")
+    assert(typeof Object.methods, "Object")
+    assert(typeof PrimitiveClass.methods, "Object")
+    assert(typeof String.methods, "Object")
   })
 
 }

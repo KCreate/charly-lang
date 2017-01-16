@@ -66,11 +66,11 @@ const Quicksort = {
     let left = arguments[1]
     let right = arguments[2]
 
-    if left.typeof() ! "Numeric" {
+    if typeof left ! "Numeric" {
       left = 0
     }
 
-    if right.typeof() ! "Numeric" {
+    if typeof right ! "Numeric" {
       right = array.length() - 1
     }
 

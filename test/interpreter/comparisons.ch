@@ -185,16 +185,16 @@ export = ->(describe, it, assert) {
     let d
 
     d = a || b
-    assert(d.typeof(), "Numeric")
+    assert(typeof d, "Numeric")
 
     d = b || c
-    assert(d.typeof(), "Boolean")
+    assert(typeof d, "Boolean")
 
     d = b || a
-    assert(d.typeof(), "Numeric")
+    assert(typeof d, "Numeric")
 
     d = c || b
-    assert(d.typeof(), "Null")
+    assert(typeof d, "Null")
   })
 
   describe("null values", ->{

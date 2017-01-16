@@ -4,7 +4,7 @@ export = ->(describe, it, assert) {
 
     it("saves named functions to the current scope", ->{
       func foo() {}
-      assert(foo.typeof(), "Function")
+      assert(typeof foo, "Function")
     })
 
     it("gives named functions the name property", ->{
@@ -365,7 +365,7 @@ export = ->(describe, it, assert) {
       25
     }
 
-    assert(myFunc().typeof(), "Function")
+    assert(typeof myFunc(), "Function")
     assert(myFunc()(), 25)
   })
 
@@ -389,7 +389,7 @@ export = ->(describe, it, assert) {
       func() {}
     }
 
-    assert(box[""].typeof(), "Null")
+    assert(typeof box[""], "Null")
   })
 
   describe("internal methods", ->{
@@ -397,7 +397,7 @@ export = ->(describe, it, assert) {
     it("loads internal methods", ->{
       let object_keys = __internal__method("_object_keys")
 
-      assert(object_keys.typeof(), "Function")
+      assert(typeof object_keys, "Function")
       assert(object_keys.name, "_object_keys")
 
       let test_object = {

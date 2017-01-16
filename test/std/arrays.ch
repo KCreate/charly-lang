@@ -13,8 +13,8 @@ export = ->(describe, it, assert) {
     })
 
     it("returns null for values out of bounds", ->{
-      assert(nums[100].typeof(), "Null")
-      assert(nums[-20].typeof(), "Null")
+      assert(typeof nums[100], "Null")
+      assert(typeof nums[-20], "Null")
     })
 
     describe("multilevel expressions", ->{
@@ -206,13 +206,13 @@ export = ->(describe, it, assert) {
 
     it("returns an array", ->{
       let strings = nums.all_to_s()
-      assert(strings.typeof(), "Array")
+      assert(typeof strings, "Array")
     })
 
     it("leaves the original untouched", ->{
       let strings = nums.all_to_s()
 
-      assert(nums[0].typeof(), "Numeric")
+      assert(typeof nums[0], "Numeric")
     })
 
     it("respects the to_s method", ->{
@@ -365,7 +365,7 @@ export = ->(describe, it, assert) {
       let nums = []
       let value = nums.first()
 
-      assert(value.typeof(), "Null")
+      assert(typeof value, "Null")
     })
 
   })
@@ -383,7 +383,7 @@ export = ->(describe, it, assert) {
       let nums = []
       let value = nums.last()
 
-      assert(value.typeof(), "Null")
+      assert(typeof value, "Null")
     })
 
   })

@@ -13,7 +13,7 @@ export = ->(describe, it, assert) {
       throw 2
     } catch (e) {
       assert(e, 2)
-      assert(e.typeof(), "Numeric")
+      assert(typeof e, "Numeric")
     }
   })
 
@@ -57,7 +57,7 @@ export = ->(describe, it, assert) {
       const a = 2
       a = 3
     } catch(e) {
-      assert(e.message.typeof(), "String")
+      assert(typeof e.message, "String")
       return
     }
 
@@ -69,7 +69,7 @@ export = ->(describe, it, assert) {
       const a = 2
       a = 3
     } catch(e) {
-      assert(e.trace.typeof(), "Array")
+      assert(typeof e.trace, "Array")
       assert(e.trace.length() > 0, true)
       return
     }

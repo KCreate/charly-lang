@@ -1,6 +1,5 @@
 const length = __internal__method("length")
 const _colorize = __internal__method("colorize")
-const typeof = __internal__method("typeof")
 const _object_keys = __internal__method("_object_keys")
 const _isolate_object = __internal__method("_isolate_object")
 const _object_id = __internal__method("_object_id")
@@ -60,7 +59,7 @@ export = primitive class Object {
   }
 
   func to_s() {
-    if @typeof() == "Object" {
+    if typeof self == "Object" {
       PrettyPrintHistory.push(Object.object_id(self))
 
       let render = "{\n"
@@ -95,7 +94,7 @@ export = primitive class Object {
    * Pretty prints *value*
    * */
   static func pretty_print(value) {
-    const type = value.typeof()
+    const type = typeof value
 
     if type == "String" {
       return ("\"" + value + "\"").colorize(32)
@@ -148,20 +147,6 @@ export = primitive class Object {
   }
 
   /*
-   * Returns the type of a variable as a string
-   *
-   * ```
-   * 5.typeof() // => "Numeric"
-   * "hello world".typeof() // => "String"
-   * {}.typeof() // => "Object"
-   * MyClass().typeof() // => "Object"
-   * ```
-   * */
-  func typeof() {
-    typeof(self)
-  }
-
-  /*
    * Calls the callback with self and returns self
    *
    * ```
@@ -181,8 +166,8 @@ export = primitive class Object {
     const pipes = arguments
 
     pipes.each(func(pipe) {
-      if pipe.typeof() ! "Function" {
-        throw Exception("pipe expected an array of Functions, got: " + pipe.typeof())
+      if typeof pipe ! "Function" {
+        throw Exception("pipe expected an array of Functions, got: " + typeof pipe)
       }
 
       pipe(self)
@@ -200,8 +185,8 @@ export = primitive class Object {
 
     let result = self
     pipes.each(func(pipe) {
-      if pipe.typeof() ! "Function" {
-        throw Exception("transform expected an array of Functions, got: " + pipe.typeof())
+      if typeof pipe ! "Function" {
+        throw Exception("transform expected an array of Functions, got: " + typeof pipe)
       }
 
       result = pipe(result)
@@ -222,8 +207,8 @@ export = primitive class Object {
       "PrimitiveClass"
     ]
 
-    if allowed_types.index_of(object.typeof()) == -1 {
-      throw Exception("Expected object, function, class or primitive class, got " + object.typeof())
+    if allowed_types.index_of(typeof object) == -1 {
+      throw Exception("Expected object, function, class or primitive class, got " + typeof object)
     }
 
     _object_keys(object)
@@ -251,8 +236,8 @@ export = primitive class Object {
    * ```
    * */
   static func isolate(object) {
-    if object.typeof() ! "Object" {
-      throw Exception("Expected object, got " + object.typeof())
+    if typeof object ! "Object" {
+      throw Exception("Expected object, got " + typeof object)
     }
 
     _isolate_object(object)
@@ -278,7 +263,7 @@ export = primitive class Object {
    * Note: Functions, Classes, Primitive Classes cannot be copied
    * */
   static func copy(value) {
-    const type = value.typeof()
+    const type = typeof value
 
     if type == "Function" {
       throw Exception("Cannot copy functions")
@@ -311,7 +296,7 @@ export = primitive class Object {
    * Note: Functions, Classes, Primitive Classes cannot be copied
    * */
   static func deep_copy(value) {
-    const type = value.typeof()
+    const type = typeof value
 
     if type == "Function" {
       throw Exception("Cannot deep_copy functions")

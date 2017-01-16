@@ -15,11 +15,6 @@ module Charly::Internals
     end
   end
 
-  # Return the name of the type as a string
-  charly_api "typeof", value : BaseType do
-    return TString.new("#{value.class}")
-  end
-
   charly_api "_object_id", value : BaseType do
     return TNumeric.new value.object_id
   end

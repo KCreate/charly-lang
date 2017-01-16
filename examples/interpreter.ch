@@ -35,7 +35,7 @@ class Lexer {
   func read_token() {
     let char = @current_char()
 
-    guard char.typeof() == "String" {
+    guard typeof char == "String" {
       return false
     }
 
@@ -93,7 +93,7 @@ class Lexer {
     loop {
       const char = @current_char()
 
-      if char.typeof() ! "String" {
+      if typeof char ! "String" {
         @read_char()
         break
       }
@@ -129,7 +129,7 @@ class Parser {
   }
 
   func parse_error(expected, real) {
-    if real.typeof() == "Null" {
+    if typeof real == "Null" {
       throw "Expected " + expected + " but reached end of input"
     }
 

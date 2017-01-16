@@ -341,17 +341,17 @@ export = ->(describe, it, assert) {
 
   describe("typeof", ->{
 
-    it("returns the type() of a variable", ->{
-      assert(false.typeof(), "Boolean")
-      assert(true.typeof(), "Boolean")
-      assert("test".typeof(), "String")
-      assert(25.typeof(), "Numeric")
-      assert(25.5.typeof(), "Numeric")
-      assert([1, 2, 3].typeof(), "Array")
-      assert((class Test {}).typeof(), "Class")
-      assert((func() {}).typeof(), "Function")
-      assert({}.typeof(), "Object")
-      assert(null.typeof(), "Null")
+    it("returns the type of a variable", ->{
+      assert(typeof false, "Boolean")
+      assert(typeof true, "Boolean")
+      assert(typeof "test", "String")
+      assert(typeof 25, "Numeric")
+      assert(typeof 25.5, "Numeric")
+      assert(typeof [1, 2, 3], "Array")
+      assert(typeof class Test {}, "Class")
+      assert(typeof func() {}, "Function")
+      assert(typeof {}, "Object")
+      assert(typeof null, "Null")
     })
 
   })
@@ -492,7 +492,7 @@ export = ->(describe, it, assert) {
 
       obj2.prop = 200
 
-      assert(copy.prop.typeof(), "Object")
+      assert(typeof copy.prop, "Object")
     })
 
     describe("throws when trying to copy uncopiable values", ->{
@@ -548,7 +548,7 @@ export = ->(describe, it, assert) {
 
       obj3.prop = 200
 
-      assert(copy.prop.typeof(), "Object")
+      assert(typeof copy.prop, "Object")
     })
 
     it("copies sub-arrays", ->{

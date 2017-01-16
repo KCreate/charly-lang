@@ -326,7 +326,7 @@ export = ->(describe, it, assert) {
 
     Box()
 
-    assert(a.typeof(), "Numeric")
+    assert(typeof a, "Numeric")
     assert(a, 25)
   })
 
@@ -337,7 +337,7 @@ export = ->(describe, it, assert) {
       static property a
     }
 
-    assert(a.typeof(), "Numeric")
+    assert(typeof a, "Numeric")
     assert(a, 25)
   })
 
@@ -348,7 +348,7 @@ export = ->(describe, it, assert) {
       static func a() {}
     }
 
-    assert(a.typeof(), "Numeric")
+    assert(typeof a, "Numeric")
     assert(a, 25)
   })
 }
