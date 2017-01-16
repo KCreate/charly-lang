@@ -371,10 +371,6 @@ export = primitive class Array {
 
     const other_type = other.typeof()
 
-    if (other_type == "Boolean") {
-      return other
-    }
-
     if (other_type ! @typeof()) {
       return false
     }
