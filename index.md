@@ -56,7 +56,17 @@ For example the `TInternalFunction` can only be gathered from a call to `__inter
 | class Box {}            | Class    |
 | func() {}               | Function |
 | ->() {}                 | Function |
-| { let name = "charly" } | Object   |
+| { let name = "Charly" } | Object   |
+
+> You can get the type of a value by using the `typeof` operator.
+  It returns the name of the type as a string.
+
+```javascript
+typeof 25 // => "Numeric"
+typeof "hello world" // => "String"
+typeof null // => "Null"
+typeof func() {} // => "Function"
+```
 
 ### Null
 The `Null` type can be compared to `undefined` in javascript or `nil` in some other languages.
@@ -168,11 +178,11 @@ A `Container` is basically the scope of a block turned into an Object:
 
 ```javascript
 let Box = {
-  let name = "charly"
+  let name = "Charly"
   let age = 200
 }
 
-Box.name // => "charly"
+Box.name // => "Charly"
 Box.age // => 200
 ```
 
@@ -180,11 +190,11 @@ This can be compared to the javascript equivalent of using `new Function()`:
 
 ```javascript
 let Box = (new function() {
-  this.name = "charly"
+  this.name = "Charly"
   this.age = 200
 })
 
-Box.name // "charly"
+Box.name // "Charly"
 Box.age // 200
 ```
 
@@ -471,7 +481,7 @@ self.instance = 2
 
 ## Control expressions
 
-All control expressions inside charly behave as if they were normal expressions.
+All control expressions inside Charly behave as if they were normal expressions.
 
 This means that altough you can't place a control expression inside a method call, it will still return a value.
 
@@ -587,8 +597,8 @@ Everything in Charly is an object. Not every type can have an internal state how
 Only `Object`, `Class`, `PrimitiveClass` and `Array` can have an internal state.
 
 When you write `5`, the interpreter actually treats it as a primitive.
-There are no funny castings or object instantiations (inside charly).
-All values inside charly are boxed in heap memory. When you write `5.times`,
+There are no funny castings or object instantiations (inside Charly).
+All values inside Charly are boxed in heap memory. When you write `5.times`,
 the interpreter searches for a primitive class called `Numeric` and checks if it contains a method called `times`.
 
 This allows the interpreter to reuse the same object for all primitives of the same type.
@@ -754,7 +764,7 @@ Recursive `require` call won't be catched or prevented in any way.
 
 ## Command line arguments and flags
 
-The `charly` command has the ability to receive flags.
+The `Charly` command has the ability to receive flags.
 A list of these can be obtained by running `charly -h` in the command line.
 
 You can pass flags via the following format
@@ -825,7 +835,7 @@ Charly has a built-in REPL (Read Eval Print Loop) where you can quickly test out
 
 You can invoke it by typing `charly` or `charly repl`
 
-Here you can write charly statements. Run them by pressing enter.
+Here you can write Charly statements. Run them by pressing enter.
 
 The REPL provides a few _magic_ variables which are specific to your current REPL session.
 
@@ -1032,7 +1042,7 @@ end
 
 3. Recompile & reinstall the interpreter
 
-4. Link against the method inside your charly program like this:
+4. Link against the method inside your Charly program like this:
 
 ```javascript
 const mymethod = __internal__method("mymethod")
