@@ -231,6 +231,14 @@ export = ->(describe, it, assert) {
       assert(render, "{\n  name: charly\n  data: {\n    foo: okay\n    hello: world\n  }\n}")
     })
 
+    it("renders arrays", ->{
+      let arr = [1, 2, 3, 4]
+
+      let render = arr.to_s()
+
+      assert(render, "[1, 2, 3, 4]")
+    })
+
     it("renders circular objects", ->{
       let Box = {}
       Box.box = {}
@@ -241,7 +249,7 @@ export = ->(describe, it, assert) {
       let pretty_render = Object.pretty_print(Box)
 
       assert(render, "{\n  box: {\n    box: {\n      box: (circular)\n    }\n  }\n}")
-      assert(render, "{\n  box: {\n    box: {\n      box: (circular)\n    }\n  }\n}")
+      assert(pretty_render, "{\n  box: {\n    box: {\n      box: (circular)\n    }\n  }\n}")
     })
 
     it("renders circular arrays", ->{
@@ -255,7 +263,20 @@ export = ->(describe, it, assert) {
       let pretty_render = Array.pretty_print(a)
 
       assert(render, "[[(circular)]]")
-      assert(render, "[[(circular)]]")
+      assert(pretty_render, "[[(circular)]]")
+    })
+
+    it("renders literals", ->{
+      let box = {}
+      box.string = "hello world"
+      box.num = 25
+      box.bool = true
+      box.nil = null
+      box.nan = NAN
+
+      let render = box.to_s()
+
+      assert(render, "{\n  string: hello world\n  num: 25\n  bool: true\n  nil: null\n  nan: NAN\n}")
     })
 
   })
