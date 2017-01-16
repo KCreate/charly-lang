@@ -792,7 +792,7 @@ module Charly
         node = StringLiteral.new(@token.value).at(@token.location)
         advance
       when TokenType::Boolean
-        node = BooleanLiteral.new(@token.value[0] == 't').at(@token.location)
+        node = BooleanLiteral.new(@token.value == "true").at(@token.location)
         advance
       when TokenType::Null
         node = NullLiteral.new.at(@token.location)
