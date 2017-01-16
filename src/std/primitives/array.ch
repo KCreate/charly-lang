@@ -348,31 +348,20 @@ export = primitive class Array {
    * If the argument is not an array, it will be appended (non-mutating)
    * */
   func +(element) {
+
+    // Return a copy of the current array and append the item
     if (element.typeof() ! "Array") {
-
-      // Create a new array containing @length + 1 items
-      let new_array = Array.of_size(@length() + 1, null)
-      @each(func(v, i) {
-        new_array[i] = v
-      })
-      new_array[new_array.length() - 1] = element
-      new_array
-    } else {
-
-      // Create an array with the size of the two arrays combined
-      let new_array = Array.of_size(@length() + element.length(), null)
-
-      // Copy the values
-      @each(func(v, i) {
-        new_array[i] = v
-      })
-
-      element.each(func(v, i) {
-        new_array[i + @length()] = v
-      })
-
-      new_array
+      let new = @copy()
+      new.push(element)
+      return new
     }
+
+    // Create a copy and append each item of the other array
+    let new = @copy()
+    element.each(->(item) {
+      new.push(item)
+    })
+    return new
   }
 
   /*
