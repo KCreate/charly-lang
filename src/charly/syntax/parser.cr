@@ -714,7 +714,7 @@ module Charly
     end
 
     private def parse_pow
-      left = parse_call_expression
+      left = parse_typeof
       while true
         case @token.type
         when TokenType::Pow
@@ -725,6 +725,17 @@ module Charly
         else
           return left
         end
+      end
+    end
+
+    private def parse_typeof
+      start = @token.location
+      if @token.type == TokenType::Keyword && @token.value == "typeof"
+        advance
+        right = parse_pow
+        return TypeofExpression.new(right).at(start, right.location_end)
+      else
+        parse_call_expression
       end
     end
 

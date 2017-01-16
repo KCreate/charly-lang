@@ -350,6 +350,12 @@ module Charly
           else
             consume_ident
           end
+        when 'y'
+          if read_char == 'p' && read_char == 'e' && read_char == 'o' && read_char == 'f'
+            check_ident_or_keyword(TokenType::Keyword)
+          else
+            consume_ident
+          end
         else
           consume_ident
         end
