@@ -274,16 +274,23 @@ export = primitive class Array {
     let i = 0
 
     let length = @length()
-    let found = false
+
+    const element_id = Object.object_id(element)
+    const element_type = element.typeof()
 
     while (i < length) {
       const self_val = self[i]
-      if self_val.typeof() == element.typeof() && self_val == element {
+
+      if element_id == Object.object_id(self_val) {
         index = i
-        found = true
-        i = length
         break
       }
+
+      if self_val.typeof() == element_type && self_val == element {
+        index = i
+        break
+      }
+
       i += 1
     }
 
