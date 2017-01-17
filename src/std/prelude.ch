@@ -1,5 +1,4 @@
 // Require
-const require_no_prelude = __internal__method("require_no_prelude")
 const require = __internal__method("require")
 require.resolve = __internal__method("require_resolve")
 
