@@ -1,27 +1,55 @@
 export = ->(describe, it, assert) {
 
-  it("requires a file", ->{
-    assert(require("./external.ch").num, 25)
-    assert(require("./external.ch").num, 25)
+  describe("require", ->{
 
-    let external = require("./external.ch")
-    external.num = 50
+    it("loads an internal module", ->{
+      const Math = require("math")
 
-    assert(require("./external.ch").num, 50)
+      assert(typeof Math, "Object")
+      assert(typeof Math.rand, "Function")
+      assert(typeof Math.sin(25), "Numeric")
+    })
 
-    // Reset for further tests
-    external.num = 25
+    it("includes files", ->{
+      const module = require("./require-test/module.ch")
+
+      assert(module.num, 25)
+      assert(typeof module.foo, "Function")
+      assert(module.foo(), "I am foo")
+      assert(module.bar(1, 2), 3)
+
+      let Person = module.Person
+
+      assert(typeof Person, "Class")
+
+      let leonard = Person("Leonard", 2000)
+      let bob = Person("Bob", 1990)
+
+      assert(typeof leonard, "Object")
+      assert(typeof bob, "Object")
+
+      assert(leonard.name, "Leonard")
+      assert(leonard.birthyear, 2000)
+
+      assert(leonard.greeting(), "Leonard was born in 2000.")
+    })
+
   })
 
-  it("includes a file that's already required", ->{
-    let external = require("./external.ch")
-    external.num = 50
+  describe("stack traces", ->{
 
-    assert(require("./external.ch") == external, true)
-    assert(require("./external.ch").num, 50)
+    it("passes the current stack to the included file", ->{
+      const foo = require("./require-test/foo.ch")
 
-    // Reset for further tests
-    external.num = 25
+      try {
+        foo.foo(->foo.bar())
+      } catch(e) {
+        print(e.trace)
+        assert(typeof e.trace, "Array")
+        assert(e.trace.length() > 20, true)
+      }
+    })
+
   })
 
 }
