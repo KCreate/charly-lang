@@ -91,14 +91,6 @@ module Charly
       self.new(user, prelude)
     end
 
-    #  :nodoc:
-    def render_trace(io)
-      @trace.reverse.each do |entry|
-        io << entry
-        io << '\n'
-      end
-    end
-
     # Executes *program* inside *scope*
     def visit_program(program : Program, scope : Scope = @top)
       # Insert *export* if not already set
