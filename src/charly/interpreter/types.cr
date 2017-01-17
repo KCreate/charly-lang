@@ -54,6 +54,12 @@ module Charly
       super()
       @data = Scope.new
     end
+
+    def initialize
+      super()
+      @data = Scope.new
+      yield @data
+    end
   end
 
   # The basetype of all types in charly that don't have their own data scope

@@ -30,11 +30,11 @@ module Charly
     end
 
     private def self.load_env
-      object = TObject.new
-      ENV.each do |key, value|
-        object.data.init(key, TString.new(value), true)
+      TObject.new do |obj|
+        ENV.each do |key, value|
+          obj.init(key, TString.new(value), true)
+        end
       end
-      object
     end
   end
 end

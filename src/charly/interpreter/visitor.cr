@@ -1187,27 +1187,27 @@ module Charly
         context.trace.delete_at(trace_position..-1)
 
         # Create the exception object
-        exc = TObject.new
-        exc.data = Scope.new
-        exc.data.init("message", TString.new(e.message || "RunTimeError"), true)
-        exc.data.init("trace", TArray.new(trace_entries), true)
-        exc.data.init("filename", TString.new(e.filename), true)
+        exc = TObject.new do |obj|
+          obj.init("message", TString.new(e.message || "RunTimeError"), true)
+          obj.init("trace", TArray.new(trace_entries), true)
+          obj.init("filename", TString.new(e.filename), true)
 
-        # Objects that will contain the location information
-        obj_loc_start = TObject.new
-        obj_loc_end = TObject.new
+          obj_loc_start = TObject.new do |obj|
+            obj.init("row", TNumeric.new(e.location_start.row + 1), true)
+            obj.init("column", TNumeric.new(e.location_start.column + 1), true)
+            obj.init("length", TNumeric.new(e.location_start.length), true)
+          end
 
-        exc.data.init("loc_start", obj_loc_start, true)
-        exc.data.init("loc_end", obj_loc_end, true)
+          obj_loc_end = TObject.new do |obj|
+            obj.init("row", TNumeric.new(e.location_end.row + 1), true)
+            obj.init("column", TNumeric.new(e.location_end.column + 1), true)
+            obj.init("length", TNumeric.new(e.location_end.length), true)
+          end
 
-        # Insert location information
-        obj_loc_start.data.init("row", TNumeric.new(e.location_start.row + 1), true)
-        obj_loc_start.data.init("column", TNumeric.new(e.location_start.column + 1), true)
-        obj_loc_start.data.init("length", TNumeric.new(e.location_start.length), true)
-
-        obj_loc_end.data.init("row", TNumeric.new(e.location_end.row + 1), true)
-        obj_loc_end.data.init("column", TNumeric.new(e.location_end.column + 1), true)
-        obj_loc_end.data.init("length", TNumeric.new(e.location_end.length), true)
+          # Insert into the exception object
+          obj.init("loc_start", obj_loc_start, true)
+          obj.init("loc_end", obj_loc_end, true)
+        end
 
         # Insert into the catch block
         scope.init(node.exception_name.name, exc)
