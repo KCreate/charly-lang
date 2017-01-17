@@ -22,7 +22,7 @@ module Charly::Require
   ] of String
 
   # Loads *filename* and returns the value of the export variable
-  def load(filename, cwd, prelude)
+  def load(filename, cwd, prelude, context)
     path = resolve(filename, cwd)
 
     # Check the cache for an entry
@@ -31,7 +31,7 @@ module Charly::Require
     end
 
     # Try to load as a file
-    could_include_as_file = load_as_file(path, prelude)
+    could_include_as_file = load_as_file(path, prelude, context)
 
     if could_include_as_file
       @@cache[path] = could_include_as_file
@@ -66,7 +66,7 @@ module Charly::Require
   end
 
   # Loads *path*
-  private def load_as_file(path, prelude)
+  private def load_as_file(path, prelude, context)
     # Check if the path is accessable
     if File.exists?(path) && File.readable?(path)
       # The scope in which the included file will run
@@ -75,7 +75,7 @@ module Charly::Require
       # Load the included file
       visitor = Visitor.new include_scope, prelude
       program = Parser.create(File.open(path), path)
-      visitor.visit_program(program, include_scope)
+      visitor.visit_program(program, include_scope, context)
       return include_scope.get("export")
     end
 

@@ -55,7 +55,6 @@ module Charly
   class Visitor
     property top : Scope
     property prelude : Scope
-    property trace : Array(Trace) # The leftmost value is the main trace entry
 
     # A list of disallowed variable names
     DISALLOWED_VARS = [
@@ -79,8 +78,7 @@ module Charly
 
     # Creates a new Interpreter inside *top*
     # Setting *load_prelude* to false will prevent loading the prelude file
-    def initialize(@top : Scope, @prelude)
-      @trace = [] of Trace
+    def initialize(@top : Scope, @prelude : Scope)
     end
 
     # Create a new interpreter with an empty scope as it's top
@@ -92,7 +90,7 @@ module Charly
     end
 
     # Executes *program* inside *scope*
-    def visit_program(program : Program, scope : Scope = @top)
+    def visit_program(program : Program, scope : Scope = @top, context : Context? = nil)
       # Insert *export* if not already set
       unless scope.contains "export"
         scope.init("export", TObject.new)
@@ -104,7 +102,10 @@ module Charly
         scope.init("self", self_object, true)
       end
 
-      context = Context.new(program, @trace)
+      unless context
+        context = Context.new([] of Trace)
+      end
+
       visit_block(program.tree, scope, context)
     end
 
@@ -801,11 +802,11 @@ module Charly
       if call_location.is_a? Location
         filename = File.basename call_location.filename
         location = call_location.loc_to_s
-        @trace << Trace.new(target_name, filename, location)
+        context.trace << Trace.new(target_name, filename, location)
       else
         filename = File.basename target.block.location_start.filename
         location = target.block.location_start.loc_to_s
-        @trace << Trace.new(target_name, filename, location)
+        context.trace << Trace.new(target_name, filename, location)
       end
 
       # Run the function
@@ -816,7 +817,7 @@ module Charly
       end
 
       # Remove the previously added trace entry
-      @trace.pop
+      context.trace.pop
 
       return result
     end
@@ -871,9 +872,9 @@ module Charly
         # Execute the constructor function inside the object_scope
         filename = node.location_start.filename
         location = node.location_start.loc_to_s
-        @trace << Trace.new("#{target.name}:constructor", filename, location)
+        context.trace << Trace.new("#{target.name}:constructor", filename, location)
         visit_function_call(constructor, callex, object, scope, context)
-        @trace.pop
+        context.trace.pop
       end
 
       object_scope.replace("__class", target, Flag::INIT | Flag::CONSTANT | Flag::IGNORE_PARENT)
@@ -1209,7 +1210,7 @@ module Charly
 
     def visit_throw_statement(node : ThrowStatement, scope, context)
       expression = visit_expression(node.expression, scope, context)
-      raise UserException.new(expression, @trace.dup, node, context)
+      raise UserException.new(expression, context.trace.dup, node, context)
     end
   end
 end
