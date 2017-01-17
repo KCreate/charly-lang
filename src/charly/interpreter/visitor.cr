@@ -5,25 +5,12 @@ require "./types.cr"
 require "./context.cr"
 require "./internals.cr"
 require "./calculator.cr"
+require "./trace.cr"
 
 module Charly
   include AST
 
   alias Scope = Container(BaseType)
-
-  # Single trace entry for callstacks
-  class Trace
-    property name : String
-    property filename : String
-    property location : String
-
-    def initialize(@name, @filename, @location)
-    end
-
-    def to_s(io)
-      io << "at #{@name} (#{@filename}:#{@location})"
-    end
-  end
 
   # Exception used to return prematurely from functions
   class ReturnException < Exception
