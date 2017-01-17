@@ -27,25 +27,4 @@ module Charly::Internals
     path = Require.resolve(filename.value, cwd)
     return TString.new(path)
   end
-
-  # Run a file in the same scope as the function call
-  charly_api "__run", filename : TString do
-    filename = filename.value
-
-    begin
-      cwd = File.dirname(call.location_start.filename)
-      path = Require.resolve(filename, cwd)
-
-      # Load the file content
-      unless File.exists?(path) && File.readable?(path)
-        raise RunTimeError.new(call.argumentlist.children[0], "Can't load #{filename}")
-      end
-
-      program = Parser.create(File.open(path), path)
-      visitor.visit_program(program, scope)
-      return TNull.new
-    rescue e : Require::FileNotFoundException
-      raise RunTimeError.new(call.argumentlist.children[0], "Can't load #{filename}")
-    end
-  end
 end
