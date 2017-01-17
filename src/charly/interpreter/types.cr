@@ -135,18 +135,9 @@ module Charly
 
   # An object
   class TObject < DataType
-    property type : TClass?
-
-    def initialize(@type = nil)
-      super()
-    end
 
     def name(io)
-      if (type = @type).is_a? TClass
-        io << "Object:#{type.name}"
-      else
-        io << "Object"
-      end
+      io << "Object"
     end
 
     def self.name(io)

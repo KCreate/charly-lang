@@ -831,7 +831,7 @@ module Charly
 
     def visit_class_call(target : TClass, node : CallExpression, scope, context)
       # Initialize an empty object
-      object = TObject.new(target)
+      object = TObject.new
       object_scope = Scope.new(target.parent_scope)
       object.data = object_scope
 
