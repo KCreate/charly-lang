@@ -44,7 +44,6 @@ export = ->(describe, it, assert) {
       try {
         foo.foo(->foo.bar())
       } catch(e) {
-        print(e.trace)
         assert(typeof e.trace, "Array")
         assert(e.trace.length() > 20, true)
       }
