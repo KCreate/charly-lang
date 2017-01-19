@@ -1,11 +1,32 @@
 export = ->(describe, it, assert) {
 
-  it("throws an exception", ->{
-    try {
-      throw Exception("Something failed")
-    } catch (e) {
-      assert(e.message, "Something failed")
-    }
+  describe("exceptions", ->{
+
+    it("throws an exception", ->{
+      try {
+        throw Exception("Something failed")
+      } catch (e) {
+        assert(e.message, "Something failed")
+      }
+    })
+
+    it("has a message property", ->{
+      try {
+        throw Exception("Something failed")
+      } catch (e) {
+        assert(typeof e.message, "String")
+      }
+    })
+
+    it("has a trace property", ->{
+      try {
+        throw Exception("Something failed")
+      } catch (e) {
+        assert(typeof e.trace, "Array")
+        assert(e.trace.length() > 5, true)
+      }
+    })
+
   })
 
   it("throws primitive values", ->{
