@@ -119,6 +119,11 @@ module Charly
 
   # An array of BaseTypes
   class TArray < PrimitiveType(Array(BaseType))
+
+    def self.new
+      self.new [] of BaseType
+    end
+
     def name(io)
       io << "Array:#{@value.size}"
     end
@@ -141,7 +146,6 @@ module Charly
 
   # An object
   class TObject < DataType
-
     def name(io)
       io << "Object"
     end
