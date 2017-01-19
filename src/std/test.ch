@@ -10,7 +10,12 @@ class TestRunner {
     try {
       module = require(filename)
     } catch(e) {
-      throw ArgumentError("Couldn't find the file " + filename, "Test")
+      throw ArgumentError("Couldn't find the file " + filename)
+    }
+
+    // Make sure the exported value is a function
+    guard typeof module == "Function" {
+      throw ArgumentError("Couldn't find valid test inside " + filename + ". File exported a " + typeof module)
     }
 
     @result = @unit_test(->(describe, it, assert, context) {
