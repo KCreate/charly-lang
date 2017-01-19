@@ -800,13 +800,17 @@ module Charly
       # If we have a custom calling location supplied, use that
       # If not, use the starting location of the targets block
       if call_location.is_a? Location
-        filename = File.basename call_location.filename
-        location = call_location.loc_to_s
-        context.trace << Trace.new(target_name, filename, location)
+        context.trace << Trace.new(
+          target_name,
+          File.basename(call_location.filename),
+          call_location.loc_to_s
+        )
       else
-        filename = File.basename target.block.location_start.filename
-        location = target.block.location_start.loc_to_s
-        context.trace << Trace.new(target_name, filename, location)
+        context.trace << Trace.new(
+          target_name,
+          File.basename(target.block.location_start.filename),
+          target.block.location_start.loc_to_s
+        )
       end
 
       # Run the function
