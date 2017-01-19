@@ -88,4 +88,16 @@ module Charly::Internals
 
     return TNull.new
   end
+
+  # Returns the current stacktrace
+  charly_api "stacktrace" do
+    trace = context.trace
+    entries = TArray.new
+
+    trace.each do |entry|
+      entries.value << TString.new "#{entry}"
+    end
+
+    return entries
+  end
 end
