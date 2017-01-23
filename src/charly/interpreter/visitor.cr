@@ -179,6 +179,8 @@ module Charly
         raise BreakException.new
       when .is_a? ContinueStatement
         raise ContinueException.new
+      when .is_a? SwitchStatement
+        return visit_switch_statement(node, scope, context)
       when .is_a? IfStatement
         return visit_if_statement(node, scope, context)
       when .is_a? UnlessStatement
@@ -1033,6 +1035,43 @@ module Charly
       end
 
       return TNull.new
+    end
+
+    def visit_switch_statement(node : SwitchStatement, scope, context)
+      switch_scope = Scope.new(scope)
+
+      # Evaluate the expression
+      test = visit_expression(node.test, scope, context)
+
+      # Keeps track if a block has succeeded
+      yield_value : BaseType? = nil
+
+      # Iterate over all available blocks
+      node.body.children.each do |statement|
+
+        # The first statement to succeed causes the block to run
+        statement.values.children.each do |value|
+          value = visit_expression(value, scope, context)
+
+          if Calculator.eq(test, value).value
+            yield_value = visit_block(statement.block, Scope.new(scope), context)
+            break
+          end
+        end
+
+        break if yield_value.is_a? BaseType
+      end
+
+      # If no block succeeded, check if a default block exists
+      unless yield_value.is_a? BaseType
+        if (default_block = node.default_block).is_a? Block
+          return visit_block(default_block, Scope.new(switch_scope), context)
+        else
+          return TNull.new
+        end
+      else
+        return yield_value
+      end
     end
 
     def visit_if_statement(node : IfStatement, scope, context)
