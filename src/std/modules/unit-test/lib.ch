@@ -9,7 +9,7 @@ export = ->(callback) {
 
   callback(
     ->(title, callback) context.suite(title, callback),
-    ->(title, callback) context.case(title, callback),
+    ->(title, callback) context.it(title, callback),
     ->(real, expected) context.assert(real, expected),
     context
   )

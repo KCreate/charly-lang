@@ -46,7 +46,7 @@ class Context {
     @add_node(NodeType.Suite, title, callback)
   }
 
-  func case(title, callback) {
+  func it(title, callback) {
     @add_node(NodeType.Test, title, callback)
   }
 
