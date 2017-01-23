@@ -127,6 +127,18 @@ module Charly::AST
     left : ASTNode,
     right : ASTNode
 
+  ast_node SwitchStatement,
+    test : ASTNode,
+    body : SwitchNodeList,
+    default_block : Block?
+
+  ast_node SwitchNodeList,
+    children : Array(SwitchNode)
+
+  ast_node SwitchNode,
+    values : ExpressionList,
+    block : Block
+
   ast_node And,
     left : ASTNode,
     right : ASTNode

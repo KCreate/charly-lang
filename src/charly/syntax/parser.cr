@@ -124,6 +124,11 @@ module Charly
     end
 
     # :nodoc:
+    private def context_error(message : String)
+      raise SyntaxError.new(@token.location, message)
+    end
+
+    # :nodoc:
     private def assert_token(type : TokenType)
       unless @token.type == type
         unexpected_token type
@@ -221,6 +226,87 @@ module Charly
       end
 
       body.at(start_location, end_location)
+    end
+
+    private def parse_switch_block
+      start_location = nil
+      end_location = nil
+
+      assert_token TokenType::LeftCurly do
+        start_location = @token.location
+        advance
+      end
+
+      nodes, default_block = parse_switch_body
+
+      assert_token TokenType::RightCurly do
+        end_location = @token.location
+        advance
+      end
+
+      return { nodes, default_block, end_location }
+    end
+
+    private def parse_switch_body
+      nodes = [] of SwitchNode
+      default_block : Block? = nil
+
+      start_location = @token.location
+
+      until @token.type == TokenType::RightCurly
+        case @token.type
+        when TokenType::Keyword
+          case @token.value
+          when "case"
+            start_location = @token.location
+            advance
+
+            values : ExpressionList
+            block : Block
+
+            case @token.type
+            when TokenType::LeftParen
+              advance
+              values = parse_expression_list TokenType::RightParen
+              expect TokenType::RightParen
+            else
+              values = parse_expression_list TokenType::RightParen
+            end
+
+            case @token.type
+            when TokenType::LeftCurly
+              block = parse_block
+            else
+              exp = parse_expression
+              block = Block.new([exp] of ASTNode).at(exp)
+            end
+
+            end_location = block.location_end
+            nodes << SwitchNode.new(values, block).at(start_location, block.location_end)
+          when "default"
+            unless default_block.is_a? Block
+              start_location = @token.location
+              advance
+
+              body = parse_block
+              default_block = body.at(start_location, body.location_end)
+
+              end_location = body.location_end
+            else
+              context_error "Duplicate default statement"
+            end
+          else
+            unallowed_token
+          end
+        else
+          unexpected_token value: "case or default statement"
+        end
+      end
+
+      return {
+        SwitchNodeList.new(nodes).at(start_location, end_location),
+        default_block
+      }
     end
 
     # Parses the body of a block
@@ -387,6 +473,8 @@ module Charly
 
           skip TokenType::Semicolon
           return node
+        when "switch"
+          return parse_switch_statement
         end
       else
         expression = parse_expression
@@ -477,6 +565,30 @@ module Charly
       end
 
       return IfStatement.new(test, consequent, alternate).at(start_location, end_location)
+    end
+
+    private def parse_switch_statement
+      start_location = @token.location
+      expect TokenType::Keyword, "switch"
+
+      case @token.type
+      when TokenType::LeftParen
+        advance
+        test = parse_expression
+        expect TokenType::RightParen
+      else
+        test = parse_expression
+      end
+
+      nodes, default_block, end_location = parse_switch_block
+
+      if end_location.is_a? Location
+        statement = SwitchStatement.new(test, nodes, default_block).at(start_location, end_location)
+      else
+        statement = SwitchStatement.new(test, nodes, default_block).at(start_location)
+      end
+
+      return statement
     end
 
     private def parse_guard_statement
