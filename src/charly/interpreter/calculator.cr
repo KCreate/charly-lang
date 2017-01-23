@@ -53,7 +53,7 @@ module Charly
     end
 
     # Addition
-    private def self.add(left : BaseType, right : BaseType)
+    def self.add(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TNumeric.new(left.value + right.value)
       end
@@ -66,7 +66,7 @@ module Charly
     end
 
     # Subtraction
-    private def self.sub(left : BaseType, right : BaseType)
+    def self.sub(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TNumeric.new(left.value - right.value)
       end
@@ -75,7 +75,7 @@ module Charly
     end
 
     # Multiplication
-    private def self.mul(left : BaseType, right : BaseType)
+    def self.mul(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         if left.value == 0 || right.value == 0
           return TNumeric.new(0)
@@ -95,7 +95,7 @@ module Charly
     end
 
     # Division
-    private def self.div(left : BaseType, right : BaseType)
+    def self.div(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         if left.value != 0 && right.value != 0
           return TNumeric.new(left.value / right.value)
@@ -106,7 +106,7 @@ module Charly
     end
 
     # Modulus
-    private def self.mod(left : BaseType, right : BaseType)
+    def self.mod(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         if right.value == 0
           return TNumeric.new(Float64::NAN)
@@ -118,7 +118,7 @@ module Charly
     end
 
     # Exponentation
-    private def self.pow(left : BaseType, right : BaseType)
+    def self.pow(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TNumeric.new(left.value ** right.value)
       end
@@ -127,7 +127,7 @@ module Charly
     end
 
     # Less than
-    private def self.lt(left : BaseType, right : BaseType)
+    def self.lt(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TBoolean.new(left.value < right.value)
       end
@@ -140,7 +140,7 @@ module Charly
     end
 
     # Greater than
-    private def self.gt(left : BaseType, right : BaseType)
+    def self.gt(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TBoolean.new(left.value > right.value)
       end
@@ -153,7 +153,7 @@ module Charly
     end
 
     # Less equal
-    private def self.le(left : BaseType, right : BaseType)
+    def self.le(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TBoolean.new(left.value <= right.value)
       end
@@ -166,7 +166,7 @@ module Charly
     end
 
     # Greater equal
-    private def self.ge(left : BaseType, right : BaseType)
+    def self.ge(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TBoolean.new(left.value >= right.value)
       end
@@ -179,7 +179,7 @@ module Charly
     end
 
     # Equal
-    private def self.eq(left : BaseType, right : BaseType)
+    def self.eq(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         if left.value.nan? && right.value.nan?
           return TBoolean.new true
@@ -224,7 +224,7 @@ module Charly
     end
 
     # Not equal
-    private def self.ne(left : BaseType, right : BaseType)
+    def self.ne(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TBoolean.new(left.value != right.value)
       end
@@ -265,12 +265,12 @@ module Charly
     end
 
     # Unary not equal
-    private def self.une(right : BaseType)
+    def self.une(right : BaseType)
       TBoolean.new !truthyness right
     end
 
     # Unary subtraction
-    private def self.usub(right : BaseType)
+    def self.usub(right : BaseType)
       if right.is_a? TNumeric
         return TNumeric.new(-right.value)
       end
@@ -279,7 +279,7 @@ module Charly
     end
 
     # Unary addition
-    private def self.uadd(right : BaseType)
+    def self.uadd(right : BaseType)
       right
     end
 
