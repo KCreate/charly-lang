@@ -124,11 +124,6 @@ module Charly
     end
 
     # :nodoc:
-    private def context_error(message : String)
-      raise SyntaxError.new(@token.location, message)
-    end
-
-    # :nodoc:
     private def assert_token(type : TokenType)
       unless @token.type == type
         unexpected_token type
@@ -284,17 +279,13 @@ module Charly
             end_location = block.location_end
             nodes << SwitchNode.new(values, block).at(start_location, block.location_end)
           when "default"
-            unless default_block.is_a? Block
-              start_location = @token.location
-              advance
+            start_location = @token.location
+            advance
 
-              body = parse_block
-              default_block = body.at(start_location, body.location_end)
+            body = parse_block
+            default_block = body.at(start_location, body.location_end)
 
-              end_location = body.location_end
-            else
-              context_error "Duplicate default statement"
-            end
+            end_location = body.location_end
           else
             unallowed_token
           end
