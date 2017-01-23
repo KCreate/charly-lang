@@ -129,10 +129,8 @@ module Charly
       last_result
     end
 
-    def visit_expression(node : ASTNode | BaseType, scope, context)
+    def visit_expression(node : ASTNode, scope, context)
       case node
-      when .is_a? BaseType
-        return node
       when .is_a? VariableInitialisation
         return visit_initialisation(node, scope, context, false)
       when .is_a? ConstantInitialisation
