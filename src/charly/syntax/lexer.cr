@@ -192,8 +192,19 @@ module Charly
       when 'c'
         case read_char
         when 'a'
-          if read_char == 't' && read_char == 'c' && read_char == 'h'
-            check_ident_or_keyword(TokenType::Keyword)
+          case read_char
+          when 't'
+            if read_char == 'c' && read_char == 'h'
+              check_ident_or_keyword(TokenType::Keyword)
+            else
+              consume_ident
+            end
+          when 's'
+            if read_char == 'e'
+              check_ident_or_keyword(TokenType::Keyword)
+            else
+              consume_ident
+            end
           else
             consume_ident
           end
@@ -226,6 +237,12 @@ module Charly
           else
             consume_ident
           end
+        else
+          consume_ident
+        end
+      when 'd'
+        if read_char == 'e' && read_char == 'f' && read_char == 'a' && read_char == 'u' && read_char == 'l' && read_char == 't'
+          check_ident_or_keyword(TokenType::Keyword)
         else
           consume_ident
         end
@@ -366,8 +383,19 @@ module Charly
           consume_ident
         end
       when 's'
-        if read_char == 't' && read_char == 'a' && read_char == 't' && read_char == 'i' && read_char == 'c'
-          check_ident_or_keyword(TokenType::Keyword)
+        case read_char
+        when 't'
+          if read_char == 'a' && read_char == 't' && read_char == 'i' && read_char == 'c'
+            check_ident_or_keyword(TokenType::Keyword)
+          else
+            consume_ident
+          end
+        when 'w'
+          if read_char == 'i' && read_char == 't' && read_char == 'c' && read_char == 'h'
+            check_ident_or_keyword(TokenType::Keyword)
+          else
+            consume_ident
+          end
         else
           consume_ident
         end
