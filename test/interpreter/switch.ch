@@ -172,4 +172,34 @@ export = ->(describe, it, assert) {
 
   })
 
+  describe("scoping", ->{
+
+    it("runs case blocks in a sub-scope", ->{
+      let outer = 25
+
+      switch true {
+        case true {
+          let outer = 50
+        }
+      }
+
+      assert(outer, 25)
+    })
+
+    it("has access to outer scopes", ->{
+      let outer = 25
+
+      switch outer = 10 {}
+
+      assert(outer, 10)
+
+      switch true {
+        case outer = 20 {}
+      }
+
+      assert(outer, 20)
+    })
+
+  })
+
 }
