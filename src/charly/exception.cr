@@ -45,11 +45,15 @@ module Charly
     end
 
     def self.new(location_start : Location, message : String)
-      self.new(location_start, location_start, message)
+      self.new(location_start, location_start, message, [] of Trace)
+    end
+
+    def self.new(location_start : Location, location_end : Location, message : String)
+      self.new(location_start, location_end, message, [] of Trace)
     end
 
     def self.new(node : ASTNode, message : String)
-      self.new(node.location_start, node.location_end, message)
+      self.new(node.location_start, node.location_end, message, [] of Trace)
     end
 
     def self.new(node : ASTNode, context : Context, message : String)
