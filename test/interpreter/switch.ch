@@ -200,6 +200,78 @@ export = ->(describe, it, assert) {
       assert(outer, 20)
     })
 
+    it("runs a overridden equal operator", ->{
+      let obj = {
+        func ==(other) {
+          other == 25
+        }
+      }
+
+      let passed = false
+
+      switch obj {
+        case 25 {
+          passed = true
+        }
+      }
+
+      assert(passed, true)
+    })
+
+  })
+
+  describe("control flow", ->{
+
+    it("breaks out of a block", ->{
+      let num = 25
+
+      switch num {
+        case 25 {
+          break
+        }
+
+        default {
+          num = 50
+        }
+      }
+
+      assert(num, 25)
+    })
+
+    it("breaks out of the default block", ->{
+      let num = 25
+
+      switch num {
+        default {
+          break
+          num = 50
+        }
+      }
+
+      assert(num, 25)
+    })
+
+    it("doesn't propagate up", ->{
+      let i = 0
+
+      loop {
+        switch i {
+          case 10 {
+            i += 1
+            break
+          }
+        }
+
+        if i == 100 {
+          break
+        }
+
+        i += 1
+      }
+
+      assert(i, 100)
+    })
+
   })
 
 }

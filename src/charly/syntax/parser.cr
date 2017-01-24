@@ -571,7 +571,10 @@ module Charly
         test = parse_expression
       end
 
+      backup_break_allowed = @break_allowed
+      @break_allowed = true
       nodes, default_block, end_location = parse_switch_block
+      @break_allowed = backup_break_allowed
 
       if end_location.is_a? Location
         statement = SwitchStatement.new(test, nodes, default_block).at(start_location, end_location)

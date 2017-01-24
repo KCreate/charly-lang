@@ -1054,8 +1054,13 @@ module Charly
           value = visit_expression(value, scope, context)
 
           if Calculator.eq(test, value).value
-            yield_value = visit_block(statement.block, Scope.new(scope), context)
-            break
+            begin
+              yield_value = visit_block(statement.block, Scope.new(scope), context)
+            rescue e : BreakException
+              yield_value = TNull.new
+            ensure
+              break
+            end
           end
         end
 
@@ -1065,7 +1070,11 @@ module Charly
       # If no block succeeded, check if a default block exists
       unless yield_value.is_a? BaseType
         if (default_block = node.default_block).is_a? Block
-          return visit_block(default_block, Scope.new(switch_scope), context)
+          begin
+            return visit_block(default_block, Scope.new(switch_scope), context)
+          rescue e : BreakException
+            return TNull.new
+          end
         else
           return TNull.new
         end
