@@ -30,6 +30,24 @@ export = ->(describe, it, assert) {
       assert(ran, 1)
     })
 
+    it("runs a block if at least 1 value passes", ->{
+      let passed
+
+      let obj = {
+        func ==(other) {
+          other == 25
+        }
+      }
+
+      switch obj {
+        case 0, 5, 10, 15, 20, 25 {
+          passed = true
+        }
+      }
+
+      assert(passed, true)
+    })
+
   })
 
   describe("branching", ->{
@@ -200,22 +218,77 @@ export = ->(describe, it, assert) {
       assert(outer, 20)
     })
 
-    it("runs a overridden equal operator", ->{
-      let obj = {
-        func ==(other) {
-          other == 25
+    describe("operator overriding", ->{
+
+      it("runs a overridden equal operator", ->{
+        let obj = {
+          func ==(other) {
+            other == 25
+          }
         }
-      }
 
-      let passed = false
+        let passed = false
 
-      switch obj {
-        case 25 {
-          passed = true
+        switch obj {
+          case 25 {
+            passed = true
+          }
         }
-      }
 
-      assert(passed, true)
+        assert(passed, true)
+      })
+
+      it("passes the value as the only argument", ->{
+        let got = []
+        let obj = {
+          func ==() {
+            got.push(arguments)
+            return false
+          }
+        }
+
+        switch obj {
+          case 25, 30, 35 {}
+        }
+
+        assert(got, [[25], [30], [35]])
+      })
+
+      it("passes the correct self identifier", ->{
+        let got
+        let obj = {
+          func ==(other) {
+            got = [self, other]
+            false
+          }
+        }
+
+        switch obj {
+          case 25 {}
+        }
+
+        # Almost went mental about this...
+        obj.__equal = null
+
+        assert(got[0], obj)
+        assert(got[1], 25)
+      })
+
+      it("invokes overriden handlers only once", ->{
+        let amount = 0
+        let obj = {
+          func ==(other) {
+            amount += 1
+          }
+        }
+
+        switch obj {
+          case 25 {}
+        }
+
+        assert(amount, 1)
+      })
+
     })
 
   })

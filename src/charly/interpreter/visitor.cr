@@ -1043,14 +1043,48 @@ module Charly
 
         # The first statement to succeed causes the block to run
         statement.values.children.each do |value|
-          value = visit_expression(value, scope, context)
+          override_method_name = OPERATOR_MAPPING[TokenType::Equal]
+          method = nil
+          if test.is_a?(DataType) && test.data.contains override_method_name
+            method = test.data.get(override_method_name, Flag::IGNORE_PARENT)
+          elsif test.is_a? TArray
+            method = get_primitive_method(test, override_method_name, scope, context)
+          end
 
-          if Calculator.eq(test, value).value
-            begin
-              yield_value = visit_block(statement.block, Scope.new(scope), context)
-            rescue e : BreakException
-              yield_value = TNull.new
-            ensure
+          if method.is_a? TFunc
+
+            # Create a fake call expression
+            callex = CallExpression.new(
+              MemberExpression.new(
+                node.test,
+                IdentifierLiteral.new(override_method_name).at(node.test)
+              ).at(node.test),
+              ExpressionList.new([value] of ASTNode).at(node.test)
+            ).at(node.test)
+            result = visit_function_call(method, callex, test, scope, context)
+            result = Calculator.truthyness(result)
+
+            if result
+              begin
+                yield_value = visit_block(statement.block, Scope.new(scope), context)
+              rescue e : BreakException
+                yield_value = TNull.new
+              end
+
+              break
+            end
+          else
+
+            # If the method wasn't redirected, we evaluate the value here
+            # This is for future compatibility with the array spread operator
+            value = visit_expression(value, scope, context)
+            if Calculator.eq(test, value).value
+              begin
+                yield_value = visit_block(statement.block, Scope.new(scope), context)
+              rescue e : BreakException
+                yield_value = TNull.new
+              end
+
               break
             end
           end
