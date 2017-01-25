@@ -110,21 +110,13 @@ module Charly
     end
 
     def visit_block(block : Block, scope, context)
-      i = 0
-      children = block.children
-      size = children.size
-      last_index = size - 1
       last_result = TNull.new
-      while i < size
-        statement = children.unsafe_at(i)
-
-        if i == last_index
+      block.children.each_with_index do |statement, index|
+        if index == block.children.size - 1
           last_result = visit_expression(statement, scope, context)
         else
           visit_expression(statement, scope, context)
         end
-
-        i += 1
       end
       last_result
     end
