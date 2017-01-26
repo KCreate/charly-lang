@@ -188,6 +188,30 @@ export = ->(describe, it, assert) {
       assert(r3, "got neither 20 or 25")
     })
 
+    it("returns null if break is called", ->{
+      let result = switch 25 {
+        case 25 {
+          break
+        }
+      }
+
+      assert(result, null)
+    })
+
+    it("can return from the parent function", ->{
+      func foo() {
+        switch 25 {
+          case 25 {
+            return "hello world"
+          }
+        }
+      }
+
+      let result = foo()
+
+      assert(result, "hello world")
+    })
+
   })
 
   describe("scoping", ->{
@@ -343,6 +367,50 @@ export = ->(describe, it, assert) {
       }
 
       assert(i, 100)
+    })
+
+    it("nested loops break correctly", ->{
+      let passed = false
+
+      switch 25 {
+        case 25 {
+          loop {
+            break
+          }
+
+          passed = true
+        }
+      }
+
+      assert(passed, true)
+    })
+
+  })
+
+  describe("usage as an expression", ->{
+
+    it("assigns to a variable", ->{
+      let num = 25
+
+      let result = switch num {
+        case 25 {
+          "Num is 25"
+        }
+      }
+
+      assert(result, "Num is 25")
+    })
+
+    it("used as a function argument", ->{
+      func foo(var) { var }
+
+      let result = foo(switch 25 {
+        case 25 {
+          "hello world"
+        }
+      })
+
+      assert(result, "hello world")
     })
 
   })

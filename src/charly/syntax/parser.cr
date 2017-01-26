@@ -937,6 +937,8 @@ module Charly
             class_literal.name,
             class_literal.block
           ).at(start_location, class_literal.location_end)
+        when "switch"
+          node = parse_switch_statement
         else
           unexpected_token TokenType::Keyword, "func"
         end
