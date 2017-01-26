@@ -13,7 +13,7 @@ export = ->(describe, it, assert) {
       assert(ran, true)
     })
 
-    it("only runs once", ->{
+    it("runs the test only once", ->{
       let ran = 0
       func foo() {
         ran += 1
