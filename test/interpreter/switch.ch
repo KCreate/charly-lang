@@ -348,25 +348,27 @@ export = ->(describe, it, assert) {
       assert(num, 25)
     })
 
-    it("doesn't propagate up", ->{
-      let i = 0
+    it("captures the break event", ->{
+      let i = 0;
 
       loop {
-        switch i {
-          case 10 {
-            i += 1
+
+        // this should behave like a no-op
+        // as the break is captured by the switch
+        switch 25 {
+          case 25 {
             break
           }
         }
 
-        if i == 100 {
+        i += 1
+
+        if i == 2 {
           break
         }
-
-        i += 1
       }
 
-      assert(i, 100)
+      assert(i, 2)
     })
 
     it("nested loops break correctly", ->{
@@ -383,6 +385,30 @@ export = ->(describe, it, assert) {
       }
 
       assert(passed, true)
+    })
+    
+    it("lets continue bubble up", ->{
+      let sum = 0
+
+      let i = 0
+      loop {
+        i += 1
+
+        switch i % 2 {
+          case 1 {
+            continue
+          }
+        }
+
+        sum += i
+
+        if i == 10 {
+          break
+        }
+      }
+
+      assert(i, 10)
+      assert(sum, 30)
     })
 
   })
