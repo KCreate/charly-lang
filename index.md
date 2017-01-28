@@ -523,6 +523,91 @@ if 2 + 2 == 9 - 5 {
 }
 ```
 
+For statements which require a value to be falsey, you can use the `unless` statement.
+
+```javascript
+unless 2 < 5 {
+  print("Something's off...")
+}
+
+unless obj.failed() {
+  print("Everything worked!")
+}
+```
+
+Additionally, there is a `guard` statement.
+
+```javascript
+let input = "enter your name> ".prompt()
+
+guard input.length() > 0 {
+  print("You didn't type anything.")
+}
+
+guard false {
+  // This block will run
+}
+```
+
+### switch statements
+
+For more complex branching, you can use the `switch` statement.
+
+```javascript
+let num = 25
+
+switch num {
+  case 1, 2, 3 {
+    print("num is either 1, 2 or 3")
+  }
+
+  case 25 {
+    print("num is 25")
+  }
+
+  default {
+    print("num is neither 1, 2, 3 or 25")
+  }
+}
+
+```
+
+The switch statement can also be inlined.
+
+```javascript
+let num = 25
+
+let answer = switch num {
+  case 20 {
+    "num is 20"
+  }
+
+  default {
+    "num is not 25"
+  }
+}
+```
+
+The switch statement yields the value of the case statement which was run.
+
+```javascript
+func foo(num) {
+  switch num {
+    case 20 {
+      "the argument was 20"
+    }
+
+    default {
+      "the argument wasn't 20"
+    }
+  }
+}
+
+foo(20) // => "the argument was 20"
+foo(25) // => "the argument wasn't 20"
+foo(30) // => "the argument wasn't 20"
+```
+
 ### while statements
 
 The parenthesis around the test expression are optional
@@ -583,6 +668,25 @@ while i < 50 {
   print(i)
 
   i += 1
+}
+```
+
+A inverted method of the while loop also exists. The `until` loop runs while the test returns false.
+
+```javascript
+let i = 0
+until i == 100 {
+  i += 1
+}
+
+i // => 100
+```
+
+To create infinite loops, you can use the `loop` statement.
+
+```javascript
+loop {
+  print("hello world")
 }
 ```
 
