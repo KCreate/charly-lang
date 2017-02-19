@@ -676,17 +676,17 @@ module Charly
       @token.type = TokenType::Comment
 
       loop do
-        case read_char
+        case current_char
         when '*'
           case read_char
           when '/'
             read_char # Advance one more position
             break
           else
-            # Nothing to do
+            read_char
           end
         else
-          # Nothing to do
+          read_char
         end
       end
 
