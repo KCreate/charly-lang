@@ -466,6 +466,8 @@ module Charly
           return node
         when "switch"
           return parse_switch_statement
+        when "typeof"
+          return parse_typeof
         end
       else
         expression = parse_expression
