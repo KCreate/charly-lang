@@ -16,6 +16,7 @@ module Charly::Require
     "unit-test",
     "math",
     "charly",
+    "fs",
   ] of String
 
   # Loads *filename* and returns the value of the export variable
