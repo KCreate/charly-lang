@@ -678,9 +678,10 @@ module Charly
       loop do
         case current_char
         when '*'
-          case read_char
+          case peek_char
           when '/'
-            read_char # Advance one more position
+            read_char
+            read_char
             break
           else
             read_char
