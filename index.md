@@ -135,7 +135,7 @@ A string can span multiple lines:
 
 ```javascript
 "hello
-      word" // same as "hello\n     world"
+      world" // same as "hello\n     world"
 ```
 
 ### Array
