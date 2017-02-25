@@ -1,111 +1,71 @@
 require "../**"
+require "./fs/filepool.cr"
 
 module Charly::Internals
+  include FileSystem
 
-  module Utils
-    extend self
+  # Opens *name* and returns the file descriptor
+  charly_api "fs_open", name : TString, mode : TString, encoding : TString do
+    name, mode, encoding = name.value, mode.value, encoding.value
 
-    # Resolves *filename* to a absolute path
-    #
-    # If the path starts with "./" or '../' it gets resolved relative to the current directory
-    # If the path starts with "/" it's treated as an already absolute path
-    def resolve(filename, cwd)
-
-      # Absolute paths
-      if filename.starts_with?("/")
-        return filename
-      end
-
-      return File.expand_path(filename, cwd)
-    end
-  end
-
-  class FilePool
-    Files = {} of Int32 => File
-
-    def self.get(fd)
-      Files[fd.to_i32]?
-    end
-  end
-
-  charly_api "fs_open", filename : TString, mode : TString, encoding : TString  do
-
-    # Extract value properties
-    filename = filename.value
-    mode = mode.value
-    encoding = encoding.value
-
-    # Get the correct relative path
-    filename = Utils.resolve filename, Dir.current
-
-    file : File
     begin
-      file = File.open(filename, mode, encoding: encoding)
+      fd = FilePool.open name, mode, encoding
     rescue e
-      raise RunTimeError.new(call, e.message || "Can't open #{filename}")
+      raise RunTimeError.new(call, context, e.message || "Could not open #{name}")
     end
 
-    fd = file.fd
-    FilePool::Files[fd] = file
-    return TNumeric.new fd
+    TNumeric.new fd
   end
 
   charly_api "fs_close", fd : TNumeric do
-    file = FilePool.get fd.value
-
-    unless file
-      raise RunTimeError.new(call, "Can't find file handle #{fd}")
-    end
+    fd = fd.value.to_i32
 
     begin
-      file.close
+      FilePool.close fd
     rescue e
-      raise RunTimeError.new(call, e.message || "Can't close file.filename")
+      raise RunTimeError.new(call, context, e.message || "Could not close #{fd}")
     end
 
-    return TNull.new
+    TNull.new
   end
 
-  charly_api "fs_gets", fd : TNumeric do
-    file = FilePool.get fd.value
-
-    unless file
-      raise RunTimeError.new(call, "Can't find file handle #{fd}")
+  charly_api "fs_stat", name : TString do
+    name = name.value
+    stat = FilePool.stat name
+    return TObject.new do |obj|
+      obj.init("dev",     TNumeric.new(stat.dev), true)
+      obj.init("mode",    TNumeric.new(stat.mode), true)
+      obj.init("nlink",   TNumeric.new(stat.nlink), true)
+      obj.init("uid",     TNumeric.new(stat.uid), true)
+      obj.init("gid",     TNumeric.new(stat.gid), true)
+      obj.init("rdev",    TNumeric.new(stat.rdev), true)
+      obj.init("blksize", TNumeric.new(stat.blksize), true)
+      obj.init("ino",     TNumeric.new(stat.ino), true)
+      obj.init("size",    TNumeric.new(stat.size), true)
+      obj.init("blocks",  TNumeric.new(stat.blocks), true)
+      obj.init("atime",   TNumeric.new(stat.atime.epoch), true)
+      obj.init("mtime",   TNumeric.new(stat.mtime.epoch), true)
+      obj.init("ctime",   TNumeric.new(stat.ctime.epoch), true)
     end
-
-    line = file.gets
-
-    if line
-      return TString.new line
-    end
-
-    return TNull.new
   end
 
-  charly_api "fs_rewind", fd : TNumeric do
-    file = FilePool.get fd.value
-
-    unless file
-      raise RunTimeError.new(call, "Can't find file handle #{fd}")
+  charly_api "fs_lstat", name : TString do
+    name = name.value
+    stat = FilePool.lstat name
+    return TObject.new do |obj|
+      obj.init("dev",     TNumeric.new(stat.dev), true)
+      obj.init("mode",    TNumeric.new(stat.mode), true)
+      obj.init("nlink",   TNumeric.new(stat.nlink), true)
+      obj.init("uid",     TNumeric.new(stat.uid), true)
+      obj.init("gid",     TNumeric.new(stat.gid), true)
+      obj.init("rdev",    TNumeric.new(stat.rdev), true)
+      obj.init("blksize", TNumeric.new(stat.blksize), true)
+      obj.init("ino",     TNumeric.new(stat.ino), true)
+      obj.init("size",    TNumeric.new(stat.size), true)
+      obj.init("blocks",  TNumeric.new(stat.blocks), true)
+      obj.init("atime",   TNumeric.new(stat.atime.epoch), true)
+      obj.init("mtime",   TNumeric.new(stat.mtime.epoch), true)
+      obj.init("ctime",   TNumeric.new(stat.ctime.epoch), true)
     end
-
-    file.rewind
-    return TNull.new
-  end
-
-  charly_api "fs_read", fd : TNumeric, amount : TNumeric do
-    file = FilePool.get fd.value
-    amount = amount.value.to_i32
-
-    unless file
-      raise RunTimeError.new(call, "Can't find file handle #{fd}")
-    end
-
-    amount = 0 if amount < 0
-
-    input = Bytes.new amount
-    file.read input
-
-    return TString.new String.new input
   end
 end

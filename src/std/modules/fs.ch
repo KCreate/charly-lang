@@ -1,111 +1,49 @@
 const fs_open = __internal__method("fs_open")
 const fs_close = __internal__method("fs_close")
-const fs_gets = __internal__method("fs_gets")
-const fs_rewind = __internal__method("fs_rewind")
-const fs_read = __internal__method("fs_read")
+const fs_stat = __internal__method("fs_stat")
+const fs_lstat = __internal__method("fs_lstat")
 
-/**
- * File
- *
- * Contains bindings to the filesystem that allow to read and write from files, create new ones
- * and access all the methods regarding the filesystem
- *
- **/
 class File {
   property fd
   property filename
+  property mode
+  property encoding
 
   /**
-   * Opens a file
-   *
-   * Returns a File object
+   * Opens *name* with *mode* in *encoding*
    **/
-  static func open(filename) {
-    const mode = arguments[1] || "r"
-    const encoding = arguments[2] || "utf8"
-    const callback = arguments[3]
-
-    const fd = fs_open(filename, mode, encoding)
-    const file = File(fd, filename)
-
-    if typeof callback == "Function" {
-      const result = callback(file)
-      file.close()
-      return result
-    }
-
+  static func open(name, mode, encoding) {
+    const fd = fs_open(name, mode, encoding)
+    const file = File(fd, name, mode, encoding)
     return file
   }
 
   /**
-   * Returns the full content of a file
-   *
-   * Returns a string
+   * Returns a stat object for *filename*
    **/
-  static func read(filename) {
-    const mode = arguments[1] || "r"
-    const encoding = arguments[2] || "utf8"
-    const callback = arguments[3]
-
-    const fd = fs_open(filename, mode, encoding)
-    const file = File(fd, filename)
-
-    const lines = []
-    const content = file.each_line(->(line) lines.push(line)).join("\n")
-
-    if typeof callback == "Function" {
-      const result = callback(content)
-      file.close()
-      return result
-    }
-
-    return content
+  static func stat(filename) {
+    fs_stat(filename)
   }
 
   /**
-   * Creates a new File object for a given file descriptor and filename
+   * Returns a lstat object for *filename*
    **/
-  func constructor(fd, filename) {
+  static func lstat(filename) {
+    fs_lstat(filename)
+  }
+
+  func constructor(fd, filename, mode, encoding) {
     @fd = fd
     @filename = filename
+    @mode = mode
+    @encoding = encoding
   }
 
   /**
-   * Closes the current file
+   * Closes the underlying file descriptor
    **/
   func close() {
     fs_close(@fd)
-  }
-
-  /**
-   * Reads a line from the current file handle
-   **/
-  func gets() {
-    fs_gets(@fd)
-  }
-
-  /**
-   * Rewind the internal file pointer to the beginning
-   **/
-  func rewind() {
-    fs_rewind(@fd)
-  }
-
-  /**
-   * Read *amount* of bytes from this file handle
-   **/
-  func read(amount) {
-    fs_read(@fd, amount)
-  }
-
-  /**
-   * Calls the callback with each line
-   **/
-  func each_line(callback) {
-    let tmp
-    while tmp = @gets() {
-      callback(tmp)
-    }
   }
 
 }
