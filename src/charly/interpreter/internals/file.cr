@@ -45,6 +45,18 @@ module Charly::Internals
     end
   end
 
+  charly_api "fs_print", fd : TNumeric, data : TString do
+    fd, data = fd.value.to_i32, data.value
+
+    begin
+      FilePool.print fd, data
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not print to #{fd}")
+    end
+
+    TNull.new
+  end
+
   charly_api "fs_exists", fd : TNumeric do
     fd = fd.value.to_i32
     TBoolean.new FilePool.check_exists fd

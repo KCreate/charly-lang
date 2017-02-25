@@ -42,6 +42,16 @@ module Charly::FileSystem
       file.close
     end
 
+    # Writes *data* into *fd*
+    def print(fd : Int32, data : String)
+      unless check_exists fd
+        raise "File descriptor #{fd} is not open"
+      end
+
+      file = Files[fd]
+      file.print data
+    end
+
     # Reads a single line from the file
     def gets(fd : Int32)
       unless check_exists fd

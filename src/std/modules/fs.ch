@@ -4,6 +4,7 @@ const fs_stat = __internal__method("fs_stat")
 const fs_lstat = __internal__method("fs_lstat")
 const fs_gets = __internal__method("fs_gets")
 const fs_exists = __internal__method("fs_exists")
+const fs_print = __internal__method("fs_print")
 
 class File {
   static property LINE_SEPARATOR
@@ -67,6 +68,14 @@ class File {
   func gets() {
     @check_open()
     fs_gets(@fd)
+  }
+
+  /**
+   * Writes *data* into the underlying file descriptor
+   **/
+  func print(data) {
+    @check_open()
+    fs_print(@fd, data.to_s())
   }
 
   /**
