@@ -6,6 +6,8 @@ const fs_gets = __internal__method("fs_gets")
 const fs_exists = __internal__method("fs_exists")
 
 class File {
+  static property LINE_SEPARATOR
+
   property fd
   property filename
   property mode
@@ -18,6 +20,22 @@ class File {
     const fd = fs_open(name, mode, encoding)
     const file = File(fd, name, mode, encoding)
     return file
+  }
+
+  /**
+   * Returns the complete content of *name*
+   **/
+  static func read(name, encoding) {
+    const file = @open(name, "r", encoding)
+
+    const lines = []
+    let tmp
+
+    while tmp = file.gets() {
+      lines.push(tmp)
+    }
+
+    return lines.join(@LINE_SEPARATOR)
   }
 
   /**
@@ -71,5 +89,7 @@ class File {
   }
 
 }
+
+File.LINE_SEPARATOR = "\n"
 
 export = File
