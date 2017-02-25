@@ -29,6 +29,27 @@ module Charly::Internals
     TNull.new
   end
 
+  charly_api "fs_gets", fd : TNumeric do
+    fd = fd.value.to_i32
+
+    begin
+      line = FilePool.gets fd
+
+      if line
+        return TString.new line
+      end
+
+      return TNull.new
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not read from #{fd}")
+    end
+  end
+
+  charly_api "fs_exists", fd : TNumeric do
+    fd = fd.value.to_i32
+    TBoolean.new FilePool.check_exists fd
+  end
+
   charly_api "fs_stat", name : TString do
     name = name.value
     stat = FilePool.stat name
