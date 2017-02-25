@@ -5,6 +5,7 @@ const context = Object.isolate({
 
   const charly = require("charly")
   const Math = require("math")
+  const fs = require("fs")
 
   const context = self
   const history = []
