@@ -10,6 +10,8 @@ const fs_read_bytes = __internal__method("fs_read_bytes")
 const fs_read_char = __internal__method("fs_read_char")
 const fs_write_byte = __internal__method("fs_write_byte")
 
+class IOError extends Exception {}
+
 class File {
   static property LINE_SEPARATOR
 
@@ -147,7 +149,7 @@ class File {
     const exists = fs_exists(@fd)
 
     unless exists {
-      throw Exception("Can't perform action on closed file descriptor " + @fd)
+      throw IOError("Can't perform action on closed file descriptor " + @fd)
     }
 
     exists
