@@ -72,6 +72,26 @@ module Charly::FileSystem
       file.gets
     end
 
+    # Reads *amount* bytes from *fd*
+    def read_bytes(fd : Int32, amount : Int32)
+      unless check_exists fd
+        raise "File descriptor #{fd} is not open"
+      end
+
+      file = Files[fd]
+      bytes = [] of UInt8
+      amount.times do
+        byte = file.read_byte
+
+        unless byte
+          break
+        end
+
+        bytes << byte
+      end
+      bytes
+    end
+
     # Returns the stat for the file
     def stat(name : String)
       filename = Utils.resolve name, Dir.current

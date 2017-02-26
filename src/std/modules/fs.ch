@@ -6,6 +6,7 @@ const fs_gets = __internal__method("fs_gets")
 const fs_exists = __internal__method("fs_exists")
 const fs_print = __internal__method("fs_print")
 const fs_flush = __internal__method("fs_flush")
+const fs_read_bytes = __internal__method("fs_read_bytes")
 
 class File {
   static property LINE_SEPARATOR
@@ -69,6 +70,17 @@ class File {
   func gets() {
     @check_open()
     fs_gets(@fd)
+  }
+
+  /**
+   * Reads *amount* bytes from the underlying file descriptor
+   * Returns an array of numbers
+   *
+   * If not enough bytes could be read, the array will be shorter
+   **/
+  func read_bytes(amount) {
+    @check_open()
+    fs_read_bytes(@fd, amount)
   }
 
   /**

@@ -69,6 +69,22 @@ module Charly::Internals
     TNull.new
   end
 
+  charly_api "fs_read_bytes", fd : TNumeric, amount : TNumeric do
+    fd, amount = fd.value.to_i32, amount.value.to_i32
+
+    begin
+      bytes = FilePool.read_bytes fd, amount
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not read from #{fd}")
+    end
+
+    ch_bytes = TArray.new [] of BaseType
+    bytes.each do |byte|
+      ch_bytes.value << TNumeric.new byte
+    end
+    ch_bytes
+  end
+
   charly_api "fs_exists", fd : TNumeric do
     fd = fd.value.to_i32
     TBoolean.new FilePool.check_exists fd
