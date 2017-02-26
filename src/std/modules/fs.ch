@@ -119,6 +119,22 @@ class File {
   }
 
   /**
+   * Calls the callback with each line in this file
+   **/
+  func each_line(callback) {
+    @check_open()
+
+    let tmp
+    let i = 0
+    while tmp = fs_gets(@fd) {
+      callback(tmp, i)
+      i += 1
+    }
+
+    i
+  }
+
+  /**
    * Writes *byte* into the underlying file descriptor
    **/
   func write_byte(byte) {
