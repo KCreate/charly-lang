@@ -129,6 +129,8 @@ class File {
     unless exists {
       throw Exception("Can't perform action on closed file descriptor " + @fd)
     }
+
+    exists
   }
 
 }
