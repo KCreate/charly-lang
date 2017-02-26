@@ -52,6 +52,16 @@ module Charly::FileSystem
       file.print data
     end
 
+    # Writes *byte* into *fd*
+    def write_byte(fd : Int32, byte : UInt8)
+      unless check_exists fd
+        raise "File descriptor #{fd} is not open"
+      end
+
+      file = Files[fd]
+      file.write_byte byte
+    end
+
     # Flushes *fd*
     def flush(fd : Int32)
       unless check_exists fd

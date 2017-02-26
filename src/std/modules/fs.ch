@@ -8,6 +8,7 @@ const fs_print = __internal__method("fs_print")
 const fs_flush = __internal__method("fs_flush")
 const fs_read_bytes = __internal__method("fs_read_bytes")
 const fs_read_char = __internal__method("fs_read_char")
+const fs_write_byte = __internal__method("fs_write_byte")
 
 class File {
   static property LINE_SEPARATOR
@@ -113,6 +114,14 @@ class File {
     unless data.last() == "\n" {
       fs_print(@fd, "\n")
     }
+  }
+
+  /**
+   * Writes *byte* into the underlying file descriptor
+   **/
+  func write_byte(byte) {
+    @check_open()
+    fs_write_byte(@fd, byte)
   }
 
   /**

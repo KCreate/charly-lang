@@ -57,6 +57,18 @@ module Charly::Internals
     TNull.new
   end
 
+  charly_api "fs_write_byte", fd : TNumeric, byte : TNumeric do
+    fd, byte = fd.value.to_i32, byte.value
+
+    begin
+      FilePool.write_byte fd, byte.to_u8
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not write to #{fd}")
+    end
+
+    TNull.new
+  end
+
   charly_api "fs_flush", fd : TNumeric do
     fd = fd.value.to_i32
 
