@@ -123,7 +123,7 @@ class File {
    **/
   func write_byte(byte) {
     @check_open()
-    fs_write_byte(@fd, byte)
+    fs_write_byte(@fd, byte.to_n())
   }
 
   /**
