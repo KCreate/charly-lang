@@ -127,6 +127,23 @@ class File {
   }
 
   /**
+   * Writes *bytes* into the underlying file descriptor
+   **/
+  func write_bytes(bytes) {
+    @check_open()
+
+    unless typeof bytes == "Array" {
+      throw IOError("Expected bytes to be an array, got " + typeof bytes)
+    }
+
+    bytes.each(->(byte) {
+      fs_write_byte(@fd, byte.to_n())
+    })
+
+    fs_flush(@fd)
+  }
+
+  /**
    * Flushes all buffered data
    **/
   func flush() {
