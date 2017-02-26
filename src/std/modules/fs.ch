@@ -7,6 +7,7 @@ const fs_exists = __internal__method("fs_exists")
 const fs_print = __internal__method("fs_print")
 const fs_flush = __internal__method("fs_flush")
 const fs_read_bytes = __internal__method("fs_read_bytes")
+const fs_read_char = __internal__method("fs_read_char")
 
 class File {
   static property LINE_SEPARATOR
@@ -81,6 +82,16 @@ class File {
   func read_bytes(amount) {
     @check_open()
     fs_read_bytes(@fd, amount)
+  }
+
+  /**
+   * Reads a single char from the underlying file descriptor
+   *
+   * Returns null if no char could be read
+   **/
+  func read_char() {
+    @check_open()
+    fs_read_char(@fd)
   }
 
   /**

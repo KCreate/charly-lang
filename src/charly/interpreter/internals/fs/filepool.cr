@@ -92,6 +92,16 @@ module Charly::FileSystem
       bytes
     end
 
+    # Reads a single char from *fd*
+    def read_char(fd : Int32)
+      unless check_exists fd
+        raise "File descriptor #{fd} is not open"
+      end
+
+      file = Files[fd]
+      file.read_char
+    end
+
     # Returns the stat for the file
     def stat(name : String)
       filename = Utils.resolve name, Dir.current
