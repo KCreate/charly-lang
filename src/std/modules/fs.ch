@@ -5,6 +5,7 @@ const fs_lstat = __internal__method("fs_lstat")
 const fs_gets = __internal__method("fs_gets")
 const fs_exists = __internal__method("fs_exists")
 const fs_print = __internal__method("fs_print")
+const fs_flush = __internal__method("fs_flush")
 
 class File {
   static property LINE_SEPARATOR
@@ -76,6 +77,27 @@ class File {
   func print(data) {
     @check_open()
     fs_print(@fd, data.to_s())
+  }
+
+  /**
+   * Writes *data* into the underlying file descriptor
+   * If data doesn't end with a newline, a newline is appended
+   **/
+  func puts(data) {
+    @check_open()
+    fs_print(@fd, data.to_s())
+
+    unless data.last() == "\n" {
+      fs_print(@fd, "\n")
+    }
+  }
+
+  /**
+   * Flushes all buffered data
+   **/
+  func flush() {
+    @check_open()
+    fs_flush(@fd)
   }
 
   /**

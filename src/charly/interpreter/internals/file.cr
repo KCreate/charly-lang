@@ -57,6 +57,18 @@ module Charly::Internals
     TNull.new
   end
 
+  charly_api "fs_flush", fd : TNumeric do
+    fd = fd.value.to_i32
+
+    begin
+      FilePool.flush fd
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not flush #{fd}")
+    end
+
+    TNull.new
+  end
+
   charly_api "fs_exists", fd : TNumeric do
     fd = fd.value.to_i32
     TBoolean.new FilePool.check_exists fd
