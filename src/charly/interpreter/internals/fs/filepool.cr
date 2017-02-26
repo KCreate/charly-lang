@@ -34,61 +34,44 @@ module Charly::FileSystem
 
     # Closes *fd*
     def close(fd : Int32)
-      unless check_exists fd
-        raise "File descriptor #{fd} is not open"
-      end
-
+      check_open fd
       file = Files[fd]
       file.close
     end
 
     # Writes *data* into *fd*
     def print(fd : Int32, data : String)
-      unless check_exists fd
-        raise "File descriptor #{fd} is not open"
-      end
-
+      check_open fd
       file = Files[fd]
       file.print data
     end
 
     # Writes *byte* into *fd*
     def write_byte(fd : Int32, byte : UInt8)
-      unless check_exists fd
-        raise "File descriptor #{fd} is not open"
-      end
-
+      check_open fd
       file = Files[fd]
       file.write_byte byte
     end
 
     # Flushes *fd*
     def flush(fd : Int32)
-      unless check_exists fd
-        raise "File descriptor #{fd} is not open"
-      end
-
+      check_open fd
       file = Files[fd]
       file.flush
     end
 
     # Reads a single line from the file
     def gets(fd : Int32)
-      unless check_exists fd
-        raise "File descriptor #{fd} is not open"
-      end
-
+      check_open fd
       file = Files[fd]
       file.gets
     end
 
     # Reads *amount* bytes from *fd*
     def read_bytes(fd : Int32, amount : Int32)
-      unless check_exists fd
-        raise "File descriptor #{fd} is not open"
-      end
-
+      check_open fd
       file = Files[fd]
+
       bytes = [] of UInt8
       amount.times do
         byte = file.read_byte
@@ -104,10 +87,7 @@ module Charly::FileSystem
 
     # Reads a single char from *fd*
     def read_char(fd : Int32)
-      unless check_exists fd
-        raise "File descriptor #{fd} is not open"
-      end
-
+      check_open fd
       file = Files[fd]
       file.read_char
     end
@@ -124,8 +104,14 @@ module Charly::FileSystem
     end
 
     # Checks if *fd* exists
-    def check_exists(fd : Int32)
-      Files.has_key? fd
+    def check_open(fd : Int32)
+      exists = Files.has_key? fd
+
+      unless exists
+        raise "File descriptor #{fd} is not registered"
+      end
+
+      exists
     end
 
   end

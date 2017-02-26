@@ -115,7 +115,7 @@ module Charly::Internals
 
   charly_api "fs_exists", fd : TNumeric do
     fd = fd.value.to_i32
-    TBoolean.new FilePool.check_exists fd
+    TBoolean.new FilePool::Files.has_key? fd
   end
 
   charly_api "fs_stat", name : TString do
