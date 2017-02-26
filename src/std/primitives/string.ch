@@ -277,4 +277,20 @@ export = primitive class String {
       self[0] == "9"
     )
   }
+
+  /*
+   * Returns the first char in this string
+   * Returns null if the string is empty
+   * */
+  func first() {
+    self[0]
+  }
+
+  /*
+   * Returns the last char in this string
+   * Returns null if the string is empty
+   * */
+  func last() {
+    self[@length() - 1]
+  }
 }
