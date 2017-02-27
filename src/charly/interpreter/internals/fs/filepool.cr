@@ -114,6 +114,13 @@ module Charly::FileSystem
       exists
     end
 
+    # Returns the path of a file descriptor
+    def fd_path(fd : Int32)
+      check_open fd
+      file = Files[fd]
+      file.path
+    end
+
   end
 
 end

@@ -10,6 +10,7 @@ const fs_read_bytes = __internal__method("fs_read_bytes")
 const fs_read_char = __internal__method("fs_read_char")
 const fs_write_byte = __internal__method("fs_write_byte")
 const fs_expand_path = __internal__method("fs_expand_path")
+const fs_fd_path = __internal__method("fs_fd_path")
 
 class IOError extends Exception {}
 
@@ -26,7 +27,8 @@ class File {
    **/
   static func open(name, mode, encoding) {
     const fd = fs_open(name, mode, encoding)
-    const file = File(fd, name, mode, encoding)
+    const filename = fs_fd_path(fd)
+    const file = File(fd, filename, mode, encoding)
     return file
   }
 

@@ -39,6 +39,16 @@ module Charly::Internals
     TString.new Utils.resolve filename, Dir.current
   end
 
+  charly_api "fs_fd_path", fd : TNumeric do
+    fd = fd.value.to_i32
+
+    begin
+      return TString.new FilePool.fd_path fd
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not get filename of #{fd}")
+    end
+  end
+
   charly_api "fs_gets", fd : TNumeric do
     fd = fd.value.to_i32
 
