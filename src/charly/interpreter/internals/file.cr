@@ -17,6 +17,16 @@ module Charly::Internals
     TNumeric.new fd
   end
 
+  charly_api "fs_read", name : TString, encoding : TString do
+    name, encoding = name.value, encoding.value
+
+    begin
+      return TString.new FilePool.read name, encoding
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not read #{name}")
+    end
+  end
+
   charly_api "fs_close", fd : TNumeric do
     fd = fd.value.to_i32
 

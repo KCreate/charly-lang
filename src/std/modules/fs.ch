@@ -1,16 +1,17 @@
-const fs_open = __internal__method("fs_open")
-const fs_close = __internal__method("fs_close")
-const fs_stat = __internal__method("fs_stat")
-const fs_lstat = __internal__method("fs_lstat")
-const fs_gets = __internal__method("fs_gets")
-const fs_exists = __internal__method("fs_exists")
-const fs_print = __internal__method("fs_print")
-const fs_flush = __internal__method("fs_flush")
-const fs_read_bytes = __internal__method("fs_read_bytes")
-const fs_read_char = __internal__method("fs_read_char")
-const fs_write_byte = __internal__method("fs_write_byte")
-const fs_expand_path = __internal__method("fs_expand_path")
-const fs_fd_path = __internal__method("fs_fd_path")
+const fs_open           = __internal__method("fs_open")
+const fs_read           = __internal__method("fs_read")
+const fs_close          = __internal__method("fs_close")
+const fs_stat           = __internal__method("fs_stat")
+const fs_lstat          = __internal__method("fs_lstat")
+const fs_gets           = __internal__method("fs_gets")
+const fs_exists         = __internal__method("fs_exists")
+const fs_print          = __internal__method("fs_print")
+const fs_flush          = __internal__method("fs_flush")
+const fs_read_bytes     = __internal__method("fs_read_bytes")
+const fs_read_char      = __internal__method("fs_read_char")
+const fs_write_byte     = __internal__method("fs_write_byte")
+const fs_expand_path    = __internal__method("fs_expand_path")
+const fs_fd_path        = __internal__method("fs_fd_path")
 
 class IOError extends Exception {}
 
@@ -36,16 +37,7 @@ class File {
    * Returns the complete content of *name*
    **/
   static func read(name, encoding) {
-    const file = @open(name, "r", encoding)
-
-    const lines = []
-    let tmp
-
-    while tmp = file.gets() {
-      lines.push(tmp)
-    }
-
-    return lines.join(@LINE_SEPARATOR)
+    fs_read(name, encoding)
   }
 
   /**
