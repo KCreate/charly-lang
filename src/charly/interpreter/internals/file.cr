@@ -29,6 +29,16 @@ module Charly::Internals
     TNull.new
   end
 
+  charly_api "fs_expand_path", filename : TString, current : BaseType do
+    filename = filename.value
+
+    if current.is_a? TString
+      return TString.new Utils.resolve filename, current.value
+    end
+
+    TString.new Utils.resolve filename, Dir.current
+  end
+
   charly_api "fs_gets", fd : TNumeric do
     fd = fd.value.to_i32
 

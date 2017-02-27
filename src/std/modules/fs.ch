@@ -9,6 +9,7 @@ const fs_flush = __internal__method("fs_flush")
 const fs_read_bytes = __internal__method("fs_read_bytes")
 const fs_read_char = __internal__method("fs_read_char")
 const fs_write_byte = __internal__method("fs_write_byte")
+const fs_expand_path = __internal__method("fs_expand_path")
 
 class IOError extends Exception {}
 
@@ -57,6 +58,16 @@ class File {
    **/
   static func lstat(filename) {
     fs_lstat(filename)
+  }
+
+  /**
+   * Returns the expanded path for *filename*, using *current* as the current working directory
+   * If no current directory was passed, the current working directory of the process is used
+   *
+   * Returns *filename* if it could not be expanded
+   **/
+  static func expand_path(filename) {
+    fs_expand_path(filename, arguments[1])
   }
 
   func constructor(fd, filename, mode, encoding) {
