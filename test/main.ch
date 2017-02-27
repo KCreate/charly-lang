@@ -10,6 +10,7 @@ const result = UnitTest(->(describe, it, assert, context) {
     ["Comparisons",                 "./interpreter/comparisons.ch"],
     ["Eval",                        "./interpreter/eval.ch"],
     ["Exceptions",                  "./interpreter/exceptions.ch"],
+    ["File System",                 "./interpreter/fs/main.ch"],
     ["Functions",                   "./interpreter/functions.ch"],
     ["Guard statement",             "./interpreter/guard.ch"],
     ["Including external files",    "./interpreter/external-files.ch"],
