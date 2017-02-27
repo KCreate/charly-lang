@@ -108,6 +108,7 @@ class File {
   func print(data) {
     @check_open()
     fs_print(@fd, data.to_s())
+    fs_flush(@fd)
 
     self
   }
@@ -123,6 +124,8 @@ class File {
     unless data.last() == "\n" {
       fs_print(@fd, "\n")
     }
+
+    fs_flush(@fd)
 
     self
   }
