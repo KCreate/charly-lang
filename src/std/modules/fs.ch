@@ -29,7 +29,7 @@ class File {
     const fd = fs_open(name, mode, encoding)
     const filename = fs_fd_path(fd)
     const file = File(fd, filename, mode, encoding)
-    return file
+    file
   }
 
   /**
@@ -116,6 +116,8 @@ class File {
   func print(data) {
     @check_open()
     fs_print(@fd, data.to_s())
+
+    self
   }
 
   /**
@@ -129,6 +131,8 @@ class File {
     unless data.last() == "\n" {
       fs_print(@fd, "\n")
     }
+
+    self
   }
 
   /**
@@ -144,7 +148,7 @@ class File {
       i += 1
     }
 
-    i
+    self
   }
 
   /**
@@ -153,6 +157,8 @@ class File {
   func write_byte(byte) {
     @check_open()
     fs_write_byte(@fd, byte.to_n())
+
+    self
   }
 
   /**
@@ -170,6 +176,8 @@ class File {
     })
 
     fs_flush(@fd)
+
+    self
   }
 
   /**
@@ -178,6 +186,8 @@ class File {
   func flush() {
     @check_open()
     fs_flush(@fd)
+
+    self
   }
 
   /**
@@ -186,6 +196,8 @@ class File {
   func close() {
     @check_open()
     fs_close(@fd)
+
+    self
   }
 
   /**
