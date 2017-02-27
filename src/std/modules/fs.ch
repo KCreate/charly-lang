@@ -196,6 +196,20 @@ class File {
   }
 
   /**
+   * Tries to open this file
+   **/
+  func open() {
+    const file = File.open(@filename, @mode, @encoding)
+
+    @fd = file.fd
+    @filename = file.filename
+    @mode = file.mode
+    @encoding = file.encoding
+
+    self
+  }
+
+  /**
    * Checks if the underlying file descriptor is still open
    **/
   func check_open() {
