@@ -98,6 +98,27 @@ module Charly::Internals
     TArray.new ch_entries
   end
 
+  charly_api "fs_type", pathname : TString do
+    pathname = pathname.value
+
+    unless pathname[0] == "/"
+      pathname = Utils.resolve pathname, Dir.current
+    end
+
+    begin
+
+      # The check for symlinks is performed first, because File.file? returns
+      # true for symlinked files too
+      return TNumeric.new 2 if File.symlink? pathname
+      return TNumeric.new 0 if File.file? pathname
+      return TNumeric.new 1 if File.directory? pathname
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not get type for #{pathname}")
+    end
+
+    return TNumeric.new -1
+  end
+
   charly_api "fs_gets", fd : TNumeric do
     fd = fd.value.to_i32
 

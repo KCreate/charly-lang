@@ -269,6 +269,26 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("type", ->{
+
+      it("returns the type of files", ->{
+        const typ_file = fs.type(FILE_TEST)
+        const typ_dir = fs.type(DIR_READDIR)
+        const typ_link = fs.type(FILE_TEST_LINK)
+
+        assert(typ_file, 0)
+        assert(typ_dir, 1)
+        assert(typ_link, 2)
+      })
+
+      it("has constants defined in fs.TYPES", ->{
+        assert(fs.TYPES.FILE, 0)
+        assert(fs.TYPES.DIR, 1)
+        assert(fs.TYPES.LINK, 2)
+      })
+
+    })
+
   })
 
 }

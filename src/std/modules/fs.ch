@@ -14,6 +14,7 @@ const fs_expand_path    = __internal__method("fs_expand_path")
 const fs_fd_path        = __internal__method("fs_fd_path")
 const fs_unlink         = __internal__method("fs_unlink")
 const fs_readdir        = __internal__method("fs_readdir")
+const fs_type           = __internal__method("fs_type")
 
 class IOError extends Exception {}
 
@@ -78,6 +79,14 @@ class File {
    **/
   static func readdir(path) {
     fs_readdir(path)
+  }
+
+  /**
+   * Returns the type of the file at path
+   * See `fs.TYPES` for definitions
+   **/
+  static func type(path) {
+    fs_type(path)
   }
 
   func constructor(fd, filename, mode, encoding) {
@@ -242,5 +251,10 @@ class File {
 
 File.LINE_SEPARATOR = "\n"
 File.DIRECTORY_SEPARATOR = "/"
+File.TYPES = {
+  const FILE = 0
+  const DIR = 1
+  const LINK = 2
+}
 
 export = File
