@@ -3,6 +3,7 @@ const fs = require("fs")
 const FILE_TEST = "test/interpreter/fs/data/test.txt"
 const FILE_TEST_LINK = "test/interpreter/fs/data/test-link.txt"
 const FILE_TMP = "test/interpreter/fs/data/tmp.txt"
+const DIR_READDIR = "test/interpreter/fs/readdir"
 
 export = ->(describe, it, assert) {
 
@@ -240,6 +241,30 @@ export = ->(describe, it, assert) {
 
         })
 
+      })
+
+    })
+
+    describe("readdir", ->{
+
+      it("returns the contents of a directory", ->{
+        const entries = fs.readdir(DIR_READDIR)
+        assert(entries, [".", "..", "bar", "baz", "foo"])
+      })
+
+    })
+
+    describe("unlink", ->{
+
+      it("unlinks a file", ->{
+        const file = fs.open(DIR_READDIR + "/unlinkme.txt", "w+", "utf8")
+        file.close()
+
+        assert(fs.readdir(DIR_READDIR), [".", "..", "bar", "baz", "foo", "unlinkme.txt"])
+
+        fs.unlink(DIR_READDIR + "/unlinkme.txt")
+
+        assert(fs.readdir(DIR_READDIR), [".", "..", "bar", "baz", "foo"])
       })
 
     })
