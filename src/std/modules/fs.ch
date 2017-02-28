@@ -13,6 +13,7 @@ const fs_write_byte     = __internal__method("fs_write_byte")
 const fs_expand_path    = __internal__method("fs_expand_path")
 const fs_fd_path        = __internal__method("fs_fd_path")
 const fs_unlink         = __internal__method("fs_unlink")
+const fs_readdir        = __internal__method("fs_readdir")
 
 class IOError extends Exception {}
 
@@ -70,6 +71,13 @@ class File {
    **/
   static func unlink(filename) {
     fs_unlink(filename)
+  }
+
+  /**
+   * Returns an array of filenames inside a given directory
+   **/
+  static func readdir(path) {
+    fs_readdir(path)
   }
 
   func constructor(fd, filename, mode, encoding) {
@@ -233,5 +241,6 @@ class File {
 }
 
 File.LINE_SEPARATOR = "\n"
+File.DIRECTORY_SEPARATOR = "/"
 
 export = File

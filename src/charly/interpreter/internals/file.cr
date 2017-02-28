@@ -75,6 +75,29 @@ module Charly::Internals
     TNull.new
   end
 
+  charly_api "fs_readdir", pathname : TString do
+    pathname = pathname.value
+
+    unless pathname[0] == "/"
+      pathname = Utils.resolve pathname, Dir.current
+    end
+
+    entries : Array(String)
+
+    begin
+      entries = Dir.entries pathname
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not readdir #{pathname}")
+    end
+
+    ch_entries = [] of BaseType
+    entries.each do |filename|
+      ch_entries << TString.new filename
+    end
+
+    TArray.new ch_entries
+  end
+
   charly_api "fs_gets", fd : TNumeric do
     fd = fd.value.to_i32
 
