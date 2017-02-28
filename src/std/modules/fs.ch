@@ -12,6 +12,7 @@ const fs_read_char      = __internal__method("fs_read_char")
 const fs_write_byte     = __internal__method("fs_write_byte")
 const fs_expand_path    = __internal__method("fs_expand_path")
 const fs_fd_path        = __internal__method("fs_fd_path")
+const fs_unlink         = __internal__method("fs_unlink")
 
 class IOError extends Exception {}
 
@@ -62,6 +63,13 @@ class File {
    **/
   static func expand_path(filename) {
     fs_expand_path(filename, arguments[1])
+  }
+
+  /**
+   * Unlinks a name from the filesystem and possibly the file it refers to
+   **/
+  static func unlink(filename) {
+    fs_unlink(filename)
   }
 
   func constructor(fd, filename, mode, encoding) {

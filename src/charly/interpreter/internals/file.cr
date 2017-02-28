@@ -59,6 +59,22 @@ module Charly::Internals
     end
   end
 
+  charly_api "fs_unlink", filename : TString do
+    filename = filename.value
+
+    unless filename[0] == "/"
+      filename = Utils.resolve filename, Dir.current
+    end
+
+    begin
+      File.delete filename
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not unlink #{filename}")
+    end
+
+    TNull.new
+  end
+
   charly_api "fs_gets", fd : TNumeric do
     fd = fd.value.to_i32
 
