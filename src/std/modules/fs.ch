@@ -105,6 +105,23 @@ class File {
     fs_mkdir(path)
   }
 
+  /**
+   * Returns the last component of a path
+   **/
+  static func basename(path) {
+    path = path.split(@DIRECTORY_SEPARATOR)
+    path.last()
+  }
+
+  /**
+   * Returns all components of a path except the last one
+   **/
+  static func dirname(path) {
+    path = path.split(@DIRECTORY_SEPARATOR)
+    path.pop()
+    path.join(@DIRECTORY_SEPARATOR)
+  }
+
   func constructor(fd, filename, mode, encoding) {
     @fd = fd
     @filename = filename
