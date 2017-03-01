@@ -60,11 +60,7 @@ module Charly::Internals
   end
 
   charly_api "fs_unlink", filename : TString do
-    filename = filename.value
-
-    unless filename[0] == "/"
-      filename = Utils.resolve filename, Dir.current
-    end
+    filename = Utils.resolve filename.value, Dir.current
 
     begin
       File.delete filename
@@ -75,19 +71,27 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_readdir", pathname : TString do
-    pathname = pathname.value
+  charly_api "fs_rmdir", path : TString do
+    path = Utils.resolve path.value, Dir.current
 
-    unless pathname[0] == "/"
-      pathname = Utils.resolve pathname, Dir.current
+    begin
+      Dir.rmdir path
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not delete #{path}")
     end
+
+    TNull.new
+  end
+
+  charly_api "fs_readdir", path : TString do
+    path = Utils.resolve path.value, Dir.current
 
     entries : Array(String)
 
     begin
-      entries = Dir.entries pathname
+      entries = Dir.entries path
     rescue e
-      raise RunTimeError.new(call, context, e.message || "Could not readdir #{pathname}")
+      raise RunTimeError.new(call, context, e.message || "Could not readdir #{path}")
     end
 
     ch_entries = [] of BaseType
@@ -98,25 +102,33 @@ module Charly::Internals
     TArray.new ch_entries
   end
 
-  charly_api "fs_type", pathname : TString do
-    pathname = pathname.value
-
-    unless pathname[0] == "/"
-      pathname = Utils.resolve pathname, Dir.current
-    end
+  charly_api "fs_type", path : TString do
+    path = Utils.resolve path.value, Dir.current
 
     begin
 
       # The check for symlinks is performed first, because File.file? returns
       # true for symlinked files too
-      return TNumeric.new 2 if File.symlink? pathname
-      return TNumeric.new 0 if File.file? pathname
-      return TNumeric.new 1 if File.directory? pathname
+      return TNumeric.new 2 if File.symlink? path
+      return TNumeric.new 0 if File.file? path
+      return TNumeric.new 1 if File.directory? path
     rescue e
-      raise RunTimeError.new(call, context, e.message || "Could not get type for #{pathname}")
+      raise RunTimeError.new(call, context, e.message || "Could not get type for #{path}")
     end
 
-    return TNumeric.new -1
+    TNumeric.new -1
+  end
+
+  charly_api "fs_mkdir", path : TString do
+    path = Utils.resolve path.value, Dir.current
+
+    begin
+      Dir.mkdir_p path
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not create dir at #{path}")
+    end
+
+    TNull.new
   end
 
   charly_api "fs_gets", fd : TNumeric do
@@ -200,7 +212,7 @@ module Charly::Internals
       return TNull.new
     end
 
-    return TString.new char.to_s
+    TString.new char.to_s
   end
 
   charly_api "fs_exists", fd : TNumeric do
@@ -209,9 +221,8 @@ module Charly::Internals
   end
 
   charly_api "fs_stat", name : TString do
-    name = name.value
-    stat = FilePool.stat name
-    return TObject.new do |obj|
+    stat = FilePool.stat name.value
+    TObject.new do |obj|
       obj.init("dev",     TNumeric.new(stat.dev), true)
       obj.init("mode",    TNumeric.new(stat.mode), true)
       obj.init("nlink",   TNumeric.new(stat.nlink), true)
@@ -229,9 +240,8 @@ module Charly::Internals
   end
 
   charly_api "fs_lstat", name : TString do
-    name = name.value
-    stat = FilePool.lstat name
-    return TObject.new do |obj|
+    stat = FilePool.lstat name.value
+    TObject.new do |obj|
       obj.init("dev",     TNumeric.new(stat.dev), true)
       obj.init("mode",    TNumeric.new(stat.mode), true)
       obj.init("nlink",   TNumeric.new(stat.nlink), true)

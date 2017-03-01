@@ -15,6 +15,8 @@ const fs_fd_path        = __internal__method("fs_fd_path")
 const fs_unlink         = __internal__method("fs_unlink")
 const fs_readdir        = __internal__method("fs_readdir")
 const fs_type           = __internal__method("fs_type")
+const fs_mkdir          = __internal__method("fs_mkdir")
+const fs_rmdir          = __internal__method("fs_rmdir")
 
 class IOError extends Exception {}
 
@@ -75,6 +77,13 @@ class File {
   }
 
   /**
+   * Deletes the directory at *path*
+   **/
+  static func rmdir(path) {
+    fs_rmdir(path)
+  }
+
+  /**
    * Returns an array of filenames inside a given directory
    **/
   static func readdir(path) {
@@ -87,6 +96,13 @@ class File {
    **/
   static func type(path) {
     fs_type(path)
+  }
+
+  /**
+   * Creates a directory at *path*
+   **/
+  static func mkdir(path) {
+    fs_mkdir(path)
   }
 
   func constructor(fd, filename, mode, encoding) {
@@ -252,6 +268,7 @@ class File {
 File.LINE_SEPARATOR = "\n"
 File.DIRECTORY_SEPARATOR = "/"
 File.TYPES = {
+  const UNKNOWN = -1
   const FILE = 0
   const DIR = 1
   const LINK = 2
