@@ -4,6 +4,7 @@ const FILE_TEST = "test/interpreter/fs/data/test.txt"
 const FILE_TEST_LINK = "test/interpreter/fs/data/test-link.txt"
 const FILE_TMP = "test/interpreter/fs/data/tmp.txt"
 const DIR_READDIR = "test/interpreter/fs/readdir"
+const DIR_TMPDIR = "test/interpreter/fs/data/tmpdirectory"
 
 export = ->(describe, it, assert) {
 
@@ -287,6 +288,24 @@ export = ->(describe, it, assert) {
         assert(fs.TYPES.FILE, 0)
         assert(fs.TYPES.DIR, 1)
         assert(fs.TYPES.LINK, 2)
+      })
+
+    })
+
+    describe("mkdir", ->{
+
+      it("creates new directories", ->{
+        let typ = fs.type(DIR_TMPDIR)
+
+        assert(typ, fs.TYPES.UNKNOWN)
+
+        fs.mkdir(DIR_TMPDIR)
+
+        typ = fs.type(DIR_TMPDIR)
+
+        assert(typ, fs.TYPES.DIR)
+
+        fs.rmdir(DIR_TMPDIR)
       })
 
     })
