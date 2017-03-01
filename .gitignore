@@ -9,3 +9,4 @@
 .git
 test/debug.ch
 todos.md
+test/interpreter/fs/data/tmp.txt
