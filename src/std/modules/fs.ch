@@ -56,6 +56,19 @@ class File {
 
     null
   }
+
+  /**
+   * Appends *content* to the file at *path*
+   * Creates the file if it doesn't exist already
+   **/
+  static func append(name, content) {
+    const file = @open(name, "a", "utf8")
+    file.print(content)
+    file.close()
+
+    null
+  }
+
   /**
    * Returns a stat object for *filename*
    **/
