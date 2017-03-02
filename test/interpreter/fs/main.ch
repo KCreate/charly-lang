@@ -310,6 +310,16 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("write", ->{
+
+      it("writes data to a file", ->{
+        fs.write(FILE_TMP, "Hello World!")
+        const content = fs.read(FILE_TMP, "utf8")
+        assert(content, "Hello World!")
+      })
+
+    })
+
   })
 
 }

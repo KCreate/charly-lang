@@ -46,6 +46,17 @@ class File {
   }
 
   /**
+   * Writes *content* to the file at *path*
+   * Truncates the file if it exists already and creates it if not
+   **/
+  static func write(name, content) {
+    const file = @open(name, "w+", "utf8")
+    file.print(content)
+    file.close()
+
+    null
+  }
+  /**
    * Returns a stat object for *filename*
    **/
   static func stat(filename) {
