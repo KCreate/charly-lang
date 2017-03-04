@@ -206,14 +206,22 @@ module Charly::Internals
 
   charly_api "fs_stat", path : TString do
     path = Utils.resolve path.value, Dir.current
-    stat = File.stat path
-    Utils.stat_to_object stat
+
+    begin
+      return Utils.stat_to_object File.stat path
+    rescue e
+      return TNull.new
+    end
   end
 
   charly_api "fs_lstat", path : TString do
     path = Utils.resolve path.value, Dir.current
-    stat = File.lstat path
-    Utils.stat_to_object stat
+
+    begin
+      return Utils.stat_to_object File.lstat path
+    rescue e
+      return TNull.new
+    end
   end
 
   charly_api "fs_chmod", path : TString, mode : TNumeric do
