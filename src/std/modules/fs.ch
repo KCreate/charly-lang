@@ -25,6 +25,7 @@ const fs_rename         = __internal__method("fs_rename")
 
 class File {
   static property LINE_SEPARATOR
+  static property SEPARATOR
 
   property fd
   property filename
@@ -128,7 +129,7 @@ class File {
    * Returns the last component of a path
    **/
   static func basename(path) {
-    path = path.split(@DIRECTORY_SEPARATOR)
+    path = path.split(@SEPARATOR)
     path.last()
   }
 
@@ -136,9 +137,9 @@ class File {
    * Returns all components of a path except the last one
    **/
   static func dirname(path) {
-    path = path.split(@DIRECTORY_SEPARATOR)
+    path = path.split(@SEPARATOR)
     path.pop()
-    path.join(@DIRECTORY_SEPARATOR)
+    path.join(@SEPARATOR)
   }
 
   /**
@@ -344,6 +345,6 @@ class File {
 }
 
 File.LINE_SEPARATOR = "\n"
-File.DIRECTORY_SEPARATOR = "/"
+File.SEPARATOR = "/"
 
 export = File

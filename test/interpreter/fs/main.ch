@@ -96,6 +96,15 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("constants", ->{
+
+      it("has some constants defined", ->{
+        assert(fs.LINE_SEPARATOR, "\n")
+        assert(fs.SEPARATOR, "/")
+      })
+
+    })
+
     describe("instance", ->{
 
       describe("properties", ->{
@@ -371,8 +380,6 @@ export = ->(describe, it, assert) {
 
       it("creates a new symbolic link", ->{
         fs.symlink(fs.basename(FILE_TEST), DIR_DATA + "/test-symbolic-link.txt")
-
-        gets("", false)
 
         const content = fs.read(DIR_DATA + "/test-symbolic-link.txt", "utf8")
 
