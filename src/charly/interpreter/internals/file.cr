@@ -103,23 +103,6 @@ module Charly::Internals
     TArray.new ch_entries
   end
 
-  charly_api "fs_type", path : TString do
-    path = Utils.resolve path.value, Dir.current
-
-    begin
-
-      # The check for symlinks is performed first, because File.file? returns
-      # true for symlinked files too
-      return TNumeric.new 2 if File.symlink? path
-      return TNumeric.new 0 if File.file? path
-      return TNumeric.new 1 if File.directory? path
-    rescue e
-      raise RunTimeError.new(call, context, e.message || "Could not get type for #{path}")
-    end
-
-    TNumeric.new -1
-  end
-
   charly_api "fs_mkdir", path : TString do
     path = Utils.resolve path.value, Dir.current
 

@@ -117,14 +117,6 @@ class File {
   }
 
   /**
-   * Returns the type of the file at path
-   * See `fs.TYPES` for definitions
-   **/
-  static func type(path) {
-    fs_type(path)
-  }
-
-  /**
    * Creates a directory at *path*
    **/
   static func mkdir(path) {
@@ -338,11 +330,5 @@ class File {
 
 File.LINE_SEPARATOR = "\n"
 File.DIRECTORY_SEPARATOR = "/"
-File.TYPES = {
-  const UNKNOWN = -1
-  const FILE = 0
-  const DIR = 1
-  const LINK = 2
-}
 
 export = File
