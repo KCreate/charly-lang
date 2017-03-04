@@ -9,6 +9,11 @@ const DIR_DATA = "test/interpreter/fs/data"
 
 export = ->(describe, it, assert) {
 
+  // Prepare some test files
+  if fs.stat(DIR_DATA + "/test-direct-link.txt") {
+    fs.unlink(DIR_DATA + "/test-direct-link.txt")
+  }
+
   describe("fs", ->{
 
     describe("stat", ->{
@@ -363,12 +368,37 @@ export = ->(describe, it, assert) {
       it("returns an absolute path", ->{
         fs.link(FILE_TEST, DIR_DATA + "/test-direct-link.txt")
 
-        const path = fs.readlink(DIR_DATA + "/test-direct-link.txt")
-
-        assert(path[0], "/")
-        assert(path.index_of(DIR_DATA + "/test-direct-link.txt", 0) ! -1, true)
+        const content = fs.read(DIR_DATA + "/test-direct-link.txt", "utf8")
+        assert(content, [
+          "Hello World",
+          "My name is Charly",
+          "What is yours?",
+          ""
+        ].join("\n"))
 
         fs.unlink(DIR_DATA + "/test-direct-link.txt")
+      })
+
+    })
+
+    describe("rename", ->{
+
+      it("moves a file", ->{
+        fs.open(DIR_DATA + "/rename.txt", "w+", "utf8").print("Hello World").close()
+
+        assert(fs.stat(DIR_DATA + "/rename.txt") ! null, true)
+
+        fs.rename(DIR_DATA + "/rename.txt", DIR_DATA + "/rename-new.txt")
+
+        assert(fs.stat(DIR_DATA + "/rename.txt"), null)
+        assert(fs.stat(DIR_DATA + "/rename-new.txt") ! null, true)
+
+        fs.rename(DIR_DATA + "/rename-new.txt", DIR_DATA + "/rename.txt")
+
+        assert(fs.stat(DIR_DATA + "/rename.txt") ! null, true)
+        assert(fs.stat(DIR_DATA + "/rename-new.txt"), null)
+
+        fs.unlink(DIR_DATA + "/rename.txt")
       })
 
     })

@@ -277,4 +277,17 @@ module Charly::Internals
       raise RunTimeError.new(call, context, e.message || "Could not read link at #{path}")
     end
   end
+
+  charly_api "fs_rename", old : TString, new : TString do
+    old = Utils.resolve old.value, Dir.current
+    new = Utils.resolve new.value, Dir.current
+
+    begin
+      File.rename old, new
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not rename #{old} to #{new}")
+    end
+
+    TNull.new
+  end
 end

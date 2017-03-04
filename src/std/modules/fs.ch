@@ -20,6 +20,7 @@ const fs_chmod          = __internal__method("fs_chmod")
 const fs_chown          = __internal__method("fs_chown")
 const fs_link           = __internal__method("fs_link")
 const fs_readlink       = __internal__method("fs_readlink")
+const fs_rename         = __internal__method("fs_rename")
 
 class File {
   static property LINE_SEPARATOR
@@ -165,6 +166,13 @@ class File {
    **/
   static func readlink(path) {
     fs_readlink(path)
+  }
+
+  /**
+   * Renames the file at *old* to *new*
+   **/
+  static func rename(old, new) {
+    fs_rename(old, new)
   }
 
   func constructor(fd, filename, mode, encoding) {
