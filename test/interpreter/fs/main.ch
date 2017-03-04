@@ -10,8 +10,12 @@ const DIR_DATA = "test/interpreter/fs/data"
 export = ->(describe, it, assert) {
 
   // Prepare some test files
-  if fs.stat(DIR_DATA + "/test-direct-link.txt") {
+  if fs.lstat(DIR_DATA + "/test-direct-link.txt") {
     fs.unlink(DIR_DATA + "/test-direct-link.txt")
+  }
+
+  if fs.lstat(DIR_DATA + "/test-symbolic-link.txt") {
+    fs.unlink(DIR_DATA + "/test-symbolic-link.txt")
   }
 
   describe("fs", ->{
@@ -359,6 +363,30 @@ export = ->(describe, it, assert) {
         assert(stat.symlink, false)
 
         fs.unlink(DIR_DATA + "/test-direct-link.txt")
+      })
+
+    })
+
+    describe("symlink", ->{
+
+      it("creates a new symbolic link", ->{
+        fs.symlink(fs.basename(FILE_TEST), DIR_DATA + "/test-symbolic-link.txt")
+
+        gets("", false)
+
+        const content = fs.read(DIR_DATA + "/test-symbolic-link.txt", "utf8")
+
+        assert(content, [
+          "Hello World",
+          "My name is Charly",
+          "What is yours?",
+          ""
+        ].join("\n"))
+
+        const stat = fs.lstat(DIR_DATA + "/test-symbolic-link.txt")
+        assert(stat.symlink, true)
+
+        fs.unlink(DIR_DATA + "/test-symbolic-link.txt")
       })
 
     })

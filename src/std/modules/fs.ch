@@ -19,6 +19,7 @@ const fs_rmdir          = __internal__method("fs_rmdir")
 const fs_chmod          = __internal__method("fs_chmod")
 const fs_chown          = __internal__method("fs_chown")
 const fs_link           = __internal__method("fs_link")
+const fs_symlink        = __internal__method("fs_symlink")
 const fs_readlink       = __internal__method("fs_readlink")
 const fs_rename         = __internal__method("fs_rename")
 
@@ -159,6 +160,13 @@ class File {
    **/
   static func link(old, new) {
     fs_link(old, new)
+  }
+
+  /**
+   * Creates a new symbolic link at *new* pointing to *old*
+   **/
+  static func symlink(old, new) {
+    fs_symlink(old, new)
   }
 
   /**

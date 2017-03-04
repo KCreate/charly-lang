@@ -264,6 +264,19 @@ module Charly::Internals
     TNull.new
   end
 
+  charly_api "fs_symlink", old : TString, new : TString do
+    old = old.value
+    new = Utils.resolve new.value, Dir.current
+
+    begin
+      File.symlink old, new
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not symlink #{new} to #{old}")
+    end
+
+    TNull.new
+  end
+
   charly_api "fs_readlink", path : TString do
     path = Utils.resolve path.value, Dir.current
 
