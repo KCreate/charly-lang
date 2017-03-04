@@ -18,8 +18,6 @@ const fs_type           = __internal__method("fs_type")
 const fs_mkdir          = __internal__method("fs_mkdir")
 const fs_rmdir          = __internal__method("fs_rmdir")
 
-class IOError extends Exception {}
-
 class File {
   static property LINE_SEPARATOR
 
@@ -245,7 +243,7 @@ class File {
     @check_open()
 
     unless typeof bytes == "Array" {
-      throw IOError("Expected bytes to be an array, got " + typeof bytes)
+      throw Exception("Expected bytes to be an array, got " + typeof bytes)
     }
 
     bytes.each(->(byte) {
@@ -298,7 +296,7 @@ class File {
     const exists = fs_exists(@fd)
 
     unless exists {
-      throw IOError("Can't perform action on closed file descriptor " + @fd)
+      throw Exception("Can't perform action on closed file descriptor " + @fd)
     }
 
     exists
