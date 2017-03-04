@@ -258,4 +258,17 @@ module Charly::Internals
 
     TNull.new
   end
+
+  charly_api "fs_link", old : TString, new : TString do
+    old = Utils.resolve old.value, Dir.current
+    new = Utils.resolve new.value, Dir.current
+
+    begin
+      File.link old, new
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not link #{new} to #{old}")
+    end
+
+    TNull.new
+  end
 end

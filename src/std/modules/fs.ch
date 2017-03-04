@@ -19,6 +19,7 @@ const fs_mkdir          = __internal__method("fs_mkdir")
 const fs_rmdir          = __internal__method("fs_rmdir")
 const fs_chmod          = __internal__method("fs_chmod")
 const fs_chown          = __internal__method("fs_chown")
+const fs_link           = __internal__method("fs_link")
 
 class File {
   static property LINE_SEPARATOR
@@ -158,6 +159,13 @@ class File {
    **/
   static func chown(path, uid, gid) {
     fs_chown(path, uid, gid)
+  }
+
+  /**
+   * Creates a new link at *new* pointing to the file at *old*
+   **/
+  static func link(old, new) {
+    fs_link(old, new)
   }
 
   func constructor(fd, filename, mode, encoding) {

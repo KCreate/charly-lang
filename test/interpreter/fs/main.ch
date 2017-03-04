@@ -5,6 +5,7 @@ const FILE_TEST_LINK = "test/interpreter/fs/data/test-link.txt"
 const FILE_TMP = "test/interpreter/fs/data/tmp.txt"
 const DIR_READDIR = "test/interpreter/fs/readdir"
 const DIR_TMPDIR = "test/interpreter/fs/data/tmpdirectory"
+const DIR_DATA = "test/interpreter/fs/data"
 
 export = ->(describe, it, assert) {
 
@@ -358,6 +359,25 @@ export = ->(describe, it, assert) {
 
         assert(typeof fs.chown, "Function")
         assert(typeof __internal__method("fs_chown"), "Function")
+      })
+
+    })
+
+    describe("link", ->{
+
+      it("creates a new link", ->{
+        fs.link(FILE_TEST, DIR_DATA + "/test-direct-link.txt")
+
+        const content = fs.read(DIR_DATA + "/test-direct-link.txt", "utf8")
+
+        assert(content, [
+          "Hello World",
+          "My name is Charly",
+          "What is yours?",
+          ""
+        ].join("\n"))
+
+        fs.unlink(DIR_DATA + "/test-direct-link.txt")
       })
 
     })
