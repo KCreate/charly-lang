@@ -255,7 +255,8 @@ module Charly::Internals
     new = Utils.resolve new.value, Dir.current
 
     begin
-      File.link old, new
+      ret = LibC.link(old.check_no_null_byte, new.check_no_null_byte)
+      raise Errno.new("Error creating link from #{old} to #{new}") if ret != 0
     rescue e
       raise RunTimeError.new(call, context, e.message || "Could not link #{new} to #{old}")
     end
