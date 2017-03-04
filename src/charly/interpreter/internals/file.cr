@@ -242,4 +242,17 @@ module Charly::Internals
 
     TNull.new
   end
+
+  charly_api "fs_chown", path : TString, uid : TNumeric, gid : TNumeric do
+    path = Utils.resolve path.value, Dir.current
+    uid, gid = uid.value.to_i32, gid.value.to_i32
+
+    begin
+      File.chown path, uid, gid
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not chown #{path}")
+    end
+
+    TNull.new
+  end
 end

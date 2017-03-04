@@ -348,6 +348,20 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("chown", ->{
+
+      it("changes the owner of a file", ->{
+
+        // changing the owner and group of a file requires special permissions
+        // so we just test if the methods and corresponding internal methods
+        // exist
+
+        assert(typeof fs.chown, "Function")
+        assert(typeof __internal__method("fs_chown"), "Function")
+      })
+
+    })
+
   })
 
 }

@@ -18,6 +18,7 @@ const fs_type           = __internal__method("fs_type")
 const fs_mkdir          = __internal__method("fs_mkdir")
 const fs_rmdir          = __internal__method("fs_rmdir")
 const fs_chmod          = __internal__method("fs_chmod")
+const fs_chown          = __internal__method("fs_chown")
 
 class File {
   static property LINE_SEPARATOR
@@ -150,6 +151,13 @@ class File {
    **/
   static func chmod(path, mode) {
     fs_chmod(path, mode)
+  }
+
+  /**
+   * Changes the user and group id of the file at *path*
+   **/
+  static func chown(path, uid, gid) {
+    fs_chown(path, uid, gid)
   }
 
   func constructor(fd, filename, mode, encoding) {
