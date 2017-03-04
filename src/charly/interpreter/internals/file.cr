@@ -222,39 +222,12 @@ module Charly::Internals
 
   charly_api "fs_stat", name : TString do
     stat = FilePool.stat name.value
-    TObject.new do |obj|
-      obj.init("dev",     TNumeric.new(stat.dev), true)
-      obj.init("mode",    TNumeric.new(stat.mode), true)
-      obj.init("nlink",   TNumeric.new(stat.nlink), true)
-      obj.init("uid",     TNumeric.new(stat.uid), true)
-      obj.init("gid",     TNumeric.new(stat.gid), true)
-      obj.init("rdev",    TNumeric.new(stat.rdev), true)
-      obj.init("blksize", TNumeric.new(stat.blksize), true)
-      obj.init("ino",     TNumeric.new(stat.ino), true)
-      obj.init("size",    TNumeric.new(stat.size), true)
-      obj.init("blocks",  TNumeric.new(stat.blocks), true)
-      obj.init("atime",   TNumeric.new(stat.atime.epoch), true)
-      obj.init("mtime",   TNumeric.new(stat.mtime.epoch), true)
-      obj.init("ctime",   TNumeric.new(stat.ctime.epoch), true)
-    end
+    Utils.stat_to_object stat
   end
 
   charly_api "fs_lstat", name : TString do
     stat = FilePool.lstat name.value
-    TObject.new do |obj|
-      obj.init("dev",     TNumeric.new(stat.dev), true)
-      obj.init("mode",    TNumeric.new(stat.mode), true)
-      obj.init("nlink",   TNumeric.new(stat.nlink), true)
-      obj.init("uid",     TNumeric.new(stat.uid), true)
-      obj.init("gid",     TNumeric.new(stat.gid), true)
-      obj.init("rdev",    TNumeric.new(stat.rdev), true)
-      obj.init("blksize", TNumeric.new(stat.blksize), true)
-      obj.init("ino",     TNumeric.new(stat.ino), true)
-      obj.init("size",    TNumeric.new(stat.size), true)
-      obj.init("blocks",  TNumeric.new(stat.blocks), true)
-      obj.init("atime",   TNumeric.new(stat.atime.epoch), true)
-      obj.init("mtime",   TNumeric.new(stat.mtime.epoch), true)
-      obj.init("ctime",   TNumeric.new(stat.ctime.epoch), true)
+    Utils.stat_to_object stat
   end
 
   charly_api "fs_chmod", path : TString, mode : TNumeric do

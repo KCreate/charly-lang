@@ -15,6 +15,38 @@ module Charly::FileSystem
       return File.expand_path filename, cwd
     end
 
+    # Converts a File::Stat object to a charly object
+    def stat_to_object(stat : File::Stat)
+      TObject.new do |obj|
+        obj.init "atime",     TNumeric.new stat.atime.epoch
+        obj.init "mtime",     TNumeric.new stat.mtime.epoch
+        obj.init "ctime",     TNumeric.new stat.ctime.epoch
+
+        obj.init "blockdev",  TBoolean.new stat.blockdev?
+        obj.init "directory", TBoolean.new stat.directory?
+        obj.init "file",      TBoolean.new stat.file?
+        obj.init "pipe",      TBoolean.new stat.pipe?
+        obj.init "setgid",    TBoolean.new stat.setgid?
+        obj.init "setuid",    TBoolean.new stat.setuid?
+        obj.init "socket",    TBoolean.new stat.socket?
+        obj.init "sticky",    TBoolean.new stat.sticky?
+        obj.init "symlink",   TBoolean.new stat.symlink?
+        obj.init "chardev",   TBoolean.new stat.chardev?
+
+        obj.init "blksize",   TNumeric.new stat.blksize
+        obj.init "blocks",    TNumeric.new stat.blocks
+        obj.init "dev",       TNumeric.new stat.dev
+        obj.init "gid",       TNumeric.new stat.gid
+        obj.init "ino",       TNumeric.new stat.ino
+        obj.init "mode",      TNumeric.new stat.mode
+        obj.init "nlink",     TNumeric.new stat.nlink
+        obj.init "perm",      TNumeric.new stat.perm
+        obj.init "rdev",      TNumeric.new stat.rdev
+        obj.init "size",      TNumeric.new stat.size
+        obj.init "uid",       TNumeric.new stat.uid
+      end
+    end
+
   end
 
   # Keeps track of all open files
