@@ -271,4 +271,18 @@ module Charly::Internals
 
     TNull.new
   end
+
+  charly_api "fs_readlink", path : TString do
+    path = Utils.resolve path.value, Dir.current
+
+    unless File.symlink? path
+      raise RunTimeError.new(call, context, "#{path} is not a symlink")
+    end
+
+    begin
+      return TString.new File.real_path path
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not read link at #{path}")
+    end
+  end
 end

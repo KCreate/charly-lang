@@ -9,7 +9,7 @@ const DIR_DATA = "test/interpreter/fs/data"
 
 export = ->(describe, it, assert) {
 
-  describe("File", ->{
+  describe("fs", ->{
 
     describe("stat", ->{
 
@@ -376,6 +376,24 @@ export = ->(describe, it, assert) {
           "What is yours?",
           ""
         ].join("\n"))
+
+        const stat = fs.lstat(DIR_DATA + "/test-direct-link.txt")
+        assert(stat.symlink, false)
+
+        fs.unlink(DIR_DATA + "/test-direct-link.txt")
+      })
+
+    })
+
+    describe("readlink", ->{
+
+      it("returns an absolute path", ->{
+        fs.link(FILE_TEST, DIR_DATA + "/test-direct-link.txt")
+
+        const path = fs.readlink(DIR_DATA + "/test-direct-link.txt")
+
+        assert(path[0], "/")
+        assert(path.index_of(DIR_DATA + "/test-direct-link.txt", 0) ! -1, true)
 
         fs.unlink(DIR_DATA + "/test-direct-link.txt")
       })

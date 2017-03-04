@@ -20,6 +20,7 @@ const fs_rmdir          = __internal__method("fs_rmdir")
 const fs_chmod          = __internal__method("fs_chmod")
 const fs_chown          = __internal__method("fs_chown")
 const fs_link           = __internal__method("fs_link")
+const fs_readlink       = __internal__method("fs_readlink")
 
 class File {
   static property LINE_SEPARATOR
@@ -166,6 +167,13 @@ class File {
    **/
   static func link(old, new) {
     fs_link(old, new)
+  }
+
+  /**
+   * Returns the absolute path, the link *path* points to
+   **/
+  static func readlink(path) {
+    fs_readlink(path)
   }
 
   func constructor(fd, filename, mode, encoding) {
