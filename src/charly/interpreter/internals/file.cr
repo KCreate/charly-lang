@@ -17,13 +17,14 @@ module Charly::Internals
     TNumeric.new fd
   end
 
-  charly_api "fs_read", name : TString, encoding : TString do
-    name, encoding = name.value, encoding.value
+  charly_api "fs_read", path : TString, encoding : TString do
+    path = Utils.resolve path.value, Dir.current
+    encoding = encoding.value
 
     begin
-      return TString.new FilePool.read name, encoding
+      return TString.new File.read(path, encoding: encoding)
     rescue e
-      raise RunTimeError.new(call, context, e.message || "Could not read #{name}")
+      raise RunTimeError.new(call, context, e.message || "Could not read #{path}")
     end
   end
 
@@ -220,13 +221,15 @@ module Charly::Internals
     TBoolean.new FilePool::Files.has_key? fd
   end
 
-  charly_api "fs_stat", name : TString do
-    stat = FilePool.stat name.value
+  charly_api "fs_stat", path : TString do
+    path = Utils.resolve path.value, Dir.current
+    stat = File.stat path
     Utils.stat_to_object stat
   end
 
-  charly_api "fs_lstat", name : TString do
-    stat = FilePool.lstat name.value
+  charly_api "fs_lstat", path : TString do
+    path = Utils.resolve path.value, Dir.current
+    stat = File.lstat path
     Utils.stat_to_object stat
   end
 

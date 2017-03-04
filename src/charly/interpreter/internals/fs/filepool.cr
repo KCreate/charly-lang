@@ -64,12 +64,6 @@ module Charly::FileSystem
       file.fd
     end
 
-    # Returns the complete content of *name*
-    def read(name : String, encoding : String)
-      filename = Utils.resolve name, Dir.current
-      File.read(filename, encoding: encoding)
-    end
-
     # Closes *fd*
     def close(fd : Int32)
       check_open fd
@@ -130,26 +124,19 @@ module Charly::FileSystem
       file.read_char
     end
 
-    # Returns the stat for the file
-    def stat(name : String)
-      filename = Utils.resolve name, Dir.current
-      File.stat filename
-    end
-
-    def lstat(name : String)
-      filename = Utils.resolve name, Dir.current
-      File.lstat filename
-    end
-
     # Checks if *fd* exists
     def check_open(fd : Int32)
-      exists = Files.has_key? fd
+      exists = open? fd
 
       unless exists
         raise "File descriptor #{fd} is not registered"
       end
 
       exists
+    end
+
+    def open?(fd : Int32)
+      Files.has_key? fd
     end
 
     # Returns the path of a file descriptor
