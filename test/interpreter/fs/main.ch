@@ -331,6 +331,23 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("chmod", ->{
+
+      it("changes the mode of a file", ->{
+        fs.open(FILE_TMP, "w", "utf8")
+        fs.chmod(FILE_TMP, 64)
+
+        let stat = fs.stat(FILE_TMP)
+
+        assert(stat.perm, 64)
+        fs.chmod(FILE_TMP, 420)
+
+        stat = fs.stat(FILE_TMP)
+        assert(stat.perm, 420)
+      })
+
+    })
+
   })
 
 }

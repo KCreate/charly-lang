@@ -17,6 +17,7 @@ const fs_readdir        = __internal__method("fs_readdir")
 const fs_type           = __internal__method("fs_type")
 const fs_mkdir          = __internal__method("fs_mkdir")
 const fs_rmdir          = __internal__method("fs_rmdir")
+const fs_chmod          = __internal__method("fs_chmod")
 
 class File {
   static property LINE_SEPARATOR
@@ -142,6 +143,13 @@ class File {
     path = path.split(@DIRECTORY_SEPARATOR)
     path.pop()
     path.join(@DIRECTORY_SEPARATOR)
+  }
+
+  /**
+   * Changes the mode of the file at *path*
+   **/
+  static func chmod(path, mode) {
+    fs_chmod(path, mode)
   }
 
   func constructor(fd, filename, mode, encoding) {

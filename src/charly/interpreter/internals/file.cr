@@ -255,6 +255,18 @@ module Charly::Internals
       obj.init("atime",   TNumeric.new(stat.atime.epoch), true)
       obj.init("mtime",   TNumeric.new(stat.mtime.epoch), true)
       obj.init("ctime",   TNumeric.new(stat.ctime.epoch), true)
+  end
+
+  charly_api "fs_chmod", path : TString, mode : TNumeric do
+    path = Utils.resolve path.value, Dir.current
+    mode = mode.value.to_i32
+
+    begin
+      File.chmod path, mode
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not chmod #{path}")
     end
+
+    TNull.new
   end
 end
