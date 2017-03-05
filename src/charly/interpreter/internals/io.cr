@@ -84,14 +84,6 @@ module Charly::Internals
     return result
   end
 
-  charly_api "file_get_contents", path : TString do
-    if File.exists?(path.value) && File.readable?(path.value)
-      return TString.new(File.read(path.value))
-    end
-
-    return TNull.new
-  end
-
   # Returns the current stacktrace
   charly_api "stacktrace" do
     trace = context.trace
