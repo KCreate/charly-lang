@@ -171,6 +171,20 @@ class File {
   }
 
   /**
+   * Returns *path*'s extension, or an empty string if it has no extension
+   **/
+  static func extname(path) {
+    const dot_index = path.rindex(".", -1)
+    const path_length = path.length()
+
+    if dot_index ! -1 && dot_index ! path_length - 1 && path[dot_index - 1] ! @SEPARATOR {
+      path.substring(dot_index, path_length - dot_index)
+    } else {
+      ""
+    }
+  }
+
+  /**
    * Changes the mode of the file at *path*
    **/
   static func chmod(path, mode) {

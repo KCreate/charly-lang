@@ -516,6 +516,19 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("extname", ->{
+
+      it("returns the extension of a path", ->{
+        assert(fs.extname("/foo/bar/baz.ch"), ".ch")
+        assert(fs.extname("/foo/bar/baz.ch.cz"), ".cz")
+        assert(fs.extname("/foo/bar/.profile"), "")
+        assert(fs.extname("/foo/bar/.profile.sh"), ".sh")
+        assert(fs.extname("/foo/bar/foo."), "")
+        assert(fs.extname("test"), "")
+      })
+
+    })
+
   })
 
 }
