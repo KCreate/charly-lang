@@ -22,6 +22,7 @@ const fs_link           = __internal__method("fs_link")
 const fs_symlink        = __internal__method("fs_symlink")
 const fs_readlink       = __internal__method("fs_readlink")
 const fs_rename         = __internal__method("fs_rename")
+const fs_utime          = __internal__method("fs_utime")
 
 class File {
   static property LINE_SEPARATOR
@@ -272,6 +273,13 @@ class File {
     const file = @open(path, "r", encoding)
     file.each_line(callback)
     file.close()
+  }
+
+  /**
+   * Sets the access and modification timestamps of the file at path
+   **/
+  static func utime(path, atime, mtime) {
+    fs_utime(path, atime, mtime)
   }
 
   func constructor(fd, filename, mode, encoding) {

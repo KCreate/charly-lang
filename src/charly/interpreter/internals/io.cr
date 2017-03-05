@@ -55,7 +55,7 @@ module Charly::Internals
 
   # Returns the current timestamp in miliseconds
   charly_api "time_ms" do
-    return TNumeric.new(Time.now.epoch_ms.to_f64)
+    return TNumeric.new(Time.now.epoch_ms)
   end
 
   # Sleep for *amount* miliseconds

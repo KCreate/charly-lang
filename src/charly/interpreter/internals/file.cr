@@ -303,4 +303,20 @@ module Charly::Internals
 
     TNull.new
   end
+
+  charly_api "fs_utime", path : TString, atime : TNumeric, mtime : TNumeric do
+    path = Utils.resolve path.value, Dir.current
+    atime, mtime = atime.value.to_i64, mtime.value.to_i64
+
+    atime = Time.epoch atime
+    mtime = Time.epoch mtime
+
+    begin
+      File.utime(atime, mtime, path)
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not utime #{path}")
+    end
+
+    TNull.new
+  end
 end

@@ -604,6 +604,21 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("utime", ->{
+
+      it("sets access and modification timestamps", ->{
+        fs.open(DIR_DATA + "/foo", "w+", "utf8").close()
+        fs.utime(DIR_DATA + "/foo", 25, 25)
+
+        const stat = fs.stat(DIR_DATA + "/foo")
+        assert(stat.atime, 25)
+        assert(stat.mtime, 25)
+
+        fs.unlink(DIR_DATA + "/foo")
+      })
+
+    })
+
   })
 
 }
