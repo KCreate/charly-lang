@@ -503,6 +503,19 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("exists", ->{
+
+      it("returns true if a file exists", ->{
+        assert(fs.exists(DIR_DATA), true)
+        assert(fs.exists(FILE_TEST), true)
+        assert(fs.exists(FILE_TEST_LINK), true)
+
+        assert(fs.exists(DIR_DATA + "/foo"), false)
+        assert(fs.exists(DIR_DATA + "/invalid-link"), false)
+      })
+
+    })
+
   })
 
 }

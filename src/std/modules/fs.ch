@@ -88,6 +88,14 @@ class File {
   }
 
   /**
+   * Returns true if the file at *path* exists
+   * Follows symlinks
+   **/
+  static func exists(path) {
+    @stat(path) ! null
+  }
+
+  /**
    * Returns the expanded path for *filename*, using *current* as the current working directory
    * If no current directory was passed, the current working directory of the process is used
    *
