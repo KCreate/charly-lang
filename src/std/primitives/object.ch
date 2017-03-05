@@ -207,7 +207,7 @@ export = primitive class Object {
       "PrimitiveClass"
     ]
 
-    if allowed_types.index_of(typeof object) == -1 {
+    if allowed_types.index(typeof object, 0) == -1 {
       throw Exception("Expected object, function, class or primitive class, got " + typeof object)
     }
 

@@ -284,32 +284,67 @@ export = primitive class Array {
     new
   }
 
-  /*
-   * Returns the index of the first item that is equal to *element* and has the same type
-   * */
-  func index_of(element) {
-    let index = -1
-    let i = 0
-
-    let length = @length()
+  /**
+   * Returns the index of the first element that is equal to *element*
+   * Searching low to high indices
+   **/
+  func index(element, offset) {
+    const length = @length()
+    if offset < 0 { offset += length }
+    if offset < 0 { return -1 }
 
     const element_id = Object.object_id(element)
     const element_type = typeof element
 
-    while (i < length) {
-      const self_val = self[i]
+    let index = -1
 
-      if element_id == Object.object_id(self_val) {
-        index = i
+    while (offset < length) {
+      const val = self[offset]
+
+      if element_id == Object.object_id(val) {
+        index = offset
         break
       }
 
-      if typeof self_val == element_type && self_val == element {
-        index = i
+      if typeof val == element_type && val == element {
+        index = offset
         break
       }
 
-      i += 1
+      offset += 1
+    }
+
+    index
+  }
+
+  /**
+   * Returns the index of the first element that is equal to *element*
+   * Searching high to low indices
+   **/
+  func rindex(element, offset) {
+    const length = @length()
+    if offset < 0 { offset += length }
+    if offset >= length { return -1 }
+
+    const element_id = Object.object_id(element)
+    const element_type = typeof element
+
+    let index = -1
+
+    while (offset >= 0) {
+      const val = self[offset]
+
+      if element_id == Object.object_id(val) {
+        index = offset
+        break
+      }
+
+      if typeof val == element_type && val == element {
+        index = offset
+        break
+      }
+
+      offset -= 1
     }
 
     index
@@ -320,7 +355,7 @@ export = primitive class Array {
    * This is an alias for Array#index_of(foo) ! -1
    * */
   func includes(value) {
-    @index_of(value) ! -1
+    @index(value, 0) ! -1
   }
 
   /*

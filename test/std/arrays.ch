@@ -563,17 +563,32 @@ export = ->(describe, it, assert) {
     assert([[]].empty(), false)
   })
 
-  describe("search", ->{
+  describe("index", ->{
 
     it("finds a number", ->{
-      let nums = [1, 2, 3, 4]
+      let nums = [1, 2, 3, 4, 3, 2, 1]
 
-      assert(nums.index_of(1), 0)
-      assert(nums.index_of(2), 1)
-      assert(nums.index_of(3), 2)
-      assert(nums.index_of(4), 3)
-      assert(nums.index_of(100), -1)
-      assert(nums.index_of(true), -1)
+      assert(nums.index(1, 0), 0)
+      assert(nums.index(2, 0), 1)
+      assert(nums.index(3, 0), 2)
+      assert(nums.index(4, 0), 3)
+      assert(nums.index(100, 0), -1)
+      assert(nums.index(true, 0), -1)
+    })
+
+  })
+
+  describe("rindex", ->{
+
+    it("finds a number", ->{
+      let nums = [1, 2, 3, 4, 3, 2, 1]
+
+      assert(nums.rindex(1, -1), 6)
+      assert(nums.rindex(2, -1), 5)
+      assert(nums.rindex(3, -1), 4)
+      assert(nums.rindex(4, -1), 3)
+      assert(nums.rindex(100, -1), -1)
+      assert(nums.rindex(true, -1), -1)
     })
 
   })
