@@ -26,7 +26,7 @@ export = ->(describe, it, assert) {
     assert(CHARLY.LICENSE.length() > 0, true)
     assert(CHARLY.COMPILE_DATE.length() > 0, true)
 
-    assert(CHARLY.LICENSE.index_of("MIT", 0) ! -1, true)
+    assert(CHARLY.LICENSE.index("MIT", 0) ! -1, true)
   })
 
   it("maybe it has a commit sha", ->{

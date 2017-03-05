@@ -170,11 +170,55 @@ export = ->(describe, it, assert) {
   })
 
   it("returns the index of a substring", ->{
-    assert("hello beautiful world".index_of("hello", 0), 0)
-    assert("hello beautiful world".index_of("beautiful", 0), 6)
-    assert("hello beautiful world".index_of("world", 0), 16)
-    assert("I'm not here".index_of("test", 0), -1)
-    assert("hello beautiful world".index_of(" ", 0), 5)
+    const strings = [
+      "hello world",
+      "my name is leonard",
+      "my name is leonard.",
+      "my name is leonard..",
+      "foo bar baz qux baz bar foo",
+      "   foo   "
+    ]
+
+    const needles = [
+      "world",
+      "is",
+      "is",
+      "is",
+      "bar",
+      " "
+    ]
+
+    const indices = strings.map(->(string, i) {
+      string.index(needles[i], 0)
+    })
+
+    assert(indices, [6, 8, 8, 8, 4, 0])
+  })
+
+  it("returns the rindex of a substring", ->{
+    const strings = [
+      "hello world",
+      "my name is leonard",
+      "my name is leonard.",
+      "my name is leonard..",
+      "foo bar baz qux baz bar foo",
+      "   foo   "
+    ]
+
+    const needles = [
+      "world",
+      "is",
+      "is",
+      "is",
+      "bar",
+      " "
+    ]
+
+    const indices = strings.map(->(string, i) {
+      string.rindex(needles[i], -1)
+    })
+
+    assert(indices, [6, 8, 8, 8, 20, 8])
   })
 
   it("lstrip", ->{

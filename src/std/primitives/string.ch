@@ -1,6 +1,7 @@
 const _trim = __internal__method("trim");
 const _ord = __internal__method("ord");
 const to_numeric = __internal__method("to_numeric");
+const Math = require("math")
 
 export = primitive class String {
 
@@ -205,12 +206,12 @@ export = primitive class String {
    * Returns the index of a substring
    *
    * ```
-   * "hello world".index_of("world", 0) // => 6
-   * "hello world".index_of("hello", 0) // => 0
-   * "hello world".index_of(" ", 0) // => 5
+   * "hello world".index("world", 0) // => 6
+   * "hello world".index("hello", 0) // => 0
+   * "hello world".index(" ", 0) // => 5
    * ```
    * */
-  func index_of(needle, offset) {
+  func index(needle, offset) {
     let found_index = -1
     let end_pos = @length() - needle.length()
     @each(func(char, i) {
@@ -223,6 +224,37 @@ export = primitive class String {
       }
     })
     found_index
+  }
+
+  /*
+   * Returns the index of a substring starting at the back of the string
+   *
+   * ```
+   * "hello world".rindex("world", -1) // => 6
+   * "hello world".rindex("hello", -1) // => 0
+   * "hello world".rindex(" ", -1) // => 5
+   * "hello world hello".rindex("hello", -1) // => 12
+   * ```
+   * */
+  func rindex(needle, offset) {
+
+    // Calculate the reverse index of the needle
+    needle = needle.reverse()
+    let index = @reverse().index(needle, 0)
+
+    if index == -1 {
+      return -1
+    }
+
+    // Mirror it to the other side of the middle point
+    let middle_of_string = @length() / 2
+    const distance_to_middle = middle_of_string - index
+
+    // Correct the offset of the index
+    index += distance_to_middle * 2
+    index -= needle.length()
+
+    Math.floor(index)
   }
 
   /*
