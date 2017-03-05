@@ -551,6 +551,17 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("join", ->{
+
+      it("joins multiple paths by SEPARATOR", ->{
+        const parts = ["foo", "bar", "baz"]
+        const path = fs.join(parts)
+
+        assert(path, "foo/bar/baz")
+      })
+
+    })
+
   })
 
 }

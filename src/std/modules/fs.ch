@@ -106,6 +106,17 @@ class File {
   }
 
   /**
+   * Returns a new string by joining *parts* with fs.SEPARATOR
+   **/
+  static func join(parts) {
+    unless typeof parts == "Array" {
+      throw Exception("Expected parts to be an array, got " + typeof parts)
+    }
+
+    parts.join(@SEPARATOR)
+  }
+
+  /**
    * Unlinks a name from the filesystem and possibly the file it refers to
    **/
   static func unlink(path) {
