@@ -208,21 +208,21 @@ class File {
    * Returns true if *path* is a directory
    **/
   static func is_directory(path) {
-    !!(@stat(path).directory)
+    !!(@lstat(path).directory)
   }
 
   /**
    * Returns true if *path* is a file
    **/
   static func is_file(path) {
-    !!(@stat(path).file)
+    !!(@lstat(path).file)
   }
 
   /**
    * Returns true if *path* is a symlink
    **/
   static func is_link(path) {
-    !!(@stat(path).symlink)
+    !!(@lstat(path).symlink)
   }
 
   func constructor(fd, filename, mode, encoding) {

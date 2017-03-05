@@ -469,6 +469,40 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("convenience methods for stat", ->{
+
+      describe("is_directory", ->{
+
+        it("returns true if the path is a directory", ->{
+          assert(fs.is_directory(DIR_DATA), true)
+          assert(fs.is_directory(FILE_TEST), false)
+          assert(fs.is_directory(FILE_TEST_LINK), false)
+        })
+
+      })
+
+      describe("is_file", ->{
+
+        it("returns true if the path is a file", ->{
+          assert(fs.is_file(DIR_DATA), false)
+          assert(fs.is_file(FILE_TEST), true)
+          assert(fs.is_file(FILE_TEST_LINK), false)
+        })
+
+      })
+
+      describe("is_link", ->{
+
+        it("returns true if the path is a symlink", ->{
+          assert(fs.is_link(DIR_DATA), false)
+          assert(fs.is_link(FILE_TEST), false)
+          assert(fs.is_link(FILE_TEST_LINK), true)
+        })
+
+      })
+
+    })
+
   })
 
 }
