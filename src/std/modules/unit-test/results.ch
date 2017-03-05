@@ -29,7 +29,7 @@ export = ->(results, callback) {
       write([
         ("Assertion #" + (fnode.index + 1)).colorize(34),
         "Expected: " + Object.pretty_print(fnode.expected),
-        "Got: " + Object.pretty_print(fnode.real)
+        "Got:      " + Object.pretty_print(fnode.real)
       ].join("\n").indent(" ", 2))
 
       print("")
