@@ -100,8 +100,15 @@ class File {
   /**
    * Unlinks a name from the filesystem and possibly the file it refers to
    **/
-  static func unlink(filename) {
-    fs_unlink(filename)
+  static func unlink(path) {
+    fs_unlink(path)
+  }
+
+  /**
+   * Alias for fs.unlink
+   **/
+  static func delete(path) {
+    @unlink(path)
   }
 
   /**
