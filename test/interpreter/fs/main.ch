@@ -453,18 +453,60 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("size", ->{
+
+      it("returns the size of a file", ->{
+        fs.open(DIR_DATA + "/foo", "w", "utf8").close()
+        fs.open(DIR_DATA + "/bar", "w", "utf8").print("hello world").close()
+        fs.open(DIR_DATA + "/baz", "w", "utf8").print("hello world what's up").close()
+
+        assert(fs.size(DIR_DATA + "/foo"), 0)
+        assert(fs.size(DIR_DATA + "/bar"), 11)
+        assert(fs.size(DIR_DATA + "/baz"), 21)
+
+        fs.unlink(DIR_DATA + "/foo")
+        fs.unlink(DIR_DATA + "/bar")
+        fs.unlink(DIR_DATA + "/baz")
+      })
+
+      it("throws on non-existent files", ->{
+        try {
+          fs.size(DIR_DATA + "/qux")
+        } catch(e) {
+          assert(e.message, "Failed to stat test/interpreter/fs/data/qux")
+          return
+        }
+
+        assert(true, false)
+      })
+
+    })
+
     describe("empty", ->{
 
       it("checks if a file is empty", ->{
-        fs.open(DIR_DATA + "/emptyfile", "w", "utf8").close()
+        fs.open(DIR_DATA + "/foo", "w", "utf8").close()
+        fs.open(DIR_DATA + "/bar", "w", "utf8").print("hello world").close()
+        fs.open(DIR_DATA + "/baz", "w", "utf8").print("hello world what's up").close()
 
-        assert(fs.empty(DIR_DATA + "/emptyfile"), true)
+        assert(fs.empty(DIR_DATA + "/foo"), true)
+        assert(fs.empty(DIR_DATA + "/bar"), false)
+        assert(fs.empty(DIR_DATA + "/baz"), false)
 
-        fs.unlink(DIR_DATA + "/emptyfile")
+        fs.unlink(DIR_DATA + "/foo")
+        fs.unlink(DIR_DATA + "/bar")
+        fs.unlink(DIR_DATA + "/baz")
       })
 
-      it("returns true if the file doesn't exist", ->{
-        assert(fs.empty(DIR_DATA + "/foo"), true)
+      it("throws on non-existent files", ->{
+        try {
+          fs.empty(DIR_DATA + "/qux")
+        } catch(e) {
+          assert(e.message, "Failed to stat test/interpreter/fs/data/qux")
+          return
+        }
+
+        assert(true, false)
       })
 
     })

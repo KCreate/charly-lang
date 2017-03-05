@@ -135,12 +135,19 @@ class File {
   }
 
   /**
+   * Returns the size of the file at *path* in bytes
+   **/
+  static func size(path) {
+    const stat = @stat(path)
+    unless stat { throw Exception("Failed to stat " + path) }
+    stat.size
+  }
+
+  /**
    * Returns true if the file at *path* is empty
    **/
   static func empty(path) {
-    const stat = @stat(path)
-    unless stat { return true }
-    stat.size == 0
+    @size(path) == 0
   }
 
   /**
