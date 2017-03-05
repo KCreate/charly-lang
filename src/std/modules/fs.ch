@@ -247,6 +247,15 @@ class File {
     !!(@lstat(path).symlink)
   }
 
+  /**
+   * Calls the callback with each line and index of the file at *path*
+   **/
+  static func each_line(path, encoding, callback) {
+    const file = @open(path, "r", encoding)
+    file.each_line(callback)
+    file.close()
+  }
+
   func constructor(fd, filename, mode, encoding) {
     @fd = fd
     @filename = filename

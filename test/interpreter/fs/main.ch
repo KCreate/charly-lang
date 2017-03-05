@@ -529,6 +529,28 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("each_line", ->{
+
+      it("calls the callback with each line of a file", ->{
+        const lines = []
+        let index_sum = 0
+
+        fs.each_line(FILE_TEST, "utf8", ->(line, index) {
+          lines.push(line)
+          index_sum += index
+        })
+
+        assert(lines, [
+          "Hello World",
+          "My name is Charly",
+          "What is yours?"
+        ])
+
+        assert(index_sum, 3)
+      })
+
+    })
+
   })
 
 }
