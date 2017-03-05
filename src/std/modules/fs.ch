@@ -191,6 +191,27 @@ class File {
     fs_rename(old, new)
   }
 
+  /**
+   * Returns true if *path* is a directory
+   **/
+  static func is_directory(path) {
+    @stat(path).directory
+  }
+
+  /**
+   * Returns true if *path* is a file
+   **/
+  static func is_file(path) {
+    @stat(path).file
+  }
+
+  /**
+   * Returns true if *path* is a symlink
+   **/
+  static func is_link(path) {
+    @stat(path).symlink
+  }
+
   func constructor(fd, filename, mode, encoding) {
     @fd = fd
     @filename = filename
