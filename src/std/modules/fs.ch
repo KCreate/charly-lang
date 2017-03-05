@@ -116,6 +116,15 @@ class File {
   }
 
   /**
+   * Returns true if the file at *path* is empty
+   **/
+  static func empty(path) {
+    const stat = @stat(path)
+    unless stat { return true }
+    stat.size == 0
+  }
+
+  /**
    * Deletes the directory at *path*
    **/
   static func rmdir(path) {

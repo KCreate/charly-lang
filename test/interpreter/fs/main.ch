@@ -9,15 +9,6 @@ const DIR_DATA = "test/interpreter/fs/data"
 
 export = ->(describe, it, assert) {
 
-  // Prepare some test files
-  if fs.lstat(DIR_DATA + "/test-direct-link.txt") {
-    fs.unlink(DIR_DATA + "/test-direct-link.txt")
-  }
-
-  if fs.lstat(DIR_DATA + "/test-symbolic-link.txt") {
-    fs.unlink(DIR_DATA + "/test-symbolic-link.txt")
-  }
-
   describe("fs", ->{
 
     describe("stat", ->{
@@ -458,6 +449,22 @@ export = ->(describe, it, assert) {
         fs.delete(DIR_DATA + "/delete")
 
         assert(fs.stat(DIR_DATA + "/delete"), null)
+      })
+
+    })
+
+    describe("empty", ->{
+
+      it("checks if a file is empty", ->{
+        fs.open(DIR_DATA + "/emptyfile", "w", "utf8").close()
+
+        assert(fs.empty(DIR_DATA + "/emptyfile"), true)
+
+        fs.unlink(DIR_DATA + "/emptyfile")
+      })
+
+      it("returns true if the file doesn't exist", ->{
+        assert(fs.empty(DIR_DATA + "/foo"), true)
       })
 
     })
