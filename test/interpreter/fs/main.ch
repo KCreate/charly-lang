@@ -438,6 +438,30 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("delete", ->{
+
+      it("removes files", ->{
+        fs.open(DIR_DATA + "/delete.txt", "w", "utf8").close()
+
+        assert(fs.stat(DIR_DATA + "/delete.txt") ! null, true)
+
+        fs.delete(DIR_DATA + "/delete.txt")
+
+        assert(fs.stat(DIR_DATA + "/delete.txt"), null)
+      })
+
+      it("removes directories", ->{
+        fs.mkdir(DIR_DATA + "/delete")
+
+        assert(fs.stat(DIR_DATA + "/delete") ! null, true)
+
+        fs.delete(DIR_DATA + "/delete")
+
+        assert(fs.stat(DIR_DATA + "/delete"), null)
+      })
+
+    })
+
   })
 
 }

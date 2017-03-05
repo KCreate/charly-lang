@@ -108,7 +108,11 @@ class File {
    * Alias for fs.unlink
    **/
   static func delete(path) {
-    @unlink(path)
+    if @is_directory(path) {
+      @rmdir(path)
+    } else {
+      @unlink(path)
+    }
   }
 
   /**
