@@ -18,20 +18,32 @@ export = ->(describe, it, assert) {
         it("returns an object containing specific keys", ->{
           const stat = fs.stat(FILE_TEST)
 
-          assert(typeof stat, "Object")
-          assert(typeof stat.dev, "Numeric")
-          assert(typeof stat.mode, "Numeric")
-          assert(typeof stat.nlink, "Numeric")
-          assert(typeof stat.uid, "Numeric")
-          assert(typeof stat.gid, "Numeric")
-          assert(typeof stat.rdev, "Numeric")
-          assert(typeof stat.blksize, "Numeric")
-          assert(typeof stat.ino, "Numeric")
-          assert(typeof stat.size, "Numeric")
-          assert(typeof stat.blocks, "Numeric")
           assert(typeof stat.atime, "Numeric")
           assert(typeof stat.mtime, "Numeric")
           assert(typeof stat.ctime, "Numeric")
+
+          assert(typeof stat.blockdev, "Boolean")
+          assert(typeof stat.directory, "Boolean")
+          assert(typeof stat.file, "Boolean")
+          assert(typeof stat.pipe, "Boolean")
+          assert(typeof stat.setgid, "Boolean")
+          assert(typeof stat.setuid, "Boolean")
+          assert(typeof stat.socket, "Boolean")
+          assert(typeof stat.sticky, "Boolean")
+          assert(typeof stat.symlink, "Boolean")
+          assert(typeof stat.chardev, "Boolean")
+
+          assert(typeof stat.blksize, "Numeric")
+          assert(typeof stat.blocks, "Numeric")
+          assert(typeof stat.dev, "Numeric")
+          assert(typeof stat.gid, "Numeric")
+          assert(typeof stat.ino, "Numeric")
+          assert(typeof stat.mode, "Numeric")
+          assert(typeof stat.nlink, "Numeric")
+          assert(typeof stat.perm, "Numeric")
+          assert(typeof stat.rdev, "Numeric")
+          assert(typeof stat.size, "Numeric")
+          assert(typeof stat.uid, "Numeric")
         })
 
       })
@@ -41,20 +53,32 @@ export = ->(describe, it, assert) {
         it("returns an object containing specific keys", ->{
           const stat = fs.lstat(FILE_TEST_LINK)
 
-          assert(typeof stat, "Object")
-          assert(typeof stat.dev, "Numeric")
-          assert(typeof stat.mode, "Numeric")
-          assert(typeof stat.nlink, "Numeric")
-          assert(typeof stat.uid, "Numeric")
-          assert(typeof stat.gid, "Numeric")
-          assert(typeof stat.rdev, "Numeric")
-          assert(typeof stat.blksize, "Numeric")
-          assert(typeof stat.ino, "Numeric")
-          assert(typeof stat.size, "Numeric")
-          assert(typeof stat.blocks, "Numeric")
           assert(typeof stat.atime, "Numeric")
           assert(typeof stat.mtime, "Numeric")
           assert(typeof stat.ctime, "Numeric")
+
+          assert(typeof stat.blockdev, "Boolean")
+          assert(typeof stat.directory, "Boolean")
+          assert(typeof stat.file, "Boolean")
+          assert(typeof stat.pipe, "Boolean")
+          assert(typeof stat.setgid, "Boolean")
+          assert(typeof stat.setuid, "Boolean")
+          assert(typeof stat.socket, "Boolean")
+          assert(typeof stat.sticky, "Boolean")
+          assert(typeof stat.symlink, "Boolean")
+          assert(typeof stat.chardev, "Boolean")
+
+          assert(typeof stat.blksize, "Numeric")
+          assert(typeof stat.blocks, "Numeric")
+          assert(typeof stat.dev, "Numeric")
+          assert(typeof stat.gid, "Numeric")
+          assert(typeof stat.ino, "Numeric")
+          assert(typeof stat.mode, "Numeric")
+          assert(typeof stat.nlink, "Numeric")
+          assert(typeof stat.perm, "Numeric")
+          assert(typeof stat.rdev, "Numeric")
+          assert(typeof stat.size, "Numeric")
+          assert(typeof stat.uid, "Numeric")
         })
 
       })
@@ -651,6 +675,61 @@ export = ->(describe, it, assert) {
 
       fs.unlink(DIR_DATA + "/unreadable-file.txt")
       fs.unlink(DIR_DATA + "/unwritable-file.txt")
+
+    })
+
+    describe("fstat", ->{
+
+      it("returns an object with correct keys and types", ->{
+        const file = fs.open(FILE_TEST, "r", "utf8")
+        const stat = file.stat()
+        file.close()
+
+        assert(typeof stat.atime, "Numeric")
+        assert(typeof stat.mtime, "Numeric")
+        assert(typeof stat.ctime, "Numeric")
+
+        assert(typeof stat.blockdev, "Boolean")
+        assert(typeof stat.directory, "Boolean")
+        assert(typeof stat.file, "Boolean")
+        assert(typeof stat.pipe, "Boolean")
+        assert(typeof stat.setgid, "Boolean")
+        assert(typeof stat.setuid, "Boolean")
+        assert(typeof stat.socket, "Boolean")
+        assert(typeof stat.sticky, "Boolean")
+        assert(typeof stat.symlink, "Boolean")
+        assert(typeof stat.chardev, "Boolean")
+
+        assert(typeof stat.blksize, "Numeric")
+        assert(typeof stat.blocks, "Numeric")
+        assert(typeof stat.dev, "Numeric")
+        assert(typeof stat.gid, "Numeric")
+        assert(typeof stat.ino, "Numeric")
+        assert(typeof stat.mode, "Numeric")
+        assert(typeof stat.nlink, "Numeric")
+        assert(typeof stat.perm, "Numeric")
+        assert(typeof stat.rdev, "Numeric")
+        assert(typeof stat.size, "Numeric")
+        assert(typeof stat.uid, "Numeric")
+      })
+
+    })
+
+    describe("size", ->{
+
+      it("returns the size of a currently open file", ->{
+        const file = fs.open(DIR_DATA + "/foo", "w+", "utf8")
+
+        assert(file.size(), 0)
+
+        file.print("hello world")
+
+        assert(file.size(), 11)
+
+        file.close()
+
+        fs.unlink(DIR_DATA + "/foo")
+      })
 
     })
 

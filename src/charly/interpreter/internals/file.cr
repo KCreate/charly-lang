@@ -224,6 +224,16 @@ module Charly::Internals
     end
   end
 
+  charly_api "fs_fstat", fd : TNumeric do
+    fd = fd.value.to_i32
+
+    begin
+      return FilePool.fstat fd
+    rescue e
+      return TNull.new
+    end
+  end
+
   charly_api "fs_chmod", path : TString, mode : TNumeric do
     path = Utils.resolve path.value, Dir.current
     mode = mode.value.to_i32

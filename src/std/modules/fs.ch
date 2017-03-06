@@ -3,6 +3,7 @@ const fs_read           = __internal__method("fs_read")
 const fs_close          = __internal__method("fs_close")
 const fs_stat           = __internal__method("fs_stat")
 const fs_lstat          = __internal__method("fs_lstat")
+const fs_fstat          = __internal__method("fs_fstat")
 const fs_gets           = __internal__method("fs_gets")
 const fs_exists         = __internal__method("fs_exists")
 const fs_print          = __internal__method("fs_print")
@@ -456,6 +457,20 @@ class File {
     }
 
     exists
+  }
+
+  /**
+   * Returns the stat object for the underlying file descriptor
+   **/
+  func stat() {
+    fs_fstat(@fd)
+  }
+
+  /**
+   * Returns the size of the currently open file
+   **/
+  func size() {
+    @stat().size || 0
   }
 
 }

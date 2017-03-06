@@ -146,6 +146,13 @@ module Charly::FileSystem
       file.path
     end
 
+    # Returns the stat object for a file descriptor
+    def fstat(fd : Int32)
+      check_open fd
+      file = Files[fd]
+      Utils.stat_to_object file.stat
+    end
+
   end
 
 end
