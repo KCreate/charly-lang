@@ -37,5 +37,3 @@ const eval = io.eval
 
 const ExceptionClasses = require("./exceptions.ch")
 const Exception = ExceptionClasses.Exception
-const ArgumentError = ExceptionClasses.ArgumentError
-const TypeError = ExceptionClasses.TypeError
