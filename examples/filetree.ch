@@ -1,16 +1,21 @@
 const fs = require("fs")
 
+const Type = {
+  const Dir = 0
+  const File = 1
+}
+
 class Node {
   property path
-  property type
+  property dir
   property children
 
-  func constructor(path, type) {
+  func constructor(path, dir) {
     @path = fs.expand_path(path)
-    @type = type
+    @dir = dir
     @children = []
 
-    if type == fs.TYPES.DIR {
+    if dir && fs.is_directory(path) {
       @load_children()
     }
   }
@@ -26,7 +31,7 @@ class Node {
       }
 
       entry = fs.expand_path(entry, @path)
-      @children.push(Node(entry, fs.type(entry)))
+      @children.push(Node(entry, fs.is_directory(entry)))
     })
   }
 
@@ -39,6 +44,6 @@ class Node {
 }
 
 loop {
-  Node(gets("> ", true) || ".", fs.TYPES.DIR).print(0)
+  Node(gets("> ", true) || ".", true).print(0)
   print("")
 }
