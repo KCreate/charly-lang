@@ -357,4 +357,25 @@ module Charly::Internals
 
     TNull.new
   end
+
+  charly_api "fs_raw", fd : TNumeric, callback : TFunc do
+    fd = fd.value.to_i32
+
+    begin
+      FilePool.raw(fd) do |file|
+        visitor.run_function_call(
+          callback,
+          [] of BaseType,
+          nil,
+          scope,
+          context,
+          call.argumentlist.children[1].location_start
+        )
+      end
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not enable raw mode for #{fd}")
+    end
+
+    TNull.new
+  end
 end

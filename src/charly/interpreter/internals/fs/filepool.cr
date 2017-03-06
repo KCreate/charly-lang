@@ -54,7 +54,11 @@ module Charly::FileSystem
     extend self
 
     # All files that were opened
-    Files = {} of Int32 => File
+    Files = {
+      0 => File.open("/dev/stdin"),
+      1 => File.open("/dev/stdout"),
+      2 => File.open("/dev/stderr")
+    } of Int32 => File
 
     # Opens *name* with *mode* in *encoding*
     def open(name : String, mode : String, encoding : String)
@@ -158,6 +162,16 @@ module Charly::FileSystem
       check_open fd
       file = Files[fd]
       file.truncate size
+    end
+
+    # Activates raw mode for the duration of the block
+    def raw(fd : Int32)
+      check_open fd
+      file = Files[fd]
+
+      file.raw do |file|
+        yield file
+      end
     end
 
   end

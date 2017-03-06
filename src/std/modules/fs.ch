@@ -27,6 +27,7 @@ const fs_utime          = __internal__method("fs_utime")
 const fs_writable       = __internal__method("fs_writable")
 const fs_readable       = __internal__method("fs_readable")
 const fs_truncate       = __internal__method("fs_truncate")
+const fs_raw            = __internal__method("fs_raw")
 
 class File {
   static property LINE_SEPARATOR
@@ -498,6 +499,15 @@ class File {
    **/
   func unlink() {
     File.unlink(@filename)
+  }
+
+  /**
+   * Turns on raw mode during the execution of the callback
+   **/
+  func raw(callback) {
+    fs_raw(@fd, ->{
+      callback(self)
+    })
   }
 
 }
