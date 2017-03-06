@@ -733,6 +733,24 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("truncate", ->{
+
+      it("truncates a file", ->{
+        const file = fs.open(DIR_DATA + "/foo", "w+", "utf8")
+
+        file.print("Hello World")
+
+        assert(file.size(), 11)
+
+        file.truncate(0)
+
+        assert(file.size(), 0)
+
+        fs.unlink(DIR_DATA + "/foo")
+      })
+
+    })
+
   })
 
 }

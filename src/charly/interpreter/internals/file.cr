@@ -339,4 +339,16 @@ module Charly::Internals
     path = Utils.resolve path.value, Dir.current
     TBoolean.new File.readable? path
   end
+
+  charly_api "fs_truncate", fd : TNumeric, size : TNumeric do
+    fd, size = fd.value.to_i32, size.value.to_i32
+
+    begin
+      FilePool.truncate(fd, size)
+    rescue e
+      raise RunTimeError.new(call, context, e.message || "Could not truncate #{fd} to #{size}")
+    end
+
+    TNull.new
+  end
 end

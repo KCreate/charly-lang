@@ -153,6 +153,13 @@ module Charly::FileSystem
       Utils.stat_to_object file.stat
     end
 
+    # Truncates *fd* to *size*
+    def truncate(fd : Int32, size : Int32)
+      check_open fd
+      file = Files[fd]
+      file.truncate size
+    end
+
   end
 
 end

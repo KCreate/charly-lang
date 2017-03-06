@@ -26,6 +26,7 @@ const fs_rename         = __internal__method("fs_rename")
 const fs_utime          = __internal__method("fs_utime")
 const fs_writable       = __internal__method("fs_writable")
 const fs_readable       = __internal__method("fs_readable")
+const fs_truncate       = __internal__method("fs_truncate")
 
 class File {
   static property LINE_SEPARATOR
@@ -471,6 +472,13 @@ class File {
    **/
   func size() {
     @stat().size || 0
+  }
+
+  /**
+   * Trunactes the underlying file to *size*
+   **/
+  func truncate(size) {
+    fs_truncate(@fd, size)
   }
 
 }
