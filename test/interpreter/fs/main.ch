@@ -619,6 +619,28 @@ export = ->(describe, it, assert) {
 
     })
 
+    describe("readable", ->{
+
+      it("returns true if a path is readable", ->{
+        assert(fs.readable(DIR_DATA + "/foo"), false)
+        assert(fs.readable(DIR_DATA + "/unreadable-file.txt"), false)
+        assert(fs.readable(DIR_DATA + "/unwriteable-file.txt"), true)
+        assert(fs.readable(FILE_TEST), true)
+      })
+
+    })
+
+    describe("writable", ->{
+
+      it("returns true if a path is writable", ->{
+        assert(fs.writable(DIR_DATA + "/foo"), false)
+        assert(fs.writable(DIR_DATA + "/unreadable-file.txt"), true)
+        assert(fs.writable(DIR_DATA + "/unwriteable-file.txt"), false)
+        assert(fs.writable(FILE_TEST), true)
+      })
+
+    })
+
   })
 
 }

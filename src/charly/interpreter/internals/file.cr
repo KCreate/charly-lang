@@ -319,4 +319,14 @@ module Charly::Internals
 
     TNull.new
   end
+
+  charly_api "fs_writable", path : TString do
+    path = Utils.resolve path.value, Dir.current
+    TBoolean.new File.writable? path
+  end
+
+  charly_api "fs_readable", path : TString do
+    path = Utils.resolve path.value, Dir.current
+    TBoolean.new File.readable? path
+  end
 end

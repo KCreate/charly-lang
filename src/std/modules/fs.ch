@@ -23,6 +23,8 @@ const fs_symlink        = __internal__method("fs_symlink")
 const fs_readlink       = __internal__method("fs_readlink")
 const fs_rename         = __internal__method("fs_rename")
 const fs_utime          = __internal__method("fs_utime")
+const fs_writable       = __internal__method("fs_writable")
+const fs_readable       = __internal__method("fs_readable")
 
 class File {
   static property LINE_SEPARATOR
@@ -280,6 +282,22 @@ class File {
    **/
   static func utime(path, atime, mtime) {
     fs_utime(path, atime, mtime)
+  }
+
+  /**
+   * Returns true if the file at *path* is writable
+   * Otherwise returns false
+   **/
+  static func writable(path) {
+    fs_writable(path)
+  }
+
+  /**
+   * Returns true if the file at *path* is readable
+   * Otherwise returns false
+   **/
+  static func readable(path) {
+    fs_readable(path)
   }
 
   func constructor(fd, filename, mode, encoding) {
