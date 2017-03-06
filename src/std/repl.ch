@@ -1,38 +1,14 @@
-const context = Object.isolate({
-  let $
-  let echo = true
-  let prompt = "> "
+const REPL = require("repl")
+const main = REPL(
 
-  const charly = require("charly")
-  const Math = require("math")
-  const fs = require("fs")
+  // Insert new context variables here
+  {}.tap(->(ctx) {}),
 
-  const context = self
-  const history = []
-})
-
-print(context.charly.LICENSE)
-
-loop {
-  let input = context.prompt.prompt()
-  let value
-
-  if input == ".exit" {
-    break
-  }
-
-  try {
-    value = eval(input, context)
-  } catch(e) {
-    value = e
-  }
-
-  if context.echo {
-    Object.pretty_print(value).tap(print)
-  }
-
-  context.$ = value
-  context.history.push(input)
-}
-
-export = context
+  // Insert new REPL commands here
+  {}.tap(->(cmd) {
+    cmd["clear"] = ->(repl) {
+      repl.context = Object.assign({}, REPL.default_context)
+    }
+  })
+)
+main.start()
