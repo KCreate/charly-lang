@@ -493,6 +493,13 @@ class File {
     fs_truncate(@fd, size)
   }
 
+  /**
+   * Unlink the path this file was opened from, from the file system
+   **/
+  func unlink() {
+    File.unlink(@filename)
+  }
+
 }
 
 File.LINE_SEPARATOR = "\n"
