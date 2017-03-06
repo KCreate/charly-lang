@@ -99,7 +99,8 @@ export = primitive class String {
    * "hello world".substring(5, 5) // => "world"
    * ```
    * */
-  func substring(start, offset) {
+  func substring(start) {
+    let offset = arguments[1] || @length()
     let index = start
     let end = start + offset
     let result = ""

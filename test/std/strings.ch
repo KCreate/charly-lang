@@ -148,6 +148,14 @@ export = ->(describe, it, assert) {
       assert("".substring(10, 0), "")
     })
 
+    it("uses the string length as the defaut offset", ->{
+      assert("".substring(5), "")
+      assert("hello world".substring(5), " world")
+      assert("hello".substring(5), "")
+      assert("what is going on here".substring(5), "is going on here")
+      assert("".substring(5), "")
+    })
+
   })
 
   it("checks if a string is empty", ->{
