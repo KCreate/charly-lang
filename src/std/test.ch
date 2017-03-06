@@ -21,7 +21,7 @@ class TestRunner {
     @result = @unit_test(->(describe, it, assert, context) {
       module(describe, it, assert, context)
     }).tap(->(result) {
-      @unit_test.display_result(result, io.exit)
+      @unit_test.display_result(result, exit)
     })
   }
 }
@@ -30,7 +30,7 @@ let filename = ARGV[0]
 
 guard filename {
   print("Missing filename")
-  io.exit(1)
+  exit(1)
 }
 
 unless filename[0] == "/" {

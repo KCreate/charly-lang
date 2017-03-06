@@ -22,7 +22,7 @@ loop {
   }
 
   try {
-    value = io.eval(input, context)
+    value = eval(input, context)
   } catch(e) {
     value = e
   }

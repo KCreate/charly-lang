@@ -266,26 +266,26 @@ export = primitive class String {
   }
 
   /*
-   * Calls io.gets with self, appending to the readline history
+   * Calls STDIN.gets with self, appending to the readline history
    * */
   func prompt() {
-    io.stdin.gets(self, true)
+    gets(self, true)
   }
 
   /*
-   * Calls io.gets with self, appending to the readline history
+   * Calls STDIN.gets with self, appending to the readline history
    * After that it will try to convert the given value to a numeric
    * */
   func promptn() {
-    io.stdin.gets(self, true).to_n()
+    gets(self, true).to_n()
   }
 
   /*
-   * Prompts self and retrieves user input via io.stdin.getc
+   * Prompts self and retrieves a single char from STDIN
    * */
   func promptc() {
-    io.stdout.write(self)
-    io.stdin.getc()
+    write(self)
+    getc()
   }
 
   /*

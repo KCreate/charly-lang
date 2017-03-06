@@ -21,11 +21,19 @@ const Null =              require("./primitives/null.ch")
 
 // Anything IO related and some global bindings to commonly used methods
 const io = require("./io.ch")
-const print = io.stdout.print
-const write = io.stdout.write
-const gets = io.stdin.gets
-const getc = io.stdin.getc
+
+const STDIN = io.STDIN
+const STDOUT = io.STDOUT
+const STDERR = io.STDERR
+
+const print = io.print.stdout
+const puts = io.print.stdout
+const write = io.write.stdout
+const gets = io.gets
+const getc = io.getc
 const exit = io.exit
+const sleep = io.sleep
+const eval = io.eval
 
 const ExceptionClasses = require("./exceptions.ch")
 const Exception = ExceptionClasses.Exception

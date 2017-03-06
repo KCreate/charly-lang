@@ -46,7 +46,7 @@ while (mi < messages.length()) {
   progressView.pos = 0
   while (i < 100) {
     progressView.tick()
-    io.sleep(200 / (i + 1 + mi))
+    sleep(200 / (i + 1 + mi))
     i += 1
   }
   mi += 1

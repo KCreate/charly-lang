@@ -21,5 +21,5 @@ length.times(->(i) {
   print("*")
 
   // Delay the next render
-  io.sleep(delay)
+  sleep(delay)
 })

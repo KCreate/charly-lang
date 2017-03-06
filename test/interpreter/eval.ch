@@ -4,7 +4,7 @@ export = ->(describe, it, assert) {
 
     it("returns the result of the calculation", ->{
       let source = "2 + 3 / 6"
-      let result = io.eval(source, {})
+      let result = eval(source, {})
 
       assert(result, 2.5)
     })
@@ -17,7 +17,7 @@ export = ->(describe, it, assert) {
       "
 
       let context = {}
-      let result = io.eval(source, context)
+      let result = eval(source, context)
 
       assert(context.a, 25)
       assert(context.b, 50)
@@ -28,7 +28,7 @@ export = ->(describe, it, assert) {
       let source = "throw Exception(\"Something failed!\")"
 
       try {
-        io.eval(source, {})
+        eval(source, {})
       } catch(e) {
         assert(e.message, "Something failed!")
         assert(typeof e.trace, "Array")
@@ -40,7 +40,7 @@ export = ->(describe, it, assert) {
     })
 
     it("has access to the prelude", ->{
-      io.eval("String.methods.foo = 25", {})
+      eval("String.methods.foo = 25", {})
 
       assert(String.methods.foo, 25)
 

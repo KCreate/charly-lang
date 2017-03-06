@@ -55,9 +55,9 @@ module Charly::FileSystem
 
     # All files that were opened
     Files = {
-      0 => File.open("/dev/stdin"),
-      1 => File.open("/dev/stdout"),
-      2 => File.open("/dev/stderr")
+      0 => File.open("/dev/stdin", "r"),
+      1 => File.open("/dev/stdout", "w"),
+      2 => File.open("/dev/stderr", "w")
     } of Int32 => File
 
     # Opens *name* with *mode* in *encoding*

@@ -1,72 +1,55 @@
-const stdout_print = __internal__method("stdout_print")
-const stdout_write = __internal__method("stdout_write")
-const stderr_print = __internal__method("stderr_print")
-const stderr_write = __internal__method("stderr_write")
+const fs = require("fs")
+const readline = __internal__method("readline")
 
 export = {
+  const STDIN  = fs(0, "/dev/stdin", "r", "utf8")
+  const STDOUT = fs(1, "/dev/stdout", "r", "utf8")
+  const STDERR = fs(2, "/dev/stderr", "r", "utf8")
 
-  // Raw bindings to the output methods
-  const raw = {
-    const stdout = {
-      const print = stdout_print
-      const write = stdout_write
+  const print = {
+    const stdout = func stdout() {
+      arguments.each(->(arg) {
+        STDOUT.puts(arg.to_s())
+      })
     }
 
-    const stderr = {
-      const print = stderr_print
-      const write = stderr_write
+    const stderr = func stderr() {
+      arguments.each(->(arg) {
+        STDERR.puts(arg.to_s())
+      })
     }
   }
 
-  // Various bindings to STDOUT
-  const stdout = {
-    func print() {
-      arguments.each(func(arg) {
-        stdout_print(arg.to_s())
+  const write = {
+    const stdout = func stdout() {
+      arguments.each(->(arg) {
+        STDOUT.print(arg.to_s())
       })
-      null
     }
 
-    func write() {
-      arguments.each(func(arg) {
-        stdout_write(arg.to_s())
+    const stderr = func stderr() {
+      arguments.each(->(arg) {
+        STDERR.print(arg.to_s())
       })
-      null
     }
   }
 
-  // Various bindings to STDERR
-  const stderr = {
-    func print() {
-      arguments.each(func(arg) {
-        stderr_print(arg.to_s())
-      })
-      null
-    }
-
-    func write() {
-      arguments.each(func(arg) {
-        stderr_write(arg.to_s())
-      })
-      null
-    }
+  func gets(prompt) {
+    const history = !!(arguments[1])
+    readline(prompt, history)
   }
 
-  // Various bindings to STDIN
-  const stdin = {
-    const gets = __internal__method("stdin_gets")
-    const getc = __internal__method("stdin_getc")
+  func getc() {
+    let char
+    STDIN.raw(-> {
+      char = STDIN.read_char()
+    })
+    char
   }
 
-  // Sleep for some miliseconds
   const sleep = __internal__method("sleep")
-
-  // Immediately exit the program
   const exit = __internal__method("exit")
-
-  // Get the current timestamp in miliseconds
-  const time_ms = __internal__method("time_ms");
-
-  // Eval
-  const eval = __internal__method("eval");
+  const time_ms = __internal__method("time_ms")
+  const eval = __internal__method("eval")
+  const stacktrace = __internal__method("stacktrace")
 }

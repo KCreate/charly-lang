@@ -2,47 +2,10 @@ require "readline"
 require "../**"
 
 module Charly::Internals
-  charly_api "stdout_print" do
-    arguments.each do |arg|
-      STDOUT.puts arg
-      STDOUT.flush
-    end
-    return TNull.new
-  end
-
-  charly_api "stdout_write" do
-    arguments.each do |arg|
-      STDOUT.print arg
-      STDOUT.flush
-    end
-    return TNull.new
-  end
-
-  charly_api "stderr_print" do
-    arguments.each do |arg|
-      STDERR.puts arg
-      STDERR.flush
-    end
-    return TNull.new
-  end
-
-  charly_api "stderr_write" do
-    arguments.each do |arg|
-      STDERR.print arg
-      STDERR.flush
-    end
-    return TNull.new
-  end
-
-  # Reads a single char from STDIN (without the need of pressing return)
-  charly_api "stdin_getc" do
-    char = STDIN.raw &.read_char
-    return TString.new("#{char}")
-  end
 
   # Read a string (return terminated) from STDIN
   # Prepends *prepend* to the input and adds to the history if *history* is passed
-  charly_api "stdin_gets", prepend : TString, history : TBoolean do
+  charly_api "readline", prepend : TString, history : TBoolean do
     return TString.new(Readline.readline(prepend.value, history.value) || "")
   end
 
