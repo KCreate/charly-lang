@@ -619,25 +619,38 @@ export = ->(describe, it, assert) {
 
     })
 
-    describe("readable", ->{
+    describe("readable & writable", ->{
 
-      it("returns true if a path is readable", ->{
-        assert(fs.readable(DIR_DATA + "/foo"), false)
-        assert(fs.readable(DIR_DATA + "/unreadable-file.txt"), false)
-        assert(fs.readable(DIR_DATA + "/unwriteable-file.txt"), true)
-        assert(fs.readable(FILE_TEST), true)
+      fs.open(DIR_DATA + "/unreadable-file.txt", "w+", "utf8").close()
+      fs.open(DIR_DATA + "/unwritable-file.txt", "w+", "utf8").close()
+
+      fs.chmod(DIR_DATA + "/unreadable-file.txt", 219)
+      fs.chmod(DIR_DATA + "/unwritable-file.txt", 365)
+
+      describe("readable", ->{
+
+        it("returns true if a path is readable", ->{
+          assert(fs.readable(DIR_DATA + "/foo"), false)
+          assert(fs.readable(DIR_DATA + "/unreadable-file.txt"), false)
+          assert(fs.readable(DIR_DATA + "/unwritable-file.txt"), true)
+          assert(fs.readable(FILE_TEST), true)
+        })
+
       })
 
-    })
+      describe("writable", ->{
 
-    describe("writable", ->{
+        it("returns true if a path is writable", ->{
+          assert(fs.writable(DIR_DATA + "/foo"), false)
+          assert(fs.writable(DIR_DATA + "/unreadable-file.txt"), true)
+          assert(fs.writable(DIR_DATA + "/unwritable-file.txt"), false)
+          assert(fs.writable(FILE_TEST), true)
+        })
 
-      it("returns true if a path is writable", ->{
-        assert(fs.writable(DIR_DATA + "/foo"), false)
-        assert(fs.writable(DIR_DATA + "/unreadable-file.txt"), true)
-        assert(fs.writable(DIR_DATA + "/unwriteable-file.txt"), false)
-        assert(fs.writable(FILE_TEST), true)
       })
+
+      fs.unlink(DIR_DATA + "/unreadable-file.txt")
+      fs.unlink(DIR_DATA + "/unwritable-file.txt")
 
     })
 
