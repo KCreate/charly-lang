@@ -1,5 +1,6 @@
 require "../**"
 require "./fs/filepool.cr"
+require "file_utils"
 
 module Charly::Internals
   include FileSystem
@@ -72,11 +73,16 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_rmdir", path : TString do
+  charly_api "fs_rmdir", path : TString, recursive : TBoolean do
     path = Utils.resolve path.value, Dir.current
+    recursive = recursive.value
 
     begin
-      Dir.rmdir path
+      if recursive
+        FileUtils.rm_rf path
+      else
+        FileUtils.rmdir path
+      end
     rescue e
       raise RunTimeError.new(call, context, e.message || "Could not delete #{path}")
     end

@@ -132,8 +132,14 @@ class File {
    * Alias for fs.unlink
    **/
   static func delete(path) {
+    let recursive = arguments[1]
+
+    unless typeof recursive == "Boolean" {
+      recursive = false
+    }
+
     if @is_directory(path) {
-      @rmdir(path)
+      @rmdir(path, recursive)
     } else {
       @unlink(path)
     }
@@ -159,7 +165,13 @@ class File {
    * Deletes the directory at *path*
    **/
   static func rmdir(path) {
-    fs_rmdir(path)
+    let recursive = arguments[1]
+
+    unless typeof recursive == "Boolean" {
+      recursive = false
+    }
+
+    fs_rmdir(path, recursive)
   }
 
   /**

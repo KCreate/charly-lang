@@ -315,6 +315,38 @@ export = ->(describe, it, assert) {
         fs.rmdir(DIR_TMPDIR)
       })
 
+      it("creates nested directories", ->{
+        fs.mkdir(DIR_TMPDIR + "/foo/bar/baz")
+
+        assert(fs.is_directory(DIR_TMPDIR + "/foo/bar/baz"), true)
+
+        fs.rmdir(DIR_TMPDIR, true)
+      })
+
+    })
+
+    describe("rmdir", ->{
+
+      it("deletes a directory", ->{
+        fs.mkdir(DIR_TMPDIR)
+
+        assert(fs.is_directory(DIR_TMPDIR), true)
+
+        fs.rmdir(DIR_TMPDIR)
+
+        assert(fs.is_directory(DIR_TMPDIR), false)
+      })
+
+      it("deletes nested directories", ->{
+        fs.mkdir(DIR_TMPDIR + "/foo/bar/baz")
+
+        assert(fs.is_directory(DIR_TMPDIR), true)
+
+        fs.rmdir(DIR_TMPDIR, true)
+
+        assert(fs.is_directory(DIR_TMPDIR + "/foo/bar/baz"), false)
+      })
+
     })
 
     describe("write", ->{
