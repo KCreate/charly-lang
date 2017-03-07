@@ -461,10 +461,17 @@ class File {
   }
 
   /**
+   * Returns true if this file is open
+   **/
+  func is_open() {
+    fs_exists(@fd)
+  }
+
+  /**
    * Checks if the underlying file descriptor is still open
    **/
   func check_open() {
-    const exists = fs_exists(@fd)
+    const exists = @is_open()
 
     unless exists {
       throw Exception("Can't perform action on closed file descriptor " + @fd)
