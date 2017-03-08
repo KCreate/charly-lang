@@ -6,7 +6,7 @@ module Charly::Internals
   include FileSystem
 
   # Opens *name* and returns the file descriptor
-  charly_api "fs_open", name : TString, mode : TString, encoding : TString do
+  charly_api "fs_open", TString, TString, TString do |name, mode, encoding|
     name, mode, encoding = name.value, mode.value, encoding.value
 
     begin
@@ -18,7 +18,7 @@ module Charly::Internals
     TNumeric.new fd
   end
 
-  charly_api "fs_read", path : TString, encoding : TString do
+  charly_api "fs_read", TString, TString do |path, encoding|
     path = Utils.resolve path.value, Dir.current
     encoding = encoding.value
 
@@ -29,7 +29,7 @@ module Charly::Internals
     end
   end
 
-  charly_api "fs_close", fd : TNumeric do
+  charly_api "fs_close", TNumeric do |fd|
     fd = fd.value.to_i32
 
     begin
@@ -41,7 +41,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_expand_path", filename : TString, current : BaseType do
+  charly_api "fs_expand_path", TString, BaseType do |filename, current|
     filename = filename.value
 
     if current.is_a? TString
@@ -51,7 +51,7 @@ module Charly::Internals
     TString.new Utils.resolve filename, Dir.current
   end
 
-  charly_api "fs_fd_path", fd : TNumeric do
+  charly_api "fs_fd_path", TNumeric do |fd|
     fd = fd.value.to_i32
 
     begin
@@ -61,7 +61,7 @@ module Charly::Internals
     end
   end
 
-  charly_api "fs_unlink", filename : TString do
+  charly_api "fs_unlink", TString do |filename|
     filename = Utils.resolve filename.value, Dir.current
 
     begin
@@ -73,7 +73,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_rmdir", path : TString, recursive : TBoolean do
+  charly_api "fs_rmdir", TString, TBoolean do |path, recursive|
     path = Utils.resolve path.value, Dir.current
     recursive = recursive.value
 
@@ -90,7 +90,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_readdir", path : TString do
+  charly_api "fs_readdir", TString do |path|
     path = Utils.resolve path.value, Dir.current
 
     entries : Array(String)
@@ -109,7 +109,7 @@ module Charly::Internals
     TArray.new ch_entries
   end
 
-  charly_api "fs_mkdir", path : TString do
+  charly_api "fs_mkdir", TString do |path|
     path = Utils.resolve path.value, Dir.current
 
     begin
@@ -121,7 +121,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_gets", fd : TNumeric do
+  charly_api "fs_gets", TNumeric do |fd|
     fd = fd.value.to_i32
 
     begin
@@ -137,7 +137,7 @@ module Charly::Internals
     end
   end
 
-  charly_api "fs_print", fd : TNumeric, data : TString do
+  charly_api "fs_print", TNumeric, TString do |fd, data|
     fd, data = fd.value.to_i32, data.value
 
     begin
@@ -149,7 +149,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_write_byte", fd : TNumeric, byte : TNumeric do
+  charly_api "fs_write_byte", TNumeric, TNumeric do |fd, byte|
     fd, byte = fd.value.to_i32, byte.value
 
     begin
@@ -161,7 +161,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_flush", fd : TNumeric do
+  charly_api "fs_flush", TNumeric do |fd|
     fd = fd.value.to_i32
 
     begin
@@ -173,7 +173,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_read_bytes", fd : TNumeric, amount : TNumeric do
+  charly_api "fs_read_bytes", TNumeric, TNumeric do |fd, amount|
     fd, amount = fd.value.to_i32, amount.value.to_i32
 
     begin
@@ -189,7 +189,7 @@ module Charly::Internals
     ch_bytes
   end
 
-  charly_api "fs_read_char", fd : TNumeric do
+  charly_api "fs_read_char", TNumeric do |fd|
     fd = fd.value.to_i32
 
     begin
@@ -205,12 +205,12 @@ module Charly::Internals
     TString.new char.to_s
   end
 
-  charly_api "fs_exists", fd : TNumeric do
+  charly_api "fs_exists", TNumeric do |fd|
     fd = fd.value.to_i32
     TBoolean.new FilePool::Files.has_key? fd
   end
 
-  charly_api "fs_stat", path : TString do
+  charly_api "fs_stat", TString do |path|
     path = Utils.resolve path.value, Dir.current
 
     begin
@@ -220,7 +220,7 @@ module Charly::Internals
     end
   end
 
-  charly_api "fs_lstat", path : TString do
+  charly_api "fs_lstat", TString do |path|
     path = Utils.resolve path.value, Dir.current
 
     begin
@@ -230,7 +230,7 @@ module Charly::Internals
     end
   end
 
-  charly_api "fs_fstat", fd : TNumeric do
+  charly_api "fs_fstat", TNumeric do |fd|
     fd = fd.value.to_i32
 
     begin
@@ -240,7 +240,7 @@ module Charly::Internals
     end
   end
 
-  charly_api "fs_chmod", path : TString, mode : TNumeric do
+  charly_api "fs_chmod", TString, TNumeric do |path, mode|
     path = Utils.resolve path.value, Dir.current
     mode = mode.value.to_i32
 
@@ -253,7 +253,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_chown", path : TString, uid : TNumeric, gid : TNumeric do
+  charly_api "fs_chown", TString, TNumeric, TNumeric do |path, uid, gid|
     path = Utils.resolve path.value, Dir.current
     uid, gid = uid.value.to_i32, gid.value.to_i32
 
@@ -266,7 +266,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_link", old : TString, new : TString do
+  charly_api "fs_link", TString, TString do |old, new|
     old = Utils.resolve old.value, Dir.current
     new = Utils.resolve new.value, Dir.current
 
@@ -280,7 +280,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_symlink", old : TString, new : TString do
+  charly_api "fs_symlink", TString, TString do |old, new|
     old = old.value
     new = Utils.resolve new.value, Dir.current
 
@@ -293,7 +293,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_readlink", path : TString do
+  charly_api "fs_readlink", TString do |path|
     path = Utils.resolve path.value, Dir.current
 
     unless File.symlink? path
@@ -307,7 +307,7 @@ module Charly::Internals
     end
   end
 
-  charly_api "fs_rename", old : TString, new : TString do
+  charly_api "fs_rename", TString, TString do |old, new|
     old = Utils.resolve old.value, Dir.current
     new = Utils.resolve new.value, Dir.current
 
@@ -320,7 +320,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_utime", path : TString, atime : TNumeric, mtime : TNumeric do
+  charly_api "fs_utime", TString, TNumeric, TNumeric do |path, atime, mtime|
     path = Utils.resolve path.value, Dir.current
     atime, mtime = atime.value.to_i64, mtime.value.to_i64
 
@@ -336,17 +336,17 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_writable", path : TString do
+  charly_api "fs_writable", TString do |path|
     path = Utils.resolve path.value, Dir.current
     TBoolean.new File.writable? path
   end
 
-  charly_api "fs_readable", path : TString do
+  charly_api "fs_readable", TString do |path|
     path = Utils.resolve path.value, Dir.current
     TBoolean.new File.readable? path
   end
 
-  charly_api "fs_truncate", fd : TNumeric, size : TNumeric do
+  charly_api "fs_truncate", TNumeric, TNumeric do |fd, size|
     fd, size = fd.value.to_i32, size.value.to_i32
 
     begin
@@ -358,7 +358,7 @@ module Charly::Internals
     TNull.new
   end
 
-  charly_api "fs_raw", fd : TNumeric, callback : TFunc do
+  charly_api "fs_raw", TNumeric, TFunc do |fd, callback|
     fd = fd.value.to_i32
 
     begin

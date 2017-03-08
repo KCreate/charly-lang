@@ -4,12 +4,12 @@ require "colorize"
 module Charly::Internals
 
   # Colorizes *string* with *code*
-  charly_api "colorize", target : TString, code : TNumeric do
+  charly_api "colorize", TString, TNumeric do |target, code|
     return TString.new("\e[#{code.value.to_i64}m#{target}\e[0m")
   end
 
   # Returns a list of keys the objects internal state holds
-  charly_api "_object_keys", object : DataType do
+  charly_api "_object_keys", DataType do |object|
     keys = [] of BaseType
 
     object.data.dump_values(parents: false).each do |_, key|
@@ -23,7 +23,7 @@ module Charly::Internals
 
   # Deletes the parent property of the objects internal state
   # thus removing it from the scope hierarchy
-  charly_api "_isolate_object", object : TObject do
+  charly_api "_isolate_object", TObject do |object|
     object.data.parent = nil
     return object
   end
@@ -34,7 +34,7 @@ module Charly::Internals
   # String -> The length of the string
   # TArray -> The amount of items the array contains
   # Else -> 0
-  charly_api "length", value : BaseType do
+  charly_api "length", BaseType do |value|
     case value
     when .is_a? TNumeric
       return value
@@ -48,7 +48,7 @@ module Charly::Internals
   end
 
   # Returns the memory address of a given value
-  charly_api "_object_id", value : BaseType do
+  charly_api "_object_id", BaseType do |value|
     return TNumeric.new value.object_id
   end
 end

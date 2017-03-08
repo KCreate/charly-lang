@@ -16,15 +16,11 @@ module Charly::Internals
   #   return TString.new("Slept for #{time} seconds")
   # end
   # ```
-  macro charly_api(name, *types)
+  macro charly_api(name, *types, &block)
     class Methods
       def self.__charly_api_{{name.id}}(call, visitor, scope, context, argc : Int32, arguments : Array(BaseType))
         name = {{name}}
-        types = [{{
-                   *types.map do |field|
-                     field.type
-                   end
-                 }}] of BaseType.class
+        types = [{{*types}}] of BaseType.class
 
         # Argument count check
         if argc < {{types.size}}
@@ -36,14 +32,14 @@ module Charly::Internals
 
           arg{{index}} = arguments[{{index}}]
 
-          if !arg{{index}}.is_a?({{type.type}})
-            raise RunTimeError.new(call.argumentlist.children[{{index}}], "#{{{name}}} expected argument #{{{index + 1}}} to be of type #{{{type.type}}}, got #{arguments[{{index}}].class}")
+          if !arg{{index}}.is_a?({{type}})
+            raise RunTimeError.new(call.argumentlist.children[{{index}}], "#{{{name}}} expected argument #{{{index + 1}}} to be of type #{{{type}}}, got #{arguments[{{index}}].class}")
           end
 
-          {{type.var}} = arg{{index}}
+          {{block.args[index].id}} = arg{{index}}
         {% end %}
 
-        {{yield}}
+        {{block.body}}
       end
 
       METHODS << {{name}}

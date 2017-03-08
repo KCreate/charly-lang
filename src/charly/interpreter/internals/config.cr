@@ -1,7 +1,7 @@
 require "../**"
 
 module Charly::Internals
-  charly_api "__charly_config", name : TString do
+  charly_api "__charly_config", TString do |name|
     return case name.value
     when "LICENSE"
       TString.new ::Charly::Config::LICENSE

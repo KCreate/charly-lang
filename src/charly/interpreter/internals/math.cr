@@ -1,7 +1,7 @@
 require "../**"
 
 module Charly::Internals
-  charly_api "math", method : TString, value : TNumeric do
+  charly_api "math", TString, TNumeric do |method, value|
     method = method.value
     value = value.value
 
