@@ -5,10 +5,6 @@ const main = REPL(
   {}.tap(->(ctx) {}),
 
   // Insert new REPL commands here
-  {}.tap(->(cmd) {
-    cmd["clear"] = ->(repl) {
-      repl.context = Object.assign({}, REPL.default_context)
-    }
-  })
+  {}.tap(->(cmd) {})
 )
 main.start()
