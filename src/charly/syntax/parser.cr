@@ -775,7 +775,7 @@ module Charly
     end
 
     private def parse_ternary_if
-      condition = parse_logical_and
+      condition = parse_logical_or
       case @token.type
       when TokenType::QuestionMark
         advance
@@ -800,8 +800,8 @@ module Charly
       end
     end
 
-    parse_operator :logical_and, :logical_or, "And.new left, right", "AND"
-    parse_operator :logical_or, :equal_not, "Or.new left, right", "OR"
+    parse_operator :logical_or, :logical_and, "Or.new left, right", "OR"
+    parse_operator :logical_and, :equal_not, "And.new left, right", "AND"
     parse_operator :equal_not, :less_greater, "ComparisonExpression.new operator, left, right", "Equal", "Not"
     parse_operator :less_greater, :add_sub, "ComparisonExpression.new operator, left, right", "Less", "Greater", "LessEqual", "GreaterEqual"
     parse_operator :add_sub, :mult_div, "BinaryExpression.new operator, left, right", "Plus", "Minus"
