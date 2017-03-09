@@ -329,7 +329,18 @@ module Charly
 
     # Bitwise Left shift
     def self.lshift(left : BaseType, right : BaseType)
-      unless left.is_a?(TNumeric) && right.is_a?(TNumeric)
+
+      unless left.is_a?(TNumeric)
+
+        if left.is_a? TArray
+          left.value << right
+          return left
+        end
+
+        return TNumeric.new Float64::NAN
+      end
+
+      unless right.is_a? TNumeric
         return TNumeric.new Float64::NAN
       end
 
