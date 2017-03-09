@@ -138,13 +138,20 @@ module Charly
           read_char
           read_char TokenType::AND
         else
-          read_char TokenType::AndSign
+          read_char TokenType::BitAND
         end
       when '|'
-        case read_char
+        case peek_char
         when '|'
+          read_char
           read_char TokenType::OR
+        else
+          read_char TokenType::BitOR
         end
+      when '^'
+        read_char TokenType::BitXOR
+      when '~'
+        read_char TokenType::BitNOT
       when '!'
         read_char TokenType::Not
       when '<'
@@ -153,6 +160,8 @@ module Charly
           read_char TokenType::LessEqual
         when '-'
           read_char TokenType::LeftArrow
+        when '<'
+          read_char TokenType::LeftShift
         else
           @token.type = TokenType::Less
         end
@@ -160,6 +169,13 @@ module Charly
         case read_char
         when '='
           read_char TokenType::GreaterEqual
+        when '>'
+          case read_char
+          when '>'
+            read_char TokenType::ZFRightShift
+          else
+            @token.type = TokenType::RightShift
+          end
         else
           @token.type = TokenType::Greater
         end

@@ -801,9 +801,13 @@ module Charly
     end
 
     parse_operator :logical_or, :logical_and, "Or.new left, right", "OR"
-    parse_operator :logical_and, :equal_not, "And.new left, right", "AND"
+    parse_operator :logical_and, :bitwise_or, "And.new left, right", "AND"
+    parse_operator :bitwise_or, :bitwise_xor, "BinaryExpression.new operator, left, right", "BitOR"
+    parse_operator :bitwise_xor, :bitwise_and, "BinaryExpression.new operator, left, right", "BitXOR"
+    parse_operator :bitwise_and, :equal_not, "BinaryExpression.new operator, left, right", "BitAND"
     parse_operator :equal_not, :less_greater, "ComparisonExpression.new operator, left, right", "Equal", "Not"
-    parse_operator :less_greater, :add_sub, "ComparisonExpression.new operator, left, right", "Less", "Greater", "LessEqual", "GreaterEqual"
+    parse_operator :less_greater, :bitwise_shift, "ComparisonExpression.new operator, left, right", "Less", "Greater", "LessEqual", "GreaterEqual"
+    parse_operator :bitwise_shift, :add_sub, "BinaryExpression.new operator, left, right", "LeftShift", "RightShift", "ZFRightShift"
     parse_operator :add_sub, :mult_div, "BinaryExpression.new operator, left, right", "Plus", "Minus"
     parse_operator :mult_div, :mod, "BinaryExpression.new operator, left, right", "Mult", "Divd"
     parse_operator :mod, :unary_expression, "BinaryExpression.new operator, left, right", "Mod"
@@ -811,7 +815,7 @@ module Charly
     private def parse_unary_expression
       start_location = @token.location
       case operator = @token.type
-      when TokenType::Plus, TokenType::Minus, TokenType::Not
+      when TokenType::Plus, TokenType::Minus, TokenType::Not, TokenType::BitNOT
         advance
         value = parse_unary_expression
         return UnaryExpression.new(operator, value).at(start_location, value.location_end)

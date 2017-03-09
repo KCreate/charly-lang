@@ -57,6 +57,16 @@ module Charly
     Pow
     Assignment
 
+    # Bitwise operators
+    # The & operator is parsed as the AndSign
+    BitOR
+    BitXOR
+    BitNOT
+    BitAND
+    LeftShift
+    RightShift
+    ZFRightShift
+
     # AND assignments
     PlusAssignment
     MinusAssignment
@@ -84,7 +94,6 @@ module Charly
     Point
     Comment
     AtSign
-    AndSign
     RightArrow
     LeftArrow
     QuestionMark
@@ -97,30 +106,6 @@ module Charly
     # Misc
     EOF
     Unknown
-
-    # :nodoc:
-    def to_s(io)
-      case self
-      when Greater
-        io << ">"
-      when Less
-        io << "<"
-      when GreaterEqual
-        io << ">="
-      when LessEqual
-        io << "<="
-      when AtSign
-        io << "@"
-      when AndSign
-        io << "&"
-      when RightArrow
-        io << "->"
-      when LeftArrow
-        io << "<-"
-      else
-        io << super
-      end
-    end
 
     def regular_operator?
       OPERATOR_MAPPING.has_key? self
