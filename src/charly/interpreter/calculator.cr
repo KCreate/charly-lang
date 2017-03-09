@@ -33,6 +33,18 @@ module Charly
         return eq left, right
       when TokenType::Not
         return ne left, right
+
+      # Bitwise operators
+      when TokenType::BitOR
+        return or left, right
+      when TokenType::BitXOR
+        return xor left, right
+      when TokenType::BitAND
+        return and left, right
+      when TokenType::LeftShift
+        return lshift left, right
+      when TokenType::RightShift
+        return rshift left, right
       end
 
       return TNumeric.new(Float64::NAN)
@@ -47,6 +59,8 @@ module Charly
         return usub right
       when TokenType::Not
         return une right
+      when TokenType::BitNOT
+        return not right
       end
 
       return TNumeric.new(Float64::NAN)
@@ -281,6 +295,66 @@ module Charly
     # Unary addition
     def self.uadd(right : BaseType)
       right
+    end
+
+    # Bitwise AND
+    def self.and(left : BaseType, right : BaseType)
+      unless left.is_a?(TNumeric) && right.is_a?(TNumeric)
+        return TNumeric.new Float64::NAN
+      end
+
+      left, right = left.value.to_i64, right.value.to_i64
+      return TNumeric.new left & right
+    end
+
+    # Bitwise OR
+    def self.or(left : BaseType, right : BaseType)
+      unless left.is_a?(TNumeric) && right.is_a?(TNumeric)
+        return TNumeric.new Float64::NAN
+      end
+
+      left, right = left.value.to_i64, right.value.to_i64
+      return TNumeric.new left | right
+    end
+
+    # Bitwise XOR
+    def self.xor(left : BaseType, right : BaseType)
+      unless left.is_a?(TNumeric) && right.is_a?(TNumeric)
+        return TNumeric.new Float64::NAN
+      end
+
+      left, right = left.value.to_i64, right.value.to_i64
+      return TNumeric.new left ^ right
+    end
+
+    # Bitwise Left shift
+    def self.lshift(left : BaseType, right : BaseType)
+      unless left.is_a?(TNumeric) && right.is_a?(TNumeric)
+        return TNumeric.new Float64::NAN
+      end
+
+      left, right = left.value.to_i64, right.value.to_i64
+      return TNumeric.new left << right
+    end
+
+    # Bitwise right shift
+    def self.rshift(left : BaseType, right : BaseType)
+      unless left.is_a?(TNumeric) && right.is_a?(TNumeric)
+        return TNumeric.new Float64::NAN
+      end
+
+      left, right = left.value.to_i64, right.value.to_i64
+      return TNumeric.new left >> right
+    end
+
+    # Bitwise NOT
+    def self.not(right : BaseType)
+      unless right.is_a? TNumeric
+        return TNumeric.new Float64::NAN
+      end
+
+      right = right.value.to_i64
+      return TNumeric.new ~right
     end
 
     # Get the truthyness of a value

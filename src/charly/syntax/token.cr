@@ -65,7 +65,6 @@ module Charly
     BitAND
     LeftShift
     RightShift
-    ZFRightShift
 
     # AND assignments
     PlusAssignment

@@ -170,12 +170,7 @@ module Charly
         when '='
           read_char TokenType::GreaterEqual
         when '>'
-          case read_char
-          when '>'
-            read_char TokenType::ZFRightShift
-          else
-            @token.type = TokenType::RightShift
-          end
+          read_char TokenType::RightShift
         else
           @token.type = TokenType::Greater
         end

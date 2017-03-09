@@ -807,7 +807,7 @@ module Charly
     parse_operator :bitwise_and, :equal_not, "BinaryExpression.new operator, left, right", "BitAND"
     parse_operator :equal_not, :less_greater, "ComparisonExpression.new operator, left, right", "Equal", "Not"
     parse_operator :less_greater, :bitwise_shift, "ComparisonExpression.new operator, left, right", "Less", "Greater", "LessEqual", "GreaterEqual"
-    parse_operator :bitwise_shift, :add_sub, "BinaryExpression.new operator, left, right", "LeftShift", "RightShift", "ZFRightShift"
+    parse_operator :bitwise_shift, :add_sub, "BinaryExpression.new operator, left, right", "LeftShift", "RightShift"
     parse_operator :add_sub, :mult_div, "BinaryExpression.new operator, left, right", "Plus", "Minus"
     parse_operator :mult_div, :mod, "BinaryExpression.new operator, left, right", "Mult", "Divd"
     parse_operator :mod, :unary_expression, "BinaryExpression.new operator, left, right", "Mod"
