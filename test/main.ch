@@ -5,6 +5,7 @@ const result = UnitTest(->(describe, it, assert, context) {
 
     // Interpreter specs
     ["Arithmetic operations",       "./interpreter/arithmetic.ch"],
+    ["Bitwise operations",          "./interpreter/bitwise.ch"],
     ["Classes",                     "./interpreter/classes.ch"],
     ["Comments",                    "./interpreter/comments.ch"],
     ["Comparisons",                 "./interpreter/comparisons.ch"],
