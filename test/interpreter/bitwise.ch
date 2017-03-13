@@ -34,6 +34,9 @@ export = ->(describe, it, assert) {
       let results = TEST_NUMS.map(->(pair) pair[0] & pair[1])
 
       assert(results, [
+        -52,
+        32,
+        50,
         0,
         0,
         4,
@@ -49,6 +52,9 @@ export = ->(describe, it, assert) {
       let results = TEST_NUMS.map(->(pair) pair[0] | pair[1])
 
       assert(results, [
+        -18,
+        -2,
+        -2,
         3,
         7,
         7,
@@ -64,6 +70,9 @@ export = ->(describe, it, assert) {
       let results = TEST_NUMS.map(->(pair) pair[0] ^ pair[1])
 
       assert(results, [
+        34,
+        -34,
+        -52,
         3,
         7,
         3,
@@ -100,8 +109,8 @@ export = ->(describe, it, assert) {
         512,
         65536,
         -640,
-        0,
-        -2147483648
+        4,
+        0
       ])
     })
 
@@ -116,8 +125,8 @@ export = ->(describe, it, assert) {
         2,
         0,
         -1,
-        0,
-        0
+        64,
+        128
       ])
     })
 
