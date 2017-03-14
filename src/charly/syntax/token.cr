@@ -1,32 +1,6 @@
 require "./location.cr"
 
 module Charly
-  # Mapping between operators and function names you use to override them
-  OPERATOR_MAPPING = {
-
-    # Arithmetic
-    TokenType::Plus  => "__plus",
-    TokenType::Minus => "__minus",
-    TokenType::Mult  => "__mult",
-    TokenType::Divd  => "__divd",
-    TokenType::Mod   => "__mod",
-    TokenType::Pow   => "__pow",
-
-    # Comparison
-    TokenType::Less         => "__less",
-    TokenType::Greater      => "__greater",
-    TokenType::LessEqual    => "__lessequal",
-    TokenType::GreaterEqual => "__greaterequal",
-    TokenType::Equal        => "__equal",
-    TokenType::Not          => "__not",
-  }
-
-  # Mapping between unary operators and function names you use to override them
-  UNARY_OPERATOR_MAPPING = {
-    TokenType::Plus  => "__uplus",
-    TokenType::Minus => "__uminus",
-    TokenType::Not   => "__unot",
-  }
 
   # Mapping between and assignment operators and real operators
   AND_ASSIGNMENT_MAPPING = {
@@ -106,35 +80,8 @@ module Charly
     EOF
     Unknown
 
-    def regular_operator?
-      OPERATOR_MAPPING.has_key? self
-    end
-
-    def unary_operator?
-      UNARY_OPERATOR_MAPPING.has_key? self
-    end
-
     def and_operator?
       AND_ASSIGNMENT_MAPPING.has_key? self
-    end
-
-    # Returns true if this operator can be overridden
-    def overrideable
-      regular_operator? || unary_operator?
-    end
-
-    def is_operator?
-      overrideable
-    end
-
-    # Returns the overrideable method name of this operator
-    def regular_method_name
-      OPERATOR_MAPPING[self]
-    end
-
-    # Returns the overrideable method name of this unary operator
-    def unary_method_name
-      UNARY_OPERATOR_MAPPING[self]
     end
 
     def and_real_operator
