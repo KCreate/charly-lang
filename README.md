@@ -33,13 +33,12 @@ you may find useful.
 
 # Syntax and language guide
 
-Visit the [official website](https://charly-lang.github.io/charly/) for an introduction
-to the semantics and API-details.
+Visit the [website](https://charly-lang.github.io/charly) for an introduction to the language.
 
 # Installation
 
 1. Install [Crystal](https://crystal-lang.org)
-2. Clone this repo (`git clone https://github.com/charly-lang/charly`)
+2. Clone this repo with `git clone https://github.com/charly-lang/charly`
 3. Run `install.sh`
 
 You will be prompted for your admin password (used to copy to `/usr/local/bin`).
@@ -69,7 +68,7 @@ The [CI Build](https://travis-ci.org/charly-lang/charly) runs on Ubuntu 12.04.5 
 
 ```
 $ charly -v
-Charly 0.3.0 [8a5abb0] (08. March 2017)
+Charly 0.3.0 [bb5b857] (15. March 2017)
 $ charly -h
 Usage: charly [filename] [flags] [arguments]
     -f FLAG, --flag FLAG             Set a flag
