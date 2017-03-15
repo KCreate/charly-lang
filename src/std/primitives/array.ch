@@ -397,60 +397,6 @@ export = primitive class Array {
   }
 
   /*
-   * Returns a new array by concatenating self and the other array
-   * If the argument is not an array, it will be appended (non-mutating)
-   * */
-  func +(element) {
-
-    // Return a copy of the current array and append the item
-    if (typeof element ! "Array") {
-      let new = @copy()
-      new.push(element)
-      return new
-    }
-
-    // Create a copy and append each item of the other array
-    let new = @copy()
-    element.each(->(item) {
-      new.push(item)
-    })
-    return new
-  }
-
-  /*
-   * Returns true if this array is equal to another array or value
-   * */
-  func ==(other) {
-
-    const other_type = typeof other
-
-    if (other_type ! typeof self) {
-      return false
-    }
-
-    // Check the length
-    if (other.length() ! @length()) {
-      return false
-    }
-
-    // Iterate over the contents
-    let equal = true
-    other.each(func(e, i) {
-      if (equal) {
-        equal = e == self[i]
-      }
-    })
-    equal
-  }
-
-  /*
-   * Same as == but negated
-   * */
-  func !(other) {
-    !@__equal(other)
-  }
-
-  /*
    * Returns a sorted copy of this array
    *
    * If the array contains less than 20 elements

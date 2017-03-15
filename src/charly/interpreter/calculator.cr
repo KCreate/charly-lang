@@ -68,6 +68,16 @@ module Charly
 
     # Addition
     def self.add(left : BaseType, right : BaseType)
+      if left.is_a? TArray
+        if right.is_a? TArray
+          return TArray.new left.value + right.value
+        else
+          new_array = left.value.dup
+          new_array << right
+          return TArray.new new_array
+        end
+      end
+
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TNumeric.new(left.value + right.value)
       end
@@ -202,6 +212,16 @@ module Charly
         return TBoolean.new(left.value == right.value)
       end
 
+      if left.is_a?(TArray) && right.is_a?(TArray)
+        if left.value.size != right.value.size
+          return TBoolean.new false
+        end
+
+        return TBoolean.new left.value.equals?(right.value) { |left, right|
+          eq(left, right).value
+        }
+      end
+
       if left.is_a?(TBoolean) && right.is_a?(TBoolean)
         return TBoolean.new(left.value == right.value)
       end
@@ -241,6 +261,18 @@ module Charly
     def self.ne(left : BaseType, right : BaseType)
       if left.is_a?(TNumeric) && right.is_a?(TNumeric)
         return TBoolean.new(left.value != right.value)
+      end
+
+      if left.is_a?(TArray) && right.is_a?(TArray)
+        if left.value.size != right.value.size
+          return TBoolean.new true
+        end
+
+        equal = left.value.equals?(right.value) { |left, right|
+          eq left, right
+        }
+
+        return TBoolean.new !equal
       end
 
       if left.is_a?(TBoolean) && right.is_a?(TBoolean)

@@ -343,108 +343,22 @@ module Charly
     end
 
     def visit_unary_expression(node : UnaryExpression, scope, context)
-      # Resolve the right side
       operator = node.operator
       right = visit_expression(node.right, scope, context)
-
-      # Checks if this operator is unary overrideable
-      if operator.unary_operator?
-        override_method_name = operator.unary_method_name
-
-        method = nil
-        if right.is_a?(DataType) && right.data.contains override_method_name
-          method = right.data.get(override_method_name, Flag::IGNORE_PARENT)
-        elsif right.is_a? TArray
-          method = get_primitive_method(right, override_method_name, scope, context)
-        end
-
-        if method.is_a? TFunc
-          # Create a fake call expression
-          callex = CallExpression.new(
-            MemberExpression.new(
-              node.right,
-              IdentifierLiteral.new("#{operator}").at(node.right)
-            ).at(node.right),
-            ExpressionList.new([] of ASTNode).at(node.right)
-          ).at(node)
-
-          return visit_function_call(method, callex, right, scope, context)
-        end
-      end
-
       return Calculator.visit_unary node.operator, right
     end
 
     def visit_binary_expression(node : BinaryExpression, scope, context)
-      # Resolve the left side
       operator = node.operator
       left = visit_expression(node.left, scope, context)
-
-      if operator.regular_operator?
-        override_method_name = operator.regular_method_name
-
-        method = nil
-        if left.is_a?(DataType) && left.data.contains override_method_name
-          method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
-        elsif left.is_a? TArray
-          method = get_primitive_method(left, override_method_name, scope, context)
-        end
-
-        if method.is_a? TFunc
-          # Create a fake call expression
-          callex = CallExpression.new(
-            MemberExpression.new(
-              node.left,
-              IdentifierLiteral.new("#{operator}").at(node.left)
-            ).at(node.left),
-            ExpressionList.new([
-              node.right,
-            ] of ASTNode).at(node.right)
-          ).at(node)
-
-          return visit_function_call(method, callex, left, scope, context)
-        end
-      end
-
-      # No primitive method was found
       right = visit_expression(node.right, scope, context)
       return Calculator.visit operator, left, right
     end
 
     def visit_comparison_expression(node : ComparisonExpression, scope, context)
-      # Resolve the left side
       operator = node.operator
       left = visit_expression(node.left, scope, context)
-
-      if operator.regular_operator?
-        override_method_name = operator.regular_method_name
-
-        method = nil
-        if left.is_a?(DataType) && left.data.contains override_method_name
-          method = left.data.get(override_method_name, Flag::IGNORE_PARENT)
-        elsif left.is_a? TArray
-          method = get_primitive_method(left, override_method_name, scope, context)
-        end
-
-        if method.is_a? TFunc
-          # Create a fake call expression
-          callex = CallExpression.new(
-            MemberExpression.new(
-              node.left,
-              IdentifierLiteral.new("#{operator}").at(node.left)
-            ).at(node.left),
-            ExpressionList.new([
-              node.right,
-            ] of ASTNode).at(node.right)
-          ).at(node)
-
-          return visit_function_call(method, callex, left, scope, context)
-        end
-      end
-
-      # No primitive method was found
       right = visit_expression(node.right, scope, context)
-
       return Calculator.visit operator, left, right
     end
 
@@ -1043,50 +957,17 @@ module Charly
 
         # The first statement to succeed causes the block to run
         statement.values.children.each do |value|
-          override_method_name = OPERATOR_MAPPING[TokenType::Equal]
-          method = nil
-          if test.is_a?(DataType) && test.data.contains override_method_name
-            method = test.data.get(override_method_name, Flag::IGNORE_PARENT)
-          elsif test.is_a? TArray
-            method = get_primitive_method(test, override_method_name, scope, context)
-          end
+          value = visit_expression(value, scope, context)
+          result = Calculator.eq(test, value).value
 
-          if method.is_a? TFunc
-
-            # Create a fake call expression
-            callex = CallExpression.new(
-              MemberExpression.new(
-                node.test,
-                IdentifierLiteral.new(override_method_name).at(node.test)
-              ).at(node.test),
-              ExpressionList.new([value] of ASTNode).at(node.test)
-            ).at(node.test)
-            result = visit_function_call(method, callex, test, scope, context)
-            result = Calculator.truthyness(result)
-
-            if result
-              begin
-                yield_value = visit_block(statement.block, Scope.new(scope), context)
-              rescue e : BreakException
-                yield_value = TNull.new
-              end
-
-              break
+          if result
+            begin
+              yield_value = visit_block(statement.block, Scope.new(scope), context)
+            rescue e : BreakException
+              yield_value = TNull.new
             end
-          else
 
-            # If the method wasn't redirected, we evaluate the value here
-            # This is for future compatibility with the array spread operator
-            value = visit_expression(value, scope, context)
-            if Calculator.eq(test, value).value
-              begin
-                yield_value = visit_block(statement.block, Scope.new(scope), context)
-              rescue e : BreakException
-                yield_value = TNull.new
-              end
-
-              break
-            end
+            break
           end
         end
 
