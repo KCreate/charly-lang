@@ -18,6 +18,7 @@ module Charly::Require
     "charly",
     "fs",
     "repl",
+    "net",
   ] of String
 
   # Loads *filename* and returns the value of the export variable
